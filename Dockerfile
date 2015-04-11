@@ -1,0 +1,15 @@
+FROM python:3.4.3-slim
+
+RUN ["apt-get", "update"]
+RUN ["pip", "install", "--upgrade", "pip"]
+RUN ["apt-get", "install", "-y", "build-essential"]
+RUN ["apt-get", "install", "-y", "python3.4-dev"]
+RUN ["apt-get", "install", "-y", "libpq-dev"]
+
+ADD requirements.txt /app/requirements.txt
+WORKDIR /app
+RUN ["pip", "install", "-r", "requirements.txt"]
+
+ADD . /app
+
+EXPOSE 8080
