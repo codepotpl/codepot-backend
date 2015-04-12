@@ -19,6 +19,9 @@ RUN echo "PermitUserEnvironment=yes" >> /etc/ssh/sshd_config
 
 EXPOSE 22
 
+RUN touch /root/.bash_profile
+RUN echo "cd /app" >> /root/.bash_profile
+
 RUN mkdir /root/.ssh/
 RUN touch /root/.ssh/environment
 
