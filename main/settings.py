@@ -40,6 +40,8 @@ INSTALLED_DJANGO_APPS = (
 )
 
 INSTALLED_THIRD_PARTY_APPS = (
+    'rest_framework',
+    'rest_framework.authtoken',
 )
 
 INSTALLED_HOME_GROWN_APPS = (
