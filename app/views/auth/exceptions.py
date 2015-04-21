@@ -12,4 +12,14 @@ class EmailAddressAlreadyUsedException(AuthException):
 
 class InvalidEmailAddressException(AuthException):
     def __init__(self):
-        super().__init__('Email address is not valid', 101)
+        super().__init__('Email address is not valid.', 101)
+
+
+class UserNotFoundException(AuthException):
+    def __init__(self):
+        super().__init__('User not found.', 102)
+
+
+class InvalidPasswordException(AuthException):
+    def __init__(self):
+        super().__init__('Invalid password.', 103)

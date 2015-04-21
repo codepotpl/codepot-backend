@@ -1,22 +1,29 @@
 from rest_framework.response import Response
 from rest_framework.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_401_UNAUTHORIZED,
     HTTP_409_CONFLICT,
     HTTP_500_INTERNAL_SERVER_ERROR,
-    HTTP_400_BAD_REQUEST,
 )
 
 from app.views.auth.exceptions import (
     EmailAddressAlreadyUsedException,
     InvalidEmailAddressException,
+    UserNotFoundException,
+    InvalidPasswordException,
 )
 
 
 _CODE_TO_EXCEPTION = {
-    HTTP_409_CONFLICT: [
-        EmailAddressAlreadyUsedException,
-    ],
     HTTP_400_BAD_REQUEST: [
         InvalidEmailAddressException,
+    ],
+    HTTP_401_UNAUTHORIZED: [
+        UserNotFoundException,
+        InvalidPasswordException,
+    ],
+    HTTP_409_CONFLICT: [
+        EmailAddressAlreadyUsedException,
     ],
 }
 
