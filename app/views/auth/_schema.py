@@ -36,8 +36,7 @@ sign_up_req_schema = {
         "lastName": {
             "type": "string",
             "minLength": 1,
-        }
-
+        },
     },
     "required": ["email", "password", "firstName", "lastName"],
     "additionalProperties": False,

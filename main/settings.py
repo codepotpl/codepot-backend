@@ -56,6 +56,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
+    'EXCEPTION_HANDLER': 'app.middleware.custom_exception_handler',
 }
 
 ROOT_URLCONF = 'main.urls'

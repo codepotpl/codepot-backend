@@ -23,5 +23,23 @@ def parser_class_for_schema(schema):
     class X(JSONSchemaParser):
         def __init__(self):
             super(X, self).__init__(schema)
-
     return X
+
+
+class CodepotException(Exception):
+    def __init__(self, detail=None, code=0):
+        self.detail = detail or 'No details'
+        self.code = code
+
+
+class BadRequestException(CodepotException):
+    pass
+
+
+class ForbiddenException(CodepotException):
+    pass
+
+
+# def log_and_raise(message, exc_class):
+# logger.error(message)
+#     raise exc_class(message)
