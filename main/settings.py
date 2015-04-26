@@ -22,6 +22,7 @@ INSTALLED_DJANGO_APPS = (
 INSTALLED_THIRD_PARTY_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
 )
 
 INSTALLED_HOME_GROWN_APPS = (
@@ -32,6 +33,7 @@ INSTALLED_APPS = INSTALLED_DJANGO_APPS + INSTALLED_THIRD_PARTY_APPS + INSTALLED_
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -117,3 +119,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CORS_ORIGIN_ALLOW_ALL = True
