@@ -19,8 +19,8 @@ from rest_framework.decorators import (
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from app import parser_class_for_schema
 from app.models import UserProfile
+from app.views import parser_class_for_schema
 from app.views.auth import _schema
 from app.views.auth.exceptions import (
     EmailAddressAlreadyUsedException,
