@@ -98,9 +98,6 @@ DATABASES = {
     }
 }
 
-print(DATABASES)
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
@@ -126,7 +123,7 @@ CORS_EXPOSE_HEADERS = ('token',)
 APP_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 # TODO
-#http://www.webforefront.com/django/setupdjangologging.html
+# http://www.webforefront.com/django/setupdjangologging.html
 LOGGING = {
     'version': 1,
     'formatters': {
