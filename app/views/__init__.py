@@ -25,7 +25,7 @@ def validate_payload_with_schema(payload, schema):
         return payload
     except ValidationError as e:
         logger.error('Caught JSON schema validation error: {}.'.format(str(e)))
-        raise ParseException(str(e))
+        raise ParseException(str(e), 400)
 
 
 def parser_class_for_schema(schema):

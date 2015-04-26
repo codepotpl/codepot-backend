@@ -16,7 +16,7 @@ from app.views import (
     validate_payload_with_schema,
 )
 from app.views.auth.exceptions import LoginFailedException
-from ._schema import sign_in_req_schema
+from .auth_json_schema import sign_in_req_schema
 from ._util import prepare_auth_response_map
 
 
