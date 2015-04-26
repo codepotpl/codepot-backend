@@ -10,28 +10,25 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 
+from app.logging import logger
+
 from app.views import parser_class_for_schema
-from app.views.auth import (
-    _schema,
-    _prepare_auth_response_map,
-)
-from app.views.auth.exceptions import (
-    UserNotFoundException,
-    InvalidPasswordException,
-)
+from app.views.auth.exceptions import LoginFailedException
+from ._schema import sign_in_req_schema
+from ._util import prepare_auth_response_map
 
 
 @api_view(['POST', ])
 @permission_classes((AllowAny,))
-@parser_classes((parser_class_for_schema(_schema.sign_in_req_schema),))
+@parser_classes((parser_class_for_schema(sign_in_req_schema),))
 @transaction.atomic()
 def sign_in(request, **kwargs):
     payload = request.DATA
     email = payload['email']
     password = payload['password']
     user = _find_user_for_email(email)
-    _check_password(password, user.password)
-    response_map = _prepare_auth_response_map(user)
+    _check_password(email, password, user.password)
+    response_map = prepare_auth_response_map(user)
 
     return Response(
         status=HTTP_200_OK,
@@ -44,9 +41,11 @@ def _find_user_for_email(email):
     try:
         return User.objects.get(username=email)
     except User.DoesNotExist as e:
-        raise UserNotFoundException()
+        logger.error('No user found for email: {}, err: {}.'.format(email, str(e)))
+        raise LoginFailedException()
 
 
-def _check_password(query_password, db_password):
+def _check_password(email, query_password, db_password):
     if not check_password(query_password, db_password):
-        raise InvalidPasswordException()
+        logger.error('Password verification failed for user with email: {}.'.format(email))
+        raise LoginFailedException()

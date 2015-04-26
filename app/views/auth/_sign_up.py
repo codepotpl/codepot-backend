@@ -17,10 +17,8 @@ from app.logging import logger
 from app.models import UserProfile
 
 from app.views import parser_class_for_schema
-from app.views.auth import (
-    _schema,
-    _prepare_auth_response_map,
-)
+from ._util import prepare_auth_response_map
+from ._schema import sign_up_req_schema
 from app.views.auth.exceptions import (
     InvalidEmailAddressException,
     EmailAddressAlreadyUsedException,
@@ -29,7 +27,7 @@ from app.views.auth.exceptions import (
 
 @api_view(['POST', ])
 @permission_classes((AllowAny,))
-@parser_classes((parser_class_for_schema(_schema.sign_up_req_schema),))
+@parser_classes((parser_class_for_schema(sign_up_req_schema),))
 @transaction.atomic()
 def sign_up(request, **kwargs):
     payload = request.DATA
@@ -42,7 +40,7 @@ def sign_up(request, **kwargs):
     validate_email(email)
 
     user = _create_user(email, password, first_name, last_name)
-    response_map = _prepare_auth_response_map(user)
+    response_map = prepare_auth_response_map(user)
 
     return Response(
         status=HTTP_201_CREATED,

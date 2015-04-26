@@ -23,3 +23,8 @@ class UserNotFoundException(AuthException):
 class InvalidPasswordException(AuthException):
     def __init__(self):
         super().__init__('Invalid password.', 103)
+
+
+class LoginFailedException(AuthException):
+    def __init__(self):
+        super().__init__('Incorrect username or password', 104)
