@@ -11,8 +11,10 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 
 from app.logging import logger
-
-from app.views import parser_class_for_schema
+from app.views import (
+    parser_class_for_schema,
+    validate_payload_with_schema,
+)
 from app.views.auth.exceptions import LoginFailedException
 from ._schema import sign_in_req_schema
 from ._util import prepare_auth_response_map
@@ -24,6 +26,9 @@ from ._util import prepare_auth_response_map
 @transaction.atomic()
 def sign_in(request, **kwargs):
     payload = request.DATA
+
+    validate_payload_with_schema(payload, sign_in_req_schema)
+
     email = payload['email']
     password = payload['password']
     user = _find_user_for_email(email)

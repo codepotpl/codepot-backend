@@ -12,6 +12,7 @@ from app.views.auth.exceptions import (
     InvalidEmailAddressException,
     UserNotFoundException,
     InvalidPasswordException,
+    LoginFailedException,
 )
 from app.views.exceptions import (
     ParseException,
@@ -35,6 +36,7 @@ _CODE_TO_EXCEPTION = {
     ],
     HTTP_409_CONFLICT: [
         EmailAddressAlreadyUsedException,
+        LoginFailedException,
     ],
 }
 

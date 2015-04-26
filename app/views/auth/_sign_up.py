@@ -15,8 +15,10 @@ from rest_framework.status import HTTP_201_CREATED
 from app.logging import logger
 
 from app.models import UserProfile
-
-from app.views import parser_class_for_schema
+from app.views import (
+    parser_class_for_schema,
+    validate_payload_with_schema,
+)
 from ._util import prepare_auth_response_map
 from ._schema import sign_up_req_schema
 from app.views.auth.exceptions import (
@@ -31,6 +33,8 @@ from app.views.auth.exceptions import (
 @transaction.atomic()
 def sign_up(request, **kwargs):
     payload = request.DATA
+
+    validate_payload_with_schema(payload, sign_up_req_schema)
 
     email = payload['email']
     password = payload['password']
