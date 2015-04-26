@@ -4,23 +4,34 @@ from rest_framework.status import (
     HTTP_401_UNAUTHORIZED,
     HTTP_409_CONFLICT,
     HTTP_500_INTERNAL_SERVER_ERROR,
-)
+    HTTP_403_FORBIDDEN)
 
+from app.logging import logger
 from app.views.auth.exceptions import (
     EmailAddressAlreadyUsedException,
     InvalidEmailAddressException,
     UserNotFoundException,
     InvalidPasswordException,
 )
+from app.views.exceptions import (
+    ParseException,
+    BadRequestException,
+    ForbiddenException,
+)
 
 
 _CODE_TO_EXCEPTION = {
     HTTP_400_BAD_REQUEST: [
         InvalidEmailAddressException,
+        ParseException,
+        BadRequestException,
     ],
     HTTP_401_UNAUTHORIZED: [
         UserNotFoundException,
         InvalidPasswordException,
+    ],
+    HTTP_403_FORBIDDEN: [
+        ForbiddenException,
     ],
     HTTP_409_CONFLICT: [
         EmailAddressAlreadyUsedException,
@@ -37,9 +48,7 @@ def _find_code_for_exception(exc):
 
 
 def custom_exception_handler(exc):
-    # TODO
-    # logger.error('Exception caught: %s, error: %s', type(exc).__name__, exc)
-    print('Exception caught: %s, error: %s', type(exc).__name__, exc)
+    logger.error('Exception caught: {}, error: {}.'.format(type(exc).__name__, exc))
 
     status_code = _find_code_for_exception(exc)
     response = Response(status=status_code,

@@ -122,3 +122,36 @@ STATIC_URL = '/static/'
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_EXPOSE_HEADERS = ('token',)
+
+APP_ROOT = os.path.dirname(os.path.realpath(__file__))
+
+# TODO
+#http://www.webforefront.com/django/setupdjangologging.html
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(pathname)s %(funcName)s %(message)s',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(APP_ROOT, 'codepot.log'),
+            'backupCount': 2,
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'codepot': {
+            'handlers': ['console', 'file', ],
+            'level': 'DEBUG',
+        },
+    },
+}

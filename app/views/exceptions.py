@@ -1,7 +1,11 @@
-from app import CodepotException
+from app.exceptions import CodepotException
 
 
 class BadRequestException(CodepotException):
+    pass
+
+
+class ParseException(BadRequestException):
     pass
 
 

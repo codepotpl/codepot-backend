@@ -19,6 +19,7 @@ from rest_framework.decorators import (
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from app.logging import logger
 from app.models import UserProfile
 from app.views import parser_class_for_schema
 from app.views.auth import _schema
@@ -42,7 +43,7 @@ def get_or_generate_token(user):
     try:
         return Token.objects.get(user=user)
     except Token.DoesNotExist:
-        print('No token found for user: %s. New token will be generated.', user.id)
+        logger.info('No token found for user: %s. New token will be generated.'.format(user.id))
         return Token.objects.create(user=user)
 
 
