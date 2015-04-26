@@ -83,13 +83,15 @@ class SignInTests(TestCase):
     def test_if_sign_succeeds(self):
         email = 'lol@lol.com'
         password = 'good'
+        first_name = 'lolf'
+        last_name = 'loll'
 
         user = User.objects.create_user(email, email, password)
         UserProfile.objects.create(
             user=user,
             email=email,
-            first_name='lolf',
-            last_name='loll'
+            first_name=first_name,
+            last_name=last_name
         )
         token =Token.objects.create(user=user)
 
@@ -98,7 +100,15 @@ class SignInTests(TestCase):
             'password': password,
         }
         resp = self.client.post('/api/auth/sign-in/', payload, format='json')
+        resp_data = resp.data
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(resp['Token'], token.key)
-        jsonschema.validate(resp.data, auth_json_schema.auth_res_schema)
+
+        jsonschema.validate(resp_data, auth_json_schema.auth_res_schema)
+
+        self.assertEqual(resp_data['firstName'], first_name)
+        self.assertEqual(resp_data['lastName'], last_name)
+        self.assertEqual(resp_data['email'], email)
+        self.assertEqual(resp_data['id'], user.id)
+
 
