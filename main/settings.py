@@ -160,3 +160,8 @@ LOGGING = {
         },
     },
 }
+
+# MailGun
+EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
+MAILGUN_ACCESS_KEY = 'ACCESS-KEY'  # TODO
+MAILGUN_SERVER_NAME = 'SERVER-NAME'  # TODO
