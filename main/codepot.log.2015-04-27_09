@@ -1,0 +1,198 @@
+ERROR 2015-04-27 08:31:01,938 /app/app/views/auth/_sign_in.py _check_password Password verification failed for user with email: lol@lol.com.
+ERROR 2015-04-27 08:31:01,946 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: LoginFailedException, error: .
+ERROR 2015-04-27 08:31:01,953 /app/app/views/auth/_sign_in.py _find_user_for_email No user found for email: lol@lol.com, err: User matching query does not exist..
+ERROR 2015-04-27 08:31:01,955 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: LoginFailedException, error: .
+ERROR 2015-04-27 08:31:01,968 /app/app/views/auth/_sign_in.py _find_user_for_email No user found for email: malformed, err: User matching query does not exist..
+ERROR 2015-04-27 08:31:01,970 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: LoginFailedException, error: .
+ERROR 2015-04-27 08:31:01,979 /app/app/views/__init__.py validate_payload_with_schema Caught JSON schema validation error: 'email' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'http://json-schema.org/draft-04/schema',
+     'additionalProperties': False,
+     'properties': {'email': {'format': 'email',
+                              'minLength': 1,
+                              'type': 'string'},
+                    'password': {'minLength': 1, 'type': 'string'}},
+     'required': ['email', 'password'],
+     'type': 'object'}
+
+On instance:
+    <QueryDict: {}>.
+ERROR 2015-04-27 08:31:01,982 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: ParseException, error: ("'email' is a required property\n\nFailed validating 'required' in schema:\n    {'$schema': 'http://json-schema.org/draft-04/schema',\n     'additionalProperties': False,\n     'properties': {'email': {'format': 'email',\n                              'minLength': 1,\n                              'type': 'string'},\n                    'password': {'minLength': 1, 'type': 'string'}},\n     'required': ['email', 'password'],\n     'type': 'object'}\n\nOn instance:\n    <QueryDict: {}>", 400).
+ERROR 2015-04-27 08:31:01,988 /app/app/views/__init__.py validate_payload_with_schema Caught JSON schema validation error: 'email' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'http://json-schema.org/draft-04/schema',
+     'additionalProperties': False,
+     'properties': {'email': {'format': 'email',
+                              'minLength': 1,
+                              'type': 'string'},
+                    'password': {'minLength': 1, 'type': 'string'}},
+     'required': ['email', 'password'],
+     'type': 'object'}
+
+On instance:
+    <QueryDict: {}>.
+ERROR 2015-04-27 08:31:01,992 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: ParseException, error: ("'email' is a required property\n\nFailed validating 'required' in schema:\n    {'$schema': 'http://json-schema.org/draft-04/schema',\n     'additionalProperties': False,\n     'properties': {'email': {'format': 'email',\n                              'minLength': 1,\n                              'type': 'string'},\n                    'password': {'minLength': 1, 'type': 'string'}},\n     'required': ['email', 'password'],\n     'type': 'object'}\n\nOn instance:\n    <QueryDict: {}>", 400).
+ERROR 2015-04-27 08:31:01,998 /app/app/views/__init__.py validate_payload_with_schema Caught JSON schema validation error: 'email' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'http://json-schema.org/draft-04/schema',
+     'additionalProperties': False,
+     'properties': {'email': {'format': 'email',
+                              'minLength': 1,
+                              'type': 'string'},
+                    'password': {'minLength': 1, 'type': 'string'}},
+     'required': ['email', 'password'],
+     'type': 'object'}
+
+On instance:
+    <QueryDict: {'password': ['pass']}>.
+ERROR 2015-04-27 08:31:02,000 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: ParseException, error: ("'email' is a required property\n\nFailed validating 'required' in schema:\n    {'$schema': 'http://json-schema.org/draft-04/schema',\n     'additionalProperties': False,\n     'properties': {'email': {'format': 'email',\n                              'minLength': 1,\n                              'type': 'string'},\n                    'password': {'minLength': 1, 'type': 'string'}},\n     'required': ['email', 'password'],\n     'type': 'object'}\n\nOn instance:\n    <QueryDict: {'password': ['pass']}>", 400).
+ERROR 2015-04-27 08:31:02,009 /app/app/views/__init__.py validate_payload_with_schema Caught JSON schema validation error: 'password' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'http://json-schema.org/draft-04/schema',
+     'additionalProperties': False,
+     'properties': {'email': {'format': 'email',
+                              'minLength': 1,
+                              'type': 'string'},
+                    'password': {'minLength': 1, 'type': 'string'}},
+     'required': ['email', 'password'],
+     'type': 'object'}
+
+On instance:
+    <QueryDict: {'email': ['lol@lol.com']}>.
+ERROR 2015-04-27 08:31:02,012 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: ParseException, error: ("'password' is a required property\n\nFailed validating 'required' in schema:\n    {'$schema': 'http://json-schema.org/draft-04/schema',\n     'additionalProperties': False,\n     'properties': {'email': {'format': 'email',\n                              'minLength': 1,\n                              'type': 'string'},\n                    'password': {'minLength': 1, 'type': 'string'}},\n     'required': ['email', 'password'],\n     'type': 'object'}\n\nOn instance:\n    <QueryDict: {'email': ['lol@lol.com']}>", 400).
+ERROR 2015-04-27 08:42:18,337 /app/app/views/auth/_sign_in.py _check_password Password verification failed for user with email: lol@lol.com.
+ERROR 2015-04-27 08:42:18,340 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: LoginFailedException, error: .
+ERROR 2015-04-27 08:42:18,349 /app/app/views/auth/_sign_in.py _find_user_for_email No user found for email: lol@lol.com, err: User matching query does not exist..
+ERROR 2015-04-27 08:42:18,350 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: LoginFailedException, error: .
+ERROR 2015-04-27 08:42:18,358 /app/app/views/auth/_sign_in.py _find_user_for_email No user found for email: malformed, err: User matching query does not exist..
+ERROR 2015-04-27 08:42:18,360 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: LoginFailedException, error: .
+ERROR 2015-04-27 08:42:18,367 /app/app/views/__init__.py validate_payload_with_schema Caught JSON schema validation error: 'email' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'http://json-schema.org/draft-04/schema',
+     'additionalProperties': False,
+     'properties': {'email': {'format': 'email',
+                              'minLength': 1,
+                              'type': 'string'},
+                    'password': {'minLength': 1, 'type': 'string'}},
+     'required': ['email', 'password'],
+     'type': 'object'}
+
+On instance:
+    <QueryDict: {}>.
+ERROR 2015-04-27 08:42:18,369 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: ParseException, error: ("'email' is a required property\n\nFailed validating 'required' in schema:\n    {'$schema': 'http://json-schema.org/draft-04/schema',\n     'additionalProperties': False,\n     'properties': {'email': {'format': 'email',\n                              'minLength': 1,\n                              'type': 'string'},\n                    'password': {'minLength': 1, 'type': 'string'}},\n     'required': ['email', 'password'],\n     'type': 'object'}\n\nOn instance:\n    <QueryDict: {}>", 400).
+ERROR 2015-04-27 08:42:18,377 /app/app/views/__init__.py validate_payload_with_schema Caught JSON schema validation error: 'email' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'http://json-schema.org/draft-04/schema',
+     'additionalProperties': False,
+     'properties': {'email': {'format': 'email',
+                              'minLength': 1,
+                              'type': 'string'},
+                    'password': {'minLength': 1, 'type': 'string'}},
+     'required': ['email', 'password'],
+     'type': 'object'}
+
+On instance:
+    <QueryDict: {}>.
+ERROR 2015-04-27 08:42:18,381 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: ParseException, error: ("'email' is a required property\n\nFailed validating 'required' in schema:\n    {'$schema': 'http://json-schema.org/draft-04/schema',\n     'additionalProperties': False,\n     'properties': {'email': {'format': 'email',\n                              'minLength': 1,\n                              'type': 'string'},\n                    'password': {'minLength': 1, 'type': 'string'}},\n     'required': ['email', 'password'],\n     'type': 'object'}\n\nOn instance:\n    <QueryDict: {}>", 400).
+ERROR 2015-04-27 08:42:18,398 /app/app/views/__init__.py validate_payload_with_schema Caught JSON schema validation error: 'email' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'http://json-schema.org/draft-04/schema',
+     'additionalProperties': False,
+     'properties': {'email': {'format': 'email',
+                              'minLength': 1,
+                              'type': 'string'},
+                    'password': {'minLength': 1, 'type': 'string'}},
+     'required': ['email', 'password'],
+     'type': 'object'}
+
+On instance:
+    <QueryDict: {'password': ['pass']}>.
+ERROR 2015-04-27 08:42:18,403 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: ParseException, error: ("'email' is a required property\n\nFailed validating 'required' in schema:\n    {'$schema': 'http://json-schema.org/draft-04/schema',\n     'additionalProperties': False,\n     'properties': {'email': {'format': 'email',\n                              'minLength': 1,\n                              'type': 'string'},\n                    'password': {'minLength': 1, 'type': 'string'}},\n     'required': ['email', 'password'],\n     'type': 'object'}\n\nOn instance:\n    <QueryDict: {'password': ['pass']}>", 400).
+ERROR 2015-04-27 08:42:18,412 /app/app/views/__init__.py validate_payload_with_schema Caught JSON schema validation error: 'password' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'http://json-schema.org/draft-04/schema',
+     'additionalProperties': False,
+     'properties': {'email': {'format': 'email',
+                              'minLength': 1,
+                              'type': 'string'},
+                    'password': {'minLength': 1, 'type': 'string'}},
+     'required': ['email', 'password'],
+     'type': 'object'}
+
+On instance:
+    <QueryDict: {'email': ['lol@lol.com']}>.
+ERROR 2015-04-27 08:42:18,416 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: ParseException, error: ("'password' is a required property\n\nFailed validating 'required' in schema:\n    {'$schema': 'http://json-schema.org/draft-04/schema',\n     'additionalProperties': False,\n     'properties': {'email': {'format': 'email',\n                              'minLength': 1,\n                              'type': 'string'},\n                    'password': {'minLength': 1, 'type': 'string'}},\n     'required': ['email', 'password'],\n     'type': 'object'}\n\nOn instance:\n    <QueryDict: {'email': ['lol@lol.com']}>", 400).
+ERROR 2015-04-27 09:00:26,405 /app/app/views/auth/_sign_in.py _check_password Password verification failed for user with email: lol@lol.com.
+ERROR 2015-04-27 09:00:26,407 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: LoginFailedException, error: .
+ERROR 2015-04-27 09:00:26,414 /app/app/views/auth/_sign_in.py _find_user_for_email No user found for email: lol@lol.com, err: User matching query does not exist..
+ERROR 2015-04-27 09:00:26,416 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: LoginFailedException, error: .
+ERROR 2015-04-27 09:00:26,422 /app/app/views/auth/_sign_in.py _find_user_for_email No user found for email: malformed, err: User matching query does not exist..
+ERROR 2015-04-27 09:00:26,423 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: LoginFailedException, error: .
+ERROR 2015-04-27 09:00:26,431 /app/app/views/__init__.py validate_payload_with_schema Caught JSON schema validation error: 'email' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'http://json-schema.org/draft-04/schema',
+     'additionalProperties': False,
+     'properties': {'email': {'format': 'email',
+                              'minLength': 1,
+                              'type': 'string'},
+                    'password': {'minLength': 1, 'type': 'string'}},
+     'required': ['email', 'password'],
+     'type': 'object'}
+
+On instance:
+    <QueryDict: {}>.
+ERROR 2015-04-27 09:00:26,434 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: ParseException, error: ("'email' is a required property\n\nFailed validating 'required' in schema:\n    {'$schema': 'http://json-schema.org/draft-04/schema',\n     'additionalProperties': False,\n     'properties': {'email': {'format': 'email',\n                              'minLength': 1,\n                              'type': 'string'},\n                    'password': {'minLength': 1, 'type': 'string'}},\n     'required': ['email', 'password'],\n     'type': 'object'}\n\nOn instance:\n    <QueryDict: {}>", 400).
+ERROR 2015-04-27 09:00:26,440 /app/app/views/__init__.py validate_payload_with_schema Caught JSON schema validation error: 'email' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'http://json-schema.org/draft-04/schema',
+     'additionalProperties': False,
+     'properties': {'email': {'format': 'email',
+                              'minLength': 1,
+                              'type': 'string'},
+                    'password': {'minLength': 1, 'type': 'string'}},
+     'required': ['email', 'password'],
+     'type': 'object'}
+
+On instance:
+    <QueryDict: {}>.
+ERROR 2015-04-27 09:00:26,443 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: ParseException, error: ("'email' is a required property\n\nFailed validating 'required' in schema:\n    {'$schema': 'http://json-schema.org/draft-04/schema',\n     'additionalProperties': False,\n     'properties': {'email': {'format': 'email',\n                              'minLength': 1,\n                              'type': 'string'},\n                    'password': {'minLength': 1, 'type': 'string'}},\n     'required': ['email', 'password'],\n     'type': 'object'}\n\nOn instance:\n    <QueryDict: {}>", 400).
+ERROR 2015-04-27 09:00:26,455 /app/app/views/__init__.py validate_payload_with_schema Caught JSON schema validation error: 'email' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'http://json-schema.org/draft-04/schema',
+     'additionalProperties': False,
+     'properties': {'email': {'format': 'email',
+                              'minLength': 1,
+                              'type': 'string'},
+                    'password': {'minLength': 1, 'type': 'string'}},
+     'required': ['email', 'password'],
+     'type': 'object'}
+
+On instance:
+    <QueryDict: {'password': ['pass']}>.
+ERROR 2015-04-27 09:00:26,459 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: ParseException, error: ("'email' is a required property\n\nFailed validating 'required' in schema:\n    {'$schema': 'http://json-schema.org/draft-04/schema',\n     'additionalProperties': False,\n     'properties': {'email': {'format': 'email',\n                              'minLength': 1,\n                              'type': 'string'},\n                    'password': {'minLength': 1, 'type': 'string'}},\n     'required': ['email', 'password'],\n     'type': 'object'}\n\nOn instance:\n    <QueryDict: {'password': ['pass']}>", 400).
+ERROR 2015-04-27 09:00:26,469 /app/app/views/__init__.py validate_payload_with_schema Caught JSON schema validation error: 'password' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'http://json-schema.org/draft-04/schema',
+     'additionalProperties': False,
+     'properties': {'email': {'format': 'email',
+                              'minLength': 1,
+                              'type': 'string'},
+                    'password': {'minLength': 1, 'type': 'string'}},
+     'required': ['email', 'password'],
+     'type': 'object'}
+
+On instance:
+    <QueryDict: {'email': ['lol@lol.com']}>.
+ERROR 2015-04-27 09:00:26,472 /app/app/middleware/exceptions.py custom_exception_handler Exception caught: ParseException, error: ("'password' is a required property\n\nFailed validating 'required' in schema:\n    {'$schema': 'http://json-schema.org/draft-04/schema',\n     'additionalProperties': False,\n     'properties': {'email': {'format': 'email',\n                              'minLength': 1,\n                              'type': 'string'},\n                    'password': {'minLength': 1, 'type': 'string'}},\n     'required': ['email', 'password'],\n     'type': 'object'}\n\nOn instance:\n    <QueryDict: {'email': ['lol@lol.com']}>", 400).
