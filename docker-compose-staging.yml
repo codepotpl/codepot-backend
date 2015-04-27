@@ -1,7 +1,7 @@
 codepotbackendstaging:
   build: .
   links:
-    - codepot-postgres-staging
+    - codepotpostgresstaging
   ports:
     - "8080:8080"
 
