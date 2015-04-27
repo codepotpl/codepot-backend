@@ -1,0 +1,11 @@
+codepot-backend-staging:
+  build: .
+  links:
+    - codepot-postgres-staging
+  ports:
+    - "8080:8080"
+
+codepot-postgres-staging:
+  image: postgres:9.4.1
+  volumes:
+    - ./postgres-data:/var/lib/postgresql/data
