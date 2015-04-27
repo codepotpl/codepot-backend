@@ -2,8 +2,6 @@ django:
   build: .
   links:
     - postgres
-  ports:
-    - "8082:8080"
 
 postgres:
   image: postgres:9.4.1
