@@ -3,7 +3,7 @@ codepotbackendstaging:
   links:
     - codepotpostgresstaging
   ports:
-    - "8080:8080"
+    - "8082:8080"
 
 codepotpostgresstaging:
   image: postgres:9.4.1
