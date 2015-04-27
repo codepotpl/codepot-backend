@@ -20,6 +20,7 @@ INSTALLED_DJANGO_APPS = (
 )
 
 INSTALLED_THIRD_PARTY_APPS = (
+    'django_nose',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
@@ -119,6 +120,13 @@ STATIC_URL = '/static/'
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_EXPOSE_HEADERS = ('token',)
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    '--nocapture',
+    '--nologcapture',
+]
 
 APP_ROOT = os.path.dirname(os.path.realpath(__file__))
 
