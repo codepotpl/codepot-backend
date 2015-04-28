@@ -20,7 +20,7 @@ docker run \
     -d \
     --link codepot-redis:redis \
     -v `pwd`:/app \
-    -e C_FORCE_ROOT="true" \
+    -e C_FORCE_ROOT=true \
     --name codepot-backend-development-celery \
     codepot-backend-development \
     celery -A main.celery.app worker -B -E --loglevel=DEBUG

@@ -2,8 +2,22 @@ django:
   build: .
   links:
     - postgres
+    - redis
+
+celery:
+  build: .
+  links:
+    - redis
+  environment:
+    - C_FORCE_ROOT=true
+  command: celery -A main.celery.app worker -B -E --loglevel=DEBUG
 
 postgres:
   image: postgres:9.4.1
   volumes:
     - ./postgres-data:/var/lib/postgresql/data
+
+redis:
+  image: redis:3.0.0
+  volumes:
+    - ./redis-data:/data
