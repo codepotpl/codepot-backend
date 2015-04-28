@@ -3,7 +3,6 @@
 docker rm -f codepot-postgres
 docker run \
     --name codepot-postgres \
-    -e POSTGRES_PASSWORD=lolpass \
     -d \
     --volumes-from codepot-postgres-data \
     postgres:9.4.1
