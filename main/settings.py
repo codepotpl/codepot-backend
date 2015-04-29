@@ -1,9 +1,29 @@
 import os
+from getenv import env
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+REQUIRED_ENVIRONMENT_VARIABLES = [
+    'CDPT_ENVIRONMENT',
+    'CDPT_DJANGO_SECRET_KEY',
+    'CDPT_MAILGUN_SERVER_NAME',
+    'CDPT_MAILGUN_ACCESS_KEY',
+]
+MISSING_ENVIRONMENT_VARIABLES = []
+for e in REQUIRED_ENVIRONMENT_VARIABLES:
+    if not env(e, required=False):
+        MISSING_ENVIRONMENT_VARIABLES.append(e)
+
+if MISSING_ENVIRONMENT_VARIABLES:
+    raise Exception(
+        '\n\nFollowing environment variables are missing:\n\t{}\n\nAdd all missing variables to: {}'.format(
+            '\n\t'.join(MISSING_ENVIRONMENT_VARIABLES), '{}'.format(os.path.join(BASE_DIR, 'environment')
+                                                                    ))
+    )
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '&hhz7#y0j2c3l+##bm-dj69%!b*acw^vn4nd9iip6c&bh3h*lc'
+SECRET_KEY = env('CDPT_DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -86,14 +106,11 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-from getenv import env
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': env('POSTGRES_ENV_POSTGRES_PASSWORD'),
         'HOST': env('POSTGRES_PORT_5432_TCP_ADDR'),
         'PORT': env('POSTGRES_PORT_5432_TCP_PORT'),
     }
@@ -163,8 +180,8 @@ LOGGING = {
 
 # MailGun
 EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-MAILGUN_ACCESS_KEY = 'ACCESS-KEY'  # TODO
-MAILGUN_SERVER_NAME = 'SERVER-NAME'  # TODO
+MAILGUN_SERVER_NAME = env('CDPT_MAILGUN_SERVER_NAME')
+MAILGUN_ACCESS_KEY = env('CDPT_MAILGUN_ACCESS_KEY')
 
 # Celery
 BROKER_URL = 'redis://{}:{}'.format(env('REDIS_PORT_6379_TCP_ADDR'), env('REDIS_PORT_6379_TCP_PORT'))
@@ -172,3 +189,5 @@ CELERY_IMPORTS = ('celerytq.tasks',)
 CELERY_RESULT_BACKEND = BROKER_URL
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+print('Current environment: {}'.format(env('CDPT_ENVIRONMENT')))

@@ -29,6 +29,7 @@ docker run \
     -d \
     --link codepot-postgres:postgres \
     --link codepot-redis:redis \
+    --env-file=environment \
     -p 8080:8080 \
     -p 2222:22 \
     -v `pwd`:/app \
