@@ -11,6 +11,7 @@ WORKDIR /app
 RUN ["pip", "install", "-r", "requirements.txt"]
 
 ADD . /app
+ADD . /log
 
 EXPOSE 8080
 

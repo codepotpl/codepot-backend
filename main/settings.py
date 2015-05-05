@@ -10,7 +10,6 @@ REQUIRED_ENVIRONMENT_VARIABLES = [
     'CDPT_DJANGO_SECRET_KEY',
     'CDPT_MAILGUN_SERVER_NAME',
     'CDPT_MAILGUN_ACCESS_KEY',
-    'CDPT_LOG_DIR',
 ]
 MISSING_ENVIRONMENT_VARIABLES = []
 for e in REQUIRED_ENVIRONMENT_VARIABLES:
@@ -167,7 +166,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': os.path.join(env('CDPT_LOG_DIR'), 'codepot.log'),
+            'filename': os.path.join(os.path.abspath(os.path.join(BASE_DIR, os.pardir)), 'log', 'codepot.log'),
             'backupCount': 2,
             'formatter': 'verbose',
         },
@@ -193,3 +192,4 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 print('Current environment: {}'.format(env('CDPT_ENVIRONMENT')))
+print('Base dir: {}'.format(BASE_DIR))
