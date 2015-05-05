@@ -1,5 +1,7 @@
 import os
+
 from getenv import env
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -8,6 +10,7 @@ REQUIRED_ENVIRONMENT_VARIABLES = [
     'CDPT_DJANGO_SECRET_KEY',
     'CDPT_MAILGUN_SERVER_NAME',
     'CDPT_MAILGUN_ACCESS_KEY',
+    'CDPT_LOG_DIR',
 ]
 MISSING_ENVIRONMENT_VARIABLES = []
 for e in REQUIRED_ENVIRONMENT_VARIABLES:
@@ -145,7 +148,6 @@ NOSE_ARGS = [
     '--nologcapture',
 ]
 
-APP_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 # TODO
 # http://www.webforefront.com/django/setupdjangologging.html
@@ -165,7 +167,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': os.path.join(APP_ROOT, 'codepot.log'),
+            'filename': os.path.join(env('CDPT_LOG_DIR'), 'codepot.log'),
             'backupCount': 2,
             'formatter': 'verbose',
         },
