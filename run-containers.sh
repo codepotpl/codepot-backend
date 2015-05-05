@@ -18,6 +18,7 @@ docker rm -f codepot-backend-development-celery
 docker run \
     -d \
     --link codepot-redis:redis \
+    --env-file=environment \
     -v `pwd`:/app \
     -e C_FORCE_ROOT=true \
     --name codepot-backend-development-celery \

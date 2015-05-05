@@ -10,11 +10,12 @@ from rest_framework.decorators import (
 )
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+
 from rest_framework.status import HTTP_201_CREATED
 
 from codepot.logging import logger
-
 from codepot.models import UserProfile
+from codepot.utils import get_rendered_template
 from codepot.views import (
     parser_class_for_schema,
     validate_payload_with_schema,
@@ -25,6 +26,7 @@ from codepot.views.auth.exceptions import (
     InvalidEmailAddressException,
     EmailAddressAlreadyUsedException,
 )
+from celerytq.tasks import send_mail
 
 
 @api_view(['POST', ])
@@ -41,9 +43,12 @@ def sign_up(request, **kwargs):
     first_name = payload['firstName']
     last_name = payload['lastName']
 
-    validate_email(email)
+    _validate_email(email)
 
     user = _create_user(email, password, first_name, last_name)
+
+    _send_registration_email(email)
+
     response_map = prepare_auth_response_map(user)
 
     return Response(
@@ -53,7 +58,7 @@ def sign_up(request, **kwargs):
     )
 
 
-def validate_email(email):
+def _validate_email(email):
     try:
         validator = EmailValidator()
         validator(email)
@@ -86,3 +91,7 @@ def _get_or_generate_token(user):
     except Token.DoesNotExist:
         logger.info('No token found for user: %s. New token will be generated.'.format(user.id))
         return Token.objects.create(user=user)
+
+
+def _send_registration_email(email):
+    send_mail.delay(email, 'Welcome!', get_rendered_template('mail/registration_confirmation'))

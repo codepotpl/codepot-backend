@@ -8,8 +8,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REQUIRED_ENVIRONMENT_VARIABLES = [
     'CDPT_ENVIRONMENT',
     'CDPT_DJANGO_SECRET_KEY',
-    'CDPT_MAILGUN_SERVER_NAME',
-    'CDPT_MAILGUN_ACCESS_KEY',
+    'CDPT_MAILGUN_USER',
+    'CDPT_MAILGUN_PASS',
 ]
 MISSING_ENVIRONMENT_VARIABLES = []
 for e in REQUIRED_ENVIRONMENT_VARIABLES:
@@ -89,7 +89,7 @@ ROOT_URLCONF = 'main.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates'), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -180,9 +180,11 @@ LOGGING = {
 }
 
 # MailGun
-EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-MAILGUN_SERVER_NAME = env('CDPT_MAILGUN_SERVER_NAME')
-MAILGUN_ACCESS_KEY = env('CDPT_MAILGUN_ACCESS_KEY')
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.mailgun.org'
+EMAIL_HOST_USER = env('CDPT_MAILGUN_USER')
+EMAIL_HOST_PASSWORD = env('CDPT_MAILGUN_PASS')
+EMAIL_PORT = 587
 
 # Celery
 BROKER_URL = 'redis://{}:{}'.format(env('REDIS_PORT_6379_TCP_ADDR'), env('REDIS_PORT_6379_TCP_PORT'))
