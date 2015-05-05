@@ -11,8 +11,8 @@ from rest_framework.authtoken.models import Token
 
 from rest_framework.test import APIClient
 
-from app.models import UserProfile
-from app.views.auth import auth_json_schema
+from codepot.models import UserProfile
+from codepot.views.auth import auth_json_schema
 
 
 class SignInTests(TestCase):

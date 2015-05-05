@@ -12,16 +12,16 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 
-from app.logging import logger
+from codepot.logging import logger
 
-from app.models import UserProfile
-from app.views import (
+from codepot.models import UserProfile
+from codepot.views import (
     parser_class_for_schema,
     validate_payload_with_schema,
 )
 from ._util import prepare_auth_response_map
 from .auth_json_schema import sign_up_req_schema
-from app.views.auth.exceptions import (
+from codepot.views.auth.exceptions import (
     InvalidEmailAddressException,
     EmailAddressAlreadyUsedException,
 )

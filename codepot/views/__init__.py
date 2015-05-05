@@ -2,8 +2,8 @@ import jsonschema
 from jsonschema import ValidationError
 from rest_framework.parsers import JSONParser
 
-from app.logging import logger
-from app.views.exceptions import ParseException
+from codepot.logging import logger
+from codepot.views.exceptions import ParseException
 
 
 class JSONSchemaParser(JSONParser):

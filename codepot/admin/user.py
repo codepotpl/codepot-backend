@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.models import UserProfile
+from codepot.models import UserProfile
 
 
 @admin.register(UserProfile)

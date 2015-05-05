@@ -3,7 +3,7 @@ from django.conf.urls import (
     url,
 )
 
-from app.views import auth as auth_views
+from codepot.views import auth as auth_views
 
 
 auth_patterns = patterns(

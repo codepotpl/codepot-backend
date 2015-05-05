@@ -6,15 +6,15 @@ from rest_framework.status import (
     HTTP_500_INTERNAL_SERVER_ERROR,
     HTTP_403_FORBIDDEN)
 
-from app.logging import logger
-from app.views.auth.exceptions import (
+from codepot.logging import logger
+from codepot.views.auth.exceptions import (
     EmailAddressAlreadyUsedException,
     InvalidEmailAddressException,
     UserNotFoundException,
     InvalidPasswordException,
     LoginFailedException,
 )
-from app.views.exceptions import (
+from codepot.views.exceptions import (
     ParseException,
     BadRequestException,
     ForbiddenException,

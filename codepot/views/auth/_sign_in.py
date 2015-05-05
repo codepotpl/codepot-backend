@@ -10,12 +10,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 
-from app.logging import logger
-from app.views import (
+from codepot.logging import logger
+from codepot.views import (
     parser_class_for_schema,
     validate_payload_with_schema,
 )
-from app.views.auth.exceptions import LoginFailedException
+from codepot.views.auth.exceptions import LoginFailedException
 from .auth_json_schema import sign_in_req_schema
 from ._util import prepare_auth_response_map
 

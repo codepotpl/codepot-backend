@@ -1,4 +1,4 @@
-from app.exceptions import CodepotException
+from codepot.exceptions import CodepotException
 
 
 class AuthException(CodepotException):

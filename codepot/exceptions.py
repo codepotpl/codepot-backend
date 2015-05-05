@@ -1,4 +1,4 @@
-from app.logging import logger
+from codepot.logging import logger
 
 
 class CodepotException(Exception):

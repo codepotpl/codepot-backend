@@ -13,6 +13,6 @@ admin_patterns = patterns(
 
 api_patterns = patterns(
     '',
-    url(r'^api/', include('app.urls', namespace='peercisely')),
+    url(r'^api/', include('codepot.urls', namespace='peercisely')),
 )
 urlpatterns = admin_patterns + api_patterns

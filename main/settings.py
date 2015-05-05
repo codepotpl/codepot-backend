@@ -49,7 +49,7 @@ INSTALLED_THIRD_PARTY_APPS = (
 )
 
 INSTALLED_HOME_GROWN_APPS = (
-    'app',
+    'codepot',
 )
 
 INSTALLED_APPS = INSTALLED_DJANGO_APPS + INSTALLED_THIRD_PARTY_APPS + INSTALLED_HOME_GROWN_APPS
@@ -64,7 +64,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'app.middleware.DisableCSRF',
+    'codepot.middleware.DisableCSRF',
 )
 
 REST_FRAMEWORK = {
@@ -81,7 +81,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
-    'EXCEPTION_HANDLER': 'app.middleware.custom_exception_handler',
+    'EXCEPTION_HANDLER': 'codepot.middleware.custom_exception_handler',
 }
 
 ROOT_URLCONF = 'main.urls'
