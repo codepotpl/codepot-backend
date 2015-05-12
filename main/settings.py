@@ -30,7 +30,10 @@ SECRET_KEY = env('CDPT_DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('CDPT_ENVIRONMENT') != 'production'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'backend.codepot.pl',
+    'backend.codepot.pl.'
+]
 
 INSTALLED_DJANGO_APPS = (
     'django.contrib.admin',
