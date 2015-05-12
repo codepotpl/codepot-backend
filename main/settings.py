@@ -28,7 +28,7 @@ if MISSING_ENVIRONMENT_VARIABLES:
 SECRET_KEY = env('CDPT_DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('CDPT_ENVIRONMENT') != 'production'
 
 ALLOWED_HOSTS = []
 
