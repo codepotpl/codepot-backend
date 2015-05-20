@@ -9,6 +9,7 @@ from rest_framework.decorators import (
     parser_classes,
 )
 from rest_framework.permissions import AllowAny
+
 from rest_framework.response import Response
 
 from rest_framework.status import HTTP_201_CREATED
@@ -47,7 +48,7 @@ def sign_up(request, **kwargs):
 
     user = _create_user(email, password, first_name, last_name)
 
-    _send_registration_email(email)
+    _send_registration_email(email, '{} {}'.format(first_name, last_name))
 
     response_map = prepare_auth_response_map(user)
 
@@ -93,5 +94,5 @@ def _get_or_generate_token(user):
         return Token.objects.create(user=user)
 
 
-def _send_registration_email(email):
-    send_mail.delay(email, 'Welcome!', get_rendered_template('mail/registration_confirmation'))
+def _send_registration_email(email, name):
+    send_mail.delay(email, 'Welcome!', get_rendered_template('mail/registration_confirmation', {'name': name}))
