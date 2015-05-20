@@ -9,13 +9,10 @@ from rest_framework.decorators import (
     parser_classes,
 )
 from rest_framework.permissions import AllowAny
-
 from rest_framework.response import Response
-
 from rest_framework.status import HTTP_201_CREATED
 
 from codepot.logging import logger
-from codepot.models import UserProfile
 from codepot.utils import get_rendered_template
 from codepot.views import (
     parser_class_for_schema,
@@ -69,14 +66,7 @@ def _validate_email(email):
 
 def _create_user(email, password, first_name, last_name):
     try:
-        user = User.objects.create_user(email, email, password)
-
-        UserProfile.objects.create(
-            user=user,
-            email=email,
-            first_name=first_name,
-            last_name=last_name
-        )
+        user = User.objects.create_user(email, email, password, first_name=first_name, last_name=last_name)
 
         _get_or_generate_token(user)
 

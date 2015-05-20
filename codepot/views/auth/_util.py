@@ -5,8 +5,8 @@ def prepare_auth_response_map(user):
         },
         'data': {
             'id': user.id,
-            'email': user.userprofile.email,
-            'firstName': user.userprofile.first_name,
-            'lastName': user.userprofile.last_name,
+            'email': user.email,
+            'firstName': user.first_name,
+            'lastName': user.last_name,
         }
     }

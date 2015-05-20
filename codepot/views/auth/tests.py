@@ -1,17 +1,11 @@
 from django.contrib.auth.hashers import make_password
-
 from django.contrib.auth.models import User
-
 from django.test import TestCase
 import jsonschema
-
 from rest_framework import status
-
 from rest_framework.authtoken.models import Token
-
 from rest_framework.test import APIClient
 
-from codepot.models import UserProfile
 from codepot.views.auth import auth_json_schema
 
 
@@ -91,13 +85,7 @@ class SignInTests(TestCase):
         first_name = 'lolf'
         last_name = 'loll'
 
-        user = User.objects.create_user(email, email, password)
-        UserProfile.objects.create(
-            user=user,
-            email=email,
-            first_name=first_name,
-            last_name=last_name
-        )
+        user = User.objects.create_user(email, email, password, first_name=first_name, last_name=last_name)
         token =Token.objects.create(user=user)
 
         payload = {
