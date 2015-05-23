@@ -28,7 +28,7 @@ if MISSING_ENVIRONMENT_VARIABLES:
 SECRET_KEY = env('CDPT_DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('CDPT_ENVIRONMENT') != 'production'
+DEBUG = env('CDPT_ENVIRONMENT') != 'PRODUCTION'
 
 ALLOWED_HOSTS = [
     'backend.codepot.pl',
@@ -72,7 +72,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 # Disable https forcing on development environment
-SSLIFY_DISABLE = env('CDPT_ENVIRONMENT') == 'development'
+SSLIFY_DISABLE = env('CDPT_ENVIRONMENT') == 'DEVELOPMENT'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 REST_FRAMEWORK = {
