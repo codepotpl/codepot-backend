@@ -3,8 +3,10 @@ from django.conf.urls import (
     url,
 )
 
-from codepot.views import auth as auth_views
-
+from codepot.views import (
+    auth as auth_views,
+    purchases as purchases_views,
+)
 
 auth_patterns = patterns(
     '',
@@ -12,4 +14,9 @@ auth_patterns = patterns(
     url(r'^auth/sign-up/$', auth_views.sign_up),
 )
 
-urlpatterns = auth_patterns
+purchase_patterns = patterns(
+    '',
+    url(r'^purchases/$', purchases_views.handle_purchase)
+)
+
+urlpatterns = auth_patterns + purchase_patterns
