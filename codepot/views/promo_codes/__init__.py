@@ -1,4 +1,3 @@
-from django.db import transaction
 from rest_framework.decorators import (
     api_view,
     permission_classes,
@@ -14,7 +13,6 @@ from codepot.views.promo_codes.exceptions import PromoCodeNotFoundException
 
 @api_view(['GET', ])
 @permission_classes((IsAuthenticated,))
-@transaction.atomic()
 def get_promo_code_for_id(request, **kwargs):
     promo_code_id = kwargs['promo_code_id']
     promo_code = _find_promo_code_for_id_or_raise(promo_code_id)
