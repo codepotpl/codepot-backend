@@ -16,7 +16,7 @@ class TicketTypeName(Enum):
 
 class Ticket(models.Model):
     ticket_id = models.CharField(primary_key=True, max_length=32, default=create_hash)
-    purchase = models.ForeignKey('codepot.Purchase')
+    purchase = models.OneToOneField('codepot.Purchase')
     created = models.DateTimeField(default=datetime.datetime.now, null=False, blank=False)
     type = models.CharField(max_length=64, choices=enum_to_model_choices(TicketTypeName), null=False, blank=False)
 
