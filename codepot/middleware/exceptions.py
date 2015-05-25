@@ -13,6 +13,7 @@ from codepot.views.auth.exceptions import (
     UserNotFoundException,
     InvalidPasswordException,
     LoginFailedException,
+    InvalidUserIdException,
 )
 from codepot.views.exceptions import (
     ParseException,
@@ -20,6 +21,7 @@ from codepot.views.exceptions import (
     ForbiddenException,
 )
 from codepot.views.promo_codes.exceptions import PromoCodeNotFoundException
+from codepot.views.purchases.exceptions import UserPurchaseNotFoundException
 
 _CODE_TO_EXCEPTION = {
     HTTP_400_BAD_REQUEST: [
@@ -31,11 +33,13 @@ _CODE_TO_EXCEPTION = {
         UserNotFoundException,
         InvalidPasswordException,
     ],
-    HTTP_404_NOT_FOUND: [
-        PromoCodeNotFoundException,
-    ],
     HTTP_403_FORBIDDEN: [
         ForbiddenException,
+        InvalidUserIdException,
+    ],
+    HTTP_404_NOT_FOUND: [
+        PromoCodeNotFoundException,
+        UserPurchaseNotFoundException,
     ],
     HTTP_409_CONFLICT: [
         EmailAddressAlreadyUsedException,
