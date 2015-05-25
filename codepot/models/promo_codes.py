@@ -22,6 +22,7 @@ class PromoCode(models.Model):
                                            null=False,
                                            blank=False)
     sent = models.BooleanField(default=False)
+    contact_info = models.TextField(default=None, null=True, blank=True)
     notes = models.TextField(default=None, null=True, blank=True)
     created = models.DateTimeField(default=datetime.datetime.now, null=False, blank=False)
     valid_from = models.DateField(default=None, blank=True, null=True)
