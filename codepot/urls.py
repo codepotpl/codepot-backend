@@ -6,6 +6,7 @@ from django.conf.urls import (
 from codepot.views import (
     auth as auth_views,
     purchases as purchases_views,
+    promo_codes as promo_codes_views,
 )
 
 auth_patterns = patterns(
@@ -19,4 +20,9 @@ purchase_patterns = patterns(
     url(r'^purchases/$', purchases_views.handle_purchase)
 )
 
-urlpatterns = auth_patterns + purchase_patterns
+promo_codes_patterns = patterns(
+    '',
+    url(r'^promo-codes/(?P<promo_code_id>.+)/$', promo_codes_views.get_promo_code_for_id)
+)
+
+urlpatterns = auth_patterns + purchase_patterns + promo_codes_patterns

@@ -4,7 +4,7 @@ from rest_framework.status import (
     HTTP_401_UNAUTHORIZED,
     HTTP_409_CONFLICT,
     HTTP_500_INTERNAL_SERVER_ERROR,
-    HTTP_403_FORBIDDEN)
+    HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND)
 
 from codepot.logging import logger
 from codepot.views.auth.exceptions import (
@@ -19,7 +19,7 @@ from codepot.views.exceptions import (
     BadRequestException,
     ForbiddenException,
 )
-
+from codepot.views.promo_codes.exceptions import PromoCodeNotFoundException
 
 _CODE_TO_EXCEPTION = {
     HTTP_400_BAD_REQUEST: [
@@ -30,6 +30,9 @@ _CODE_TO_EXCEPTION = {
     HTTP_401_UNAUTHORIZED: [
         UserNotFoundException,
         InvalidPasswordException,
+    ],
+    HTTP_404_NOT_FOUND: [
+        PromoCodeNotFoundException,
     ],
     HTTP_403_FORBIDDEN: [
         ForbiddenException,
