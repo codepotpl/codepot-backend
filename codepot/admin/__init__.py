@@ -2,10 +2,10 @@ from django.contrib import admin
 
 from codepot.models import (
     PromoCode,
+    PromoCodeClassification,
     Purchase,
     Ticket,
 )
-
 
 @admin.register(PromoCode)
 class PromoCodeAdmin(admin.ModelAdmin):
@@ -19,4 +19,9 @@ class PurchaseAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(PromoCodeClassification)
+class PromoCodeClassificationAdmin(admin.ModelAdmin):
     pass

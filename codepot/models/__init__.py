@@ -1,3 +1,9 @@
 from .purchases import Purchase
-from .promo_codes import PromoCode
-from .tickets import Ticket
+from .promo_codes import (
+    PromoCode,
+    PromoCodeClassification,
+)
+from .tickets import (
+    Ticket,
+    TicketTypeName,
+)

@@ -14,6 +14,7 @@ class TicketTypeName(Enum):
     SECOND_DAY = 'SECOND_DAY'
     BOTH_DAYS = 'BOTH_DAYS'
 
+
 class Ticket(models.Model):
     ticket_id = models.CharField(primary_key=True, max_length=32, default=create_hash)
     purchase = models.OneToOneField('codepot.Purchase')
@@ -22,3 +23,4 @@ class Ticket(models.Model):
 
     def __str__(self):
         return 'Ticket {} / {}'.format(self.purchase_id, self.user.id)
+
