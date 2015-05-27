@@ -51,7 +51,7 @@ class SignInTests(TestCase):
         }
         resp = self.client.post('/api/auth/sign-in/', payload, format='json')
         self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)
-        self.assertEqual('Incorrect username or password', resp.data['detail'])
+        self.assertEqual('Incorrect username or password.', resp.data['detail'])
         self.assertFalse(resp.has_header('Token'))
 
     def test_if_sign_in_fails_if_bad_email_sent(self):
@@ -61,7 +61,7 @@ class SignInTests(TestCase):
         }
         resp = self.client.post('/api/auth/sign-in/', payload, format='json')
         self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)
-        self.assertEqual('Incorrect username or password', resp.data['detail'])
+        self.assertEqual('Incorrect username or password.', resp.data['detail'])
         self.assertFalse(resp.has_header('Token'))
 
     def test_if_sign_fails_if_invalid_password_sent(self):
@@ -76,7 +76,7 @@ class SignInTests(TestCase):
         }
         resp = self.client.post('/api/auth/sign-in/', payload, format='json')
         self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)
-        self.assertEqual('Incorrect username or password', resp.data['detail'])
+        self.assertEqual('Incorrect username or password.', resp.data['detail'])
         self.assertFalse(resp.has_header('Token'))
 
     def test_if_sign_succeeds(self):

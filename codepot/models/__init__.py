@@ -7,3 +7,5 @@ from .tickets import (
     Ticket,
     TicketTypeName,
 )
+
+from .prices import Price
