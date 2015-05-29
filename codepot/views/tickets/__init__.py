@@ -22,9 +22,12 @@ def get_tickets_prices(request, **kwargs):
             'prices': [
                 {
                     'name': p.name,
-                    'firstDay': p.first_day,
-                    'secondDay': p.second_day,
-                    'bothDays': p.both_days,
+                    'firstDayNet': p.first_day.price_net,
+                    'firstDayTotal': p.first_day.price_total,
+                    'secondDayNet': p.second_day.price_net,
+                    'secondDayTotal': p.second_day.price_total,
+                    'bothDaysNet': p.both_days.price_net,
+                    'bothDaysTotal': p.both_days.price_total,
                     'active': p.date_from < now < p.date_to,
                 } for p in prices
             ],
