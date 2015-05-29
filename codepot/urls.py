@@ -19,7 +19,7 @@ auth_patterns = patterns(
 
 purchase_patterns = patterns(
     '',
-    url(r'^purchases/$', purchases_views.handle_purchase)
+    url(r'^purchases/new/$', purchases_views.handle_new_purchase)
 )
 
 promo_codes_patterns = patterns(

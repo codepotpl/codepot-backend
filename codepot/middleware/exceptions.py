@@ -21,7 +21,13 @@ from codepot.views.exceptions import (
     ForbiddenException,
 )
 from codepot.views.promo_codes.exceptions import PromoCodeNotFoundException
-from codepot.views.purchases.exceptions import UserPurchaseNotFoundException
+from codepot.views.purchases.exceptions import (
+    UserPurchaseNotFoundException,
+    PromoCodeForPurchaseNotFoundException,
+    PromoCodeForPurchaseNotActiveException,
+    PromoCodeForPurchaseHasExceededUsageLimit,
+    UserAlreadyHasPurchaseException,
+)
 
 _CODE_TO_EXCEPTION = {
     HTTP_400_BAD_REQUEST: [
@@ -44,6 +50,10 @@ _CODE_TO_EXCEPTION = {
     HTTP_409_CONFLICT: [
         EmailAddressAlreadyUsedException,
         LoginFailedException,
+        PromoCodeForPurchaseNotFoundException,
+        PromoCodeForPurchaseNotActiveException,
+        PromoCodeForPurchaseHasExceededUsageLimit,
+        UserAlreadyHasPurchaseException,
     ],
 }
 

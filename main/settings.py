@@ -158,7 +158,6 @@ NOSE_ARGS = [
 ]
 
 
-# TODO
 # http://www.webforefront.com/django/setupdjangologging.html
 LOGGING = {
     'version': 1,

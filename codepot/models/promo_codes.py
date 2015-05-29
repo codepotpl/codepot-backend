@@ -8,6 +8,7 @@ from django.core.validators import (
 from django.db import models
 
 from codepot import create_hash
+from codepot.logging import logger
 
 
 def _promo_code_value():
@@ -19,8 +20,8 @@ class PromoCodeClassification(models.Model):
 
 
 class PromoCode(models.Model):
-    promo_code_id = models.CharField(primary_key=True, max_length=6, default=_promo_code_value)
-    usage_limit = models.IntegerField(default=1, validators=[MinValueValidator(1)], null=False, blank=False)
+    code = models.CharField(primary_key=True, max_length=6, default=_promo_code_value)
+    usage_limit = models.IntegerField(default=1, validators=[MinValueValidator(0)], null=False, blank=False)
     active = models.BooleanField(default=True)
     discount = models.IntegerField(default=10, validators=[MinValueValidator(0), MaxValueValidator(100)],
                                            null=False,
@@ -33,5 +34,11 @@ class PromoCode(models.Model):
     valid_to = models.DateField(default=None, blank=True, null=True)
     classification = models.ForeignKey('codepot.PromoCodeClassification', null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        if self.usage_limit == 0:
+            self.active = False
+            logger.info('Setting promo code: {} to inactive.'.format(self.code))
+        super(PromoCode, self).save(*args, **kwargs)
+
     def __str__(self):
-        return 'Promo code {}'.format(self.promo_code_id)
+        return self.code

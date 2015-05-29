@@ -9,3 +9,4 @@ class Price(models.Model):
     first_day = models.ForeignKey('djangopay.Product', unique=True, null=False, blank=False, related_name='+')
     second_day = models.ForeignKey('djangopay.Product', unique=True, null=False, blank=False, related_name='+')
     both_days = models.ForeignKey('djangopay.Product', unique=True, null=False, blank=False, related_name='+')
+
