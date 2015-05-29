@@ -50,6 +50,7 @@ INSTALLED_THIRD_PARTY_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'djangopay',
 )
 
 INSTALLED_HOME_GROWN_APPS = (

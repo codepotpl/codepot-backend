@@ -7,3 +7,4 @@ django-cors-headers==1.0.0
 django-nose==1.4
 celery-with-redis==3.0
 django-sslify==0.2.7
+-e git+git://github.com/DariuszAniszewski/django-pay.git#egg=django-pay

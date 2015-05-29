@@ -5,6 +5,7 @@ RUN ["pip", "install", "--upgrade", "pip"]
 RUN ["apt-get", "install", "-y", "build-essential"]
 RUN ["apt-get", "install", "-y", "python3.4-dev"]
 RUN ["apt-get", "install", "-y", "libpq-dev"]
+RUN ["apt-get", "install", "-y", "git"]
 
 ADD requirements.txt /app/requirements.txt
 WORKDIR /app
