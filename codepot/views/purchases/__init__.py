@@ -66,6 +66,7 @@ def handle_new_purchase(request, **kwargs):
         purchase.invoice_tax_id = invoice.tax_id
 
     current_price_tier = _get_current_price_tier()
+    purchase.price = current_price_tier
     product = _get_product(current_price_tier, ticket_type)
 
     # TODO create payment here
@@ -74,7 +75,7 @@ def handle_new_purchase(request, **kwargs):
 
     return Response(
         data={
-
+            'purchaseId': purchase.id,
         },
         status=HTTP_201_CREATED
     )
@@ -83,8 +84,8 @@ def handle_new_purchase(request, **kwargs):
 def _check_if_user_has_purchase(user):
     try:
         p = Purchase.objects.get(user=user)
-        logger.error('User: {} already has purchase: {}'.format(user.id, p.purchase_id))
-        raise UserAlreadyHasPurchaseException(user.id, p.purchase_id)
+        logger.error('User: {} already has purchase: {}'.format(user.id, p.id))
+        raise UserAlreadyHasPurchaseException(user.id, p.id)
     except Purchase.DoesNotExist:
         pass
 
