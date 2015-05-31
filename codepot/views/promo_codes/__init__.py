@@ -28,7 +28,7 @@ def get_promo_code_for_id(request, **kwargs):
 
 def _find_promo_code_for_id_or_raise(promo_code_id):
     try:
-        return PromoCode.objects.get(promo_code_id=promo_code_id)
+        return PromoCode.objects.get(code=promo_code_id)
     except PromoCode.DoesNotExist as e:
         logger.error('Promo code for ID: {} not found, err: {}'.format(promo_code_id, str(e)))
         raise PromoCodeNotFoundException(promo_code_id)
