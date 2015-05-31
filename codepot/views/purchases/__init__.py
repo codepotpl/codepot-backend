@@ -1,6 +1,5 @@
 from django.db import transaction
 from django.utils import timezone
-from djangopay.models import Product
 from rest_framework.decorators import (
     api_view,
     permission_classes,
@@ -67,7 +66,6 @@ def handle_new_purchase(request, **kwargs):
 
     current_price_tier = _get_current_price_tier()
     purchase.price = current_price_tier
-    product = _get_product(current_price_tier, ticket_type)
 
     # TODO create payment here
 
@@ -113,7 +111,3 @@ def _check_if_promo_code_has_valid_usage_limit(promo_code):
 def _get_current_price_tier():
     now = timezone.now()
     return Price.objects.get(date_from__lt=now, date_to__gt=now)
-
-
-def _get_product(current_price_tier, ticket_type):
-    return Product.objects.get(name='{} {}'.format(current_price_tier.name, ticket_type.replace('_', ' ')))

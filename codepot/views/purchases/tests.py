@@ -28,16 +28,16 @@ class NewPurchaseTest(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token {}'.format(self.token.key))
         self.req_format = 'json'
 
-        first_day_product = Product.objects.create(name='EARLY FIRST DAY', price_net=5000, price_total=6150)
-        second_day_product = Product.objects.create(name='EARLY SECOND DAY', price_net=5000, price_total=6150)
-        both_days_product = Product.objects.create(name='EARLY BOTH DAYS', price_net=10000, price_total=12300)
         self.price = Price.objects.create(
             name='EARLY',
             date_from=timezone.now(),
             date_to=timezone.now() + datetime.timedelta(days=1),
-            first_day=first_day_product,
-            second_day=second_day_product,
-            both_days=both_days_product
+            first_day_net=5000,
+            first_day_total=6150,
+            second_day_net=5000,
+            second_day_total=6150,
+            both_days_net=10000,
+            both_days_total=12300
         )
 
     def test_if_purchase_fails_when_no_authorization_token_sent(self):

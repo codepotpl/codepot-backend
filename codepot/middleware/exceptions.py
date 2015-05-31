@@ -1,4 +1,4 @@
-from rest_framework.exceptions import NotAuthenticated
+from rest_framework.exceptions import NotAuthenticated, AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
@@ -40,6 +40,7 @@ _CODE_TO_EXCEPTION = {
         UserNotFoundException,
         InvalidPasswordException,
         NotAuthenticated,
+        AuthenticationFailed,
     ],
     HTTP_403_FORBIDDEN: [
         ForbiddenException,
