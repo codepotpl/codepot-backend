@@ -57,12 +57,11 @@ def handle_new_purchase(request, **kwargs):
         promo_code.save()
 
     if invoice:
-        # TODO validation
-        purchase.invoice_name = invoice.name
-        purchase.invoice_street = invoice.street
-        purchase.invoice_zip = invoice.zipCode
-        purchase.invoice_country = invoice.country
-        purchase.invoice_tax_id = invoice.tax_id
+        purchase.invoice_name = invoice['name']
+        purchase.invoice_street = invoice['street']
+        purchase.invoice_zip_code = invoice['zipCode']
+        purchase.invoice_country = invoice['country']
+        purchase.invoice_tax_id = invoice['taxId']
 
     current_price_tier = _get_current_price_tier()
     purchase.price = current_price_tier

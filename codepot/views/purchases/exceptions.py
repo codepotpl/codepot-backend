@@ -17,14 +17,14 @@ class PromoCodeForPurchaseNotFoundException(PurchaseException):
 
 class PromoCodeForPurchaseNotActiveException(PurchaseException):
     def __init__(seld, code):
-        super().__init__('Given promo code: {} is not active'.format(code), 302)
+        super().__init__('Given promo code: {} is not active.'.format(code), 302)
 
 
 class PromoCodeForPurchaseHasExceededUsageLimit(PurchaseException):
     def __init__(seld, code):
-        super().__init__('Given promo code: {} has exceeded usage limit'.format(code), 303)
+        super().__init__('Given promo code: {} has exceeded usage limit.'.format(code), 303)
 
 
 class UserAlreadyHasPurchaseException(PurchaseException):
     def __init__(seld, user_id, purchase_id):
-        super().__init__('User: {} already has purchase: {}'.format(user_id, purchase_id), 304)
+        super().__init__('User: {} already has purchase: {}.'.format(user_id, purchase_id), 304)

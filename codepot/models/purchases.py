@@ -14,7 +14,7 @@ class Purchase(models.Model):
     ticket = models.OneToOneField('codepot.Ticket', null=False, blank=False)
     invoice_name = models.CharField(max_length=256, null=True, blank=True)
     invoice_street = models.CharField(max_length=256, null=True, blank=True)
-    invoice_zip = models.CharField(max_length=256, null=True, blank=True)
+    invoice_zip_code = models.CharField(max_length=256, null=True, blank=True)
     invoice_country = models.CharField(max_length=256, null=True, blank=True)
     invoice_tax_id = models.CharField(max_length=256, null=True, blank=True)
     payment = models.OneToOneField('djangopay.Payment', default=None, null=True, blank=True)
