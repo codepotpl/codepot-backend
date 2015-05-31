@@ -1,9 +1,19 @@
 import datetime
+from enum import Enum
 
 from django.contrib.auth.models import User
 from django.db import models
 
-from codepot import create_hash
+from codepot import (
+    create_hash,
+    enum_to_model_choices,
+)
+
+
+class PurchaseTypeName(Enum):
+    PAYU = 'PAYU'
+    TRANSFER = 'TRANSFER'
+    FREE = 'FREE'
 
 
 class Purchase(models.Model):
@@ -19,9 +29,9 @@ class Purchase(models.Model):
     invoice_tax_id = models.CharField(max_length=256, null=True, blank=True)
     payment = models.OneToOneField('djangopay.Payment', default=None, null=True, blank=True)
     price = models.ForeignKey('codepot.Price', null=False, blank=False)
+    type = models.CharField(max_length=64, choices=enum_to_model_choices(PurchaseTypeName), null=False, blank=False)
 
     # TODO status
-    # TODO purchase type - transfer, payu
 
     def __str__(self):
         return 'Purchase {} / {}'.format(self.id, self.user.id)
