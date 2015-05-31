@@ -19,7 +19,7 @@ def get_promo_code_for_id(request, **kwargs):
     return Response(
         status=HTTP_200_OK,
         data={
-            'promoCodeId': promo_code.promo_code_id,
+            'promoCodeId': promo_code.code,
             'active': promo_code.active,
             'discount': promo_code.discount,
         }
