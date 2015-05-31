@@ -343,3 +343,4 @@ class NewPurchaseTest(TestCase):
         Purchase.objects.all().delete()
         Ticket.objects.all().delete()
         User.objects.all().delete()
+        PromoCode.objects.all().delete()
