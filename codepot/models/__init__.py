@@ -11,4 +11,5 @@ from .tickets import (
     TicketTypeName,
 )
 
-from .prices import Price
+from .products import Product
+from .prices import PriceTier

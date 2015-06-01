@@ -27,8 +27,7 @@ class Purchase(models.Model):
     invoice_zip_code = models.CharField(max_length=256, null=True, blank=True)
     invoice_country = models.CharField(max_length=256, null=True, blank=True)
     invoice_tax_id = models.CharField(max_length=256, null=True, blank=True)
-    payment = models.OneToOneField('djangopay.Payment', default=None, null=True, blank=True)
-    price = models.ForeignKey('codepot.Price', null=False, blank=False)
+    payment = models.OneToOneField('django_payu.PayuPayment', default=None, null=True, blank=True)
     type = models.CharField(max_length=64, choices=enum_to_model_choices(PurchaseTypeName), null=False, blank=False)
 
     # TODO status

@@ -11,6 +11,9 @@ REQUIRED_ENVIRONMENT_VARIABLES = [
     'CDPT_MAILGUN_USER',
     'CDPT_MAILGUN_PASS',
     'CDPT_ADMIN_PASS',
+    'CDPT_DJANGO_PAYU_BASE_URL',
+    'CDPT_DJANGO_PAYU_POS_ID',
+    'CDPT_DJANGO_PAYU_POS_AUTHORIZATION_KEY',
 ]
 MISSING_ENVIRONMENT_VARIABLES = []
 for e in REQUIRED_ENVIRONMENT_VARIABLES:
@@ -50,7 +53,7 @@ INSTALLED_THIRD_PARTY_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'djangopay',
+    'django_payu',
 )
 
 INSTALLED_HOME_GROWN_APPS = (
@@ -71,6 +74,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'codepot.middleware.DisableCSRF',
+    'django_payu.middleware.DjangoPayExceptionsMiddleware',
 )
 
 # Disable https forcing on development environment
@@ -201,6 +205,11 @@ CELERY_IMPORTS = ('celerytq.tasks',)
 CELERY_RESULT_BACKEND = BROKER_URL
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+# PayU
+DJANGO_PAYU_BASE_URL = env('CDPT_DJANGO_PAYU_BASE_URL')
+DJANGO_PAYU_POS_ID = env('CDPT_DJANGO_PAYU_POS_ID')
+DJANGO_PAYU_POS_AUTHORIZATION_KEY = env('CDPT_DJANGO_PAYU_POS_AUTHORIZATION_KEY')
 
 print('Current environment: {}'.format(env('CDPT_ENVIRONMENT')))
 print('Base dir: {}'.format(BASE_DIR))

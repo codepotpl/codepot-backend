@@ -1,7 +1,6 @@
 from django.conf.urls import (
     patterns,
-    url,
-)
+    url)
 
 from codepot.views import (
     auth as auth_views,

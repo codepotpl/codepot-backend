@@ -5,7 +5,8 @@ from codepot.models import (
     PromoCodeClassification,
     Purchase,
     Ticket,
-    Price,
+    PriceTier,
+    Product,
 )
 
 @admin.register(PromoCode)
@@ -28,17 +29,21 @@ class PromoCodeClassificationAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Price)
+@admin.register(PriceTier)
 class PriceAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'date_from',
         'date_to',
-        'first_day_net',
-        'first_day_total',
-        'second_day_net',
-        'second_day_total',
-        'both_days_net',
-        'both_days_total',
         'tickets_purchased',
+    )
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'price_tier',
+        'price_net',
+        'price_total',
     )

@@ -1,5 +1,6 @@
-from django.utils import timezone
+import time
 
+from django.utils import timezone
 from rest_framework.decorators import (
     api_view,
     permission_classes,
@@ -8,28 +9,27 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 
-from codepot.models import Price
+from codepot.models import Product
 
 
 @api_view(['GET', ])
 @permission_classes((IsAuthenticated,))
 def get_tickets_prices(request, **kwargs):
-    prices = Price.objects.all()
+    products = Product.objects.all()
     now = timezone.now()
 
     return Response(
         data={
             'prices': [
                 {
+                    'id': p.id,
                     'name': p.name,
-                    'firstDayNet': p.first_day_net,
-                    'firstDayTotal': p.first_day_total,
-                    'secondDayNet': p.second_day_net,
-                    'secondDayTotal': p.second_day_total,
-                    'bothDaysNet': p.both_days_net,
-                    'bothDaysTotal': p.both_days_total,
-                    'active': p.date_from < now < p.date_to,
-                } for p in prices
+                    'dateFrom': int(time.mktime(p.price_tier.date_from.timetuple()) * 1000),
+                    'dateTo': int(time.mktime(p.price_tier.date_to.timetuple()) * 1000),
+                    'priceNet': p.price_net,
+                    'priceTotal': p.price_total,
+                    'active': p.price_tier.date_from < now < p.price_tier.date_to,
+                } for p in products
             ],
         },
         status=HTTP_200_OK

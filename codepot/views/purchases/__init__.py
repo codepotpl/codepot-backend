@@ -14,7 +14,7 @@ from codepot.models import (
     PromoCode,
     Purchase,
     PurchaseTypeName,
-    Price,
+    PriceTier,
     Ticket,
 )
 from codepot.views import parser_class_for_schema
@@ -54,7 +54,8 @@ def handle_new_purchase(request, **kwargs):
     current_price_tier = _get_current_price_tier()
     current_price_tier.tickets_purchased += 1
     current_price_tier.save()
-    purchase.price = current_price_tier
+    # TODO
+    # purchase.price = current_price_tier
 
     if code:
         promo_code = _find_promo_code_or_raise(code=code)
@@ -81,7 +82,8 @@ def handle_new_purchase(request, **kwargs):
         purchase.invoice_country = invoice['country']
         purchase.invoice_tax_id = invoice['taxId']
 
-    (price_net, price_total) = _calculate_price(user, current_price_tier, ticket_type, discount)
+    # TODO
+    # (price_net, price_total) = _calculate_price(user, current_price_tier, ticket_type, discount)
 
     if purchase_type == PurchaseTypeName.PAYU.value:
         # TODO create payment here
@@ -121,7 +123,7 @@ def _check_if_promo_code_has_valid_usage_limit(promo_code):
 
 def _get_current_price_tier():
     now = timezone.now()
-    return Price.objects.get(date_from__lt=now, date_to__gt=now)
+    return PriceTier.objects.get(date_from__lt=now, date_to__gt=now)
 
 def _prepare_response(purchase):
     return Response(
