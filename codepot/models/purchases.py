@@ -21,16 +21,17 @@ class Purchase(models.Model):
     user = models.OneToOneField(User)
     promo_code = models.ForeignKey('codepot.PromoCode', default=None, null=True, blank=True)
     created = models.DateTimeField(default=datetime.datetime.now, null=False, blank=False)
-    ticket = models.OneToOneField('codepot.Ticket', null=False, blank=False)
+    product = models.ForeignKey('codepot.Product', null=False, blank=False)
     invoice_name = models.CharField(max_length=256, null=True, blank=True)
     invoice_street = models.CharField(max_length=256, null=True, blank=True)
     invoice_zip_code = models.CharField(max_length=256, null=True, blank=True)
     invoice_country = models.CharField(max_length=256, null=True, blank=True)
     invoice_tax_id = models.CharField(max_length=256, null=True, blank=True)
-    payment = models.OneToOneField('django_payu.PayuPayment', default=None, null=True, blank=True)
+    payu_payment = models.OneToOneField('django_payu.PayuPayment', default=None, null=True, blank=True)
     type = models.CharField(max_length=64, choices=enum_to_model_choices(PurchaseTypeName), null=False, blank=False)
+    notes = models.TextField()
 
-    # TODO status
+    # TODO status PENDING, FINISHED, FAILED
 
     def __str__(self):
         return 'Purchase {} / {}'.format(self.id, self.user.id)

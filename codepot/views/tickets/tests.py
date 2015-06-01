@@ -33,19 +33,13 @@ class PricesTest(TestCase):
             date_to=timezone.now() + datetime.timedelta(days=4),
         )
 
-        Product.objects.create(name='EARLY_1_FIRST_DAY', price_tier=self.price_early_1, price_net=5000,
-                               price_total=6150)
-        Product.objects.create(name='EARLY_1_SECOND_DAY', price_tier=self.price_early_1, price_net=5000,
-                               price_total=6150)
-        Product.objects.create(name='EARLY_1_BOTH_DAYS', price_tier=self.price_early_1, price_net=10000,
-                               price_total=12300)
+        Product.objects.create(name='EARLY_1_FIRST_DAY', price_tier=self.price_early_1, price_net=5000)
+        Product.objects.create(name='EARLY_1_SECOND_DAY', price_tier=self.price_early_1, price_net=5000)
+        Product.objects.create(name='EARLY_1_BOTH_DAYS', price_tier=self.price_early_1, price_net=10000)
 
-        Product.objects.create(name='EARLY_2_FIRST_DAY', price_tier=self.price_early_2, price_net=5000,
-                               price_total=6150)
-        Product.objects.create(name='EARLY_2_SECOND_DAY', price_tier=self.price_early_2, price_net=5000,
-                               price_total=6150)
-        Product.objects.create(name='EARLY_2_BOTH_DAYS', price_tier=self.price_early_2, price_net=10000,
-                               price_total=12300)
+        Product.objects.create(name='EARLY_2_FIRST_DAY', price_tier=self.price_early_2, price_net=5000)
+        Product.objects.create(name='EARLY_2_SECOND_DAY', price_tier=self.price_early_2, price_net=5000)
+        Product.objects.create(name='EARLY_2_BOTH_DAYS', price_tier=self.price_early_2, price_net=10000)
 
     def test_correct_prices_response(self):
         resp = self.client.get('/api/tickets/prices/')

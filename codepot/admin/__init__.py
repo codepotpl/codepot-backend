@@ -45,5 +45,5 @@ class ProductAdmin(admin.ModelAdmin):
         'name',
         'price_tier',
         'price_net',
-        'price_total',
+        'price_vat',
     )

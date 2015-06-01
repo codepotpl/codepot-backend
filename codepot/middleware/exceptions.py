@@ -28,6 +28,8 @@ from codepot.views.purchases.exceptions import (
     PromoCodeForPurchaseNotActiveException,
     PromoCodeForPurchaseHasExceededUsageLimit,
     UserAlreadyHasPurchaseException,
+    ProductNotFoundException,
+    ProductInactiveException,
 )
 
 _CODE_TO_EXCEPTION = {
@@ -57,6 +59,8 @@ _CODE_TO_EXCEPTION = {
         PromoCodeForPurchaseNotActiveException,
         PromoCodeForPurchaseHasExceededUsageLimit,
         UserAlreadyHasPurchaseException,
+        ProductNotFoundException,
+        ProductInactiveException,
     ],
 }
 

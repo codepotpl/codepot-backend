@@ -28,3 +28,13 @@ class PromoCodeForPurchaseHasExceededUsageLimit(PurchaseException):
 class UserAlreadyHasPurchaseException(PurchaseException):
     def __init__(seld, user_id, purchase_id):
         super().__init__('User: {} already has purchase: {}.'.format(user_id, purchase_id), 304)
+
+
+class ProductNotFoundException(PurchaseException):
+    def __init__(self, product_id):
+        super().__init__('Product for ID: {}, not found.'.format(product_id), 305)
+
+
+class ProductInactiveException(PurchaseException):
+    def __init__(self, product_id):
+        super().__init__('Product for ID: {} is not active.'.format(product_id), 306)

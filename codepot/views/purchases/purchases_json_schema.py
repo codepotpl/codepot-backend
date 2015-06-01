@@ -1,7 +1,4 @@
-from codepot.models import (
-    TicketTypeName,
-    PurchaseTypeName,
-)
+from codepot.models import PurchaseTypeName
 
 make_purchase_req_schema = {
     '$schema': 'http://json-schema.org/draft-04/schema',
@@ -12,8 +9,8 @@ make_purchase_req_schema = {
             'minLength': 1,
             'pattern': '^[A-Z0-9]{6}$',
         },
-        'ticketType': {
-            'enum': [t.value for t in TicketTypeName]
+        'productId': {
+            'type': 'integer',
         },
         'purchaseType': {
             'enum': [t.value for t in PurchaseTypeName]
@@ -48,6 +45,6 @@ make_purchase_req_schema = {
             'additionalProperties': False,
         },
     },
-    'required': ['promoCode', 'ticketType', 'purchaseType', 'invoice', ],
+    'required': ['promoCode', 'productId', 'purchaseType', 'invoice', ],
     'additionalProperties': False,
 }

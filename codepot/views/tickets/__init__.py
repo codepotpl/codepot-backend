@@ -27,7 +27,7 @@ def get_tickets_prices(request, **kwargs):
                     'dateFrom': int(time.mktime(p.price_tier.date_from.timetuple()) * 1000),
                     'dateTo': int(time.mktime(p.price_tier.date_to.timetuple()) * 1000),
                     'priceNet': p.price_net,
-                    'priceTotal': p.price_total,
+                    'priceVat': p.price_vat,
                     'active': p.price_tier.date_from < now < p.price_tier.date_to,
                 } for p in products
             ],

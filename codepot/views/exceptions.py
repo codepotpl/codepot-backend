@@ -11,4 +11,3 @@ class ParseException(BadRequestException):
 
 class ForbiddenException(CodepotException):
     pass
-
