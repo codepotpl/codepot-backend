@@ -20,7 +20,7 @@ def _compare_ids_and_raise_exception_if_different(endpoint_id, user_id):
 
 @api_view(['GET', ])
 @permission_classes((IsAuthenticated,))
-def get_user_purchases(request, **kwargs):
+def get_user_purchase(request, **kwargs):
     user = request.user
     user_id = kwargs['user_id']
     _compare_ids_and_raise_exception_if_different(user_id, user.id)
@@ -30,7 +30,19 @@ def get_user_purchases(request, **kwargs):
         status=HTTP_200_OK,
         data={
             'purchase': {
-                'purchaseId': purchase.purchase_id,
+                'purchaseId': purchase.id,
+                'promoCode': purchase.promo_code and purchase.promo_code.code or None,
+                'created': purchase.created,
+                'product': purchase.product.id,
+                'invoice': {
+                    'name': purchase.invoice_name,
+                    'street': purchase.invoice_street,
+                    'zipCode': purchase.invoice_zip_code,
+                    'country': purchase.invoice_country,
+                    'taxId': purchase.invoice_tax_id,
+                } if not _all_invoice_fields_empty(purchase) else None,
+                'paymentType': purchase.payment_type,
+                'paymentStatus': purchase.payment_status,
             },
         }
     )
@@ -42,3 +54,9 @@ def _find_purchase_for_user_or_raise(user):
     except Purchase.DoesNotExist as e:
         logger.error('No purchase found for user with ID: {}, err: {}'.format(user.id, str(e)))
         raise UserPurchaseNotFoundException(user.id)
+
+
+def _all_invoice_fields_empty(purchase):
+    invoice_keys = list(filter(lambda x: x.startswith('invoice_'), purchase.__dict__.keys()))
+    invoice_values = [getattr(purchase, k) for k in invoice_keys]
+    return not bool(list(filter(lambda x: bool(x), invoice_values)))
