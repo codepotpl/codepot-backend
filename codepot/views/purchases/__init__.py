@@ -20,6 +20,7 @@ from codepot.models import (
     PromoCode,
     Purchase,
     PaymentTypeName,
+    PaymentStatusName,
     Product,
 )
 from codepot.views import parser_class_for_schema
@@ -65,6 +66,7 @@ def handle_new_purchase(request, **kwargs):
     purchase.user = user
     purchase.payment_type = payment_type
     purchase.product = product
+    purchase.payment_status = PaymentStatusName.PENDING.value
     purchase.save()
     discount = None
 
@@ -79,8 +81,9 @@ def handle_new_purchase(request, **kwargs):
         logger.info('Found promo code: {} for user: {}, discount: {}'.format(code, user.id, discount))
 
         if discount == 100:
-            purchase.payment_type = PaymentTypeName.FREE.value
             logger.info('Found 100% discount for user: {} and promo code: {}'.format(user.id, code))
+            purchase.payment_type = PaymentTypeName.FREE.value
+            purchase.payment_status = PaymentStatusName.SUCCESS.value
             purchase.save()
             return _prepare_response(purchase, payment_res_info)
 

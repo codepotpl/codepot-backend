@@ -19,7 +19,9 @@ from codepot.models import (
     PriceTier,
     PromoCode,
     PaymentTypeName,
-    Product)
+    Product,
+    PaymentStatusName,
+)
 
 
 class NewPurchaseTest(TestCase):
@@ -40,8 +42,9 @@ class NewPurchaseTest(TestCase):
 
     def test_if_purchase_fails_when_no_authorization_token_sent(self):
         client = APIClient()
-        payload = None
-        resp = client.post('/api/purchases/new/', payload, format=self.req_format)
+
+        resp = client.post('/api/purchases/new/', None, format=self.req_format)
+
         self.assertEqual(resp.status_code, HTTP_401_UNAUTHORIZED)
         self.assertEqual(resp.data['code'], 0)
         self.assertEqual(resp.data['detail'], 'Authentication credentials were not provided.')
@@ -49,8 +52,8 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(Purchase.objects.count(), 0)
 
     def test_if_purchase_fails_when_invalid_body_sent(self):
-        payload = {}
-        resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
+        resp = self.client.post('/api/purchases/new/', {}, format=self.req_format)
+
         self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
         self.assertEqual(resp.data['code'], 400)
 
@@ -108,7 +111,6 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(resp.data['code'], 306)
         self.assertEqual(resp.data['detail'], 'Product for ID: {} is not active.'.format(product.id))
 
-
     def test_if_no_new_objects_created_when_exception_occurs(self):
         Purchase.objects.create(user=self.user, product=self.product)
 
@@ -146,6 +148,7 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(resp.data['purchaseId'], purchase.id)
         self.assertEqual(purchase.payment_type, PaymentTypeName.PAYU.value)
         self.assertEqual(purchase.user, self.user)
+        self.assertEqual(purchase.payment_status, PaymentStatusName.PENDING.value)
         self.assertIsNone(purchase.promo_code)
         self.assertIsNotNone(purchase.payu_payment)
 
@@ -196,6 +199,7 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(purchase.invoice_zip_code, invoice['zipCode'])
         self.assertEqual(purchase.invoice_country, invoice['country'])
         self.assertEqual(purchase.payment_type, PaymentTypeName.PAYU.value)
+        self.assertEqual(purchase.payment_status, PaymentStatusName.PENDING.value)
 
     def test_if_tickets_purchased_field_is_increased_when_purchase_succeeds(self):
         payload = {
@@ -315,6 +319,7 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(Purchase.objects.count(), 1)
         purchase = Purchase.objects.get()
         self.assertEqual(purchase.payment_type, PaymentTypeName.FREE.value)
+        self.assertEqual(purchase.payment_status, PaymentStatusName.SUCCESS.value)
 
     def test_in_invoice_is_skipped_for_100_percent_promo_code(self):
         promo_code = PromoCode.objects.create(discount=100)
@@ -417,6 +422,8 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(transfer_data['amount'], self.product.price_net * (1 + self.product.price_vat))
         self.assertEqual(transfer_data['title'], 'Codepot: {}'.format(purchase.id))
 
+        self.assertEqual(purchase.payment_status, PaymentStatusName.PENDING.value)
+
     def test_successful_response_for_payu(self):
         payload = {
             'promoCode': None,
@@ -434,6 +441,8 @@ class NewPurchaseTest(TestCase):
         payment_info = resp.data['paymentInfo']
         payment_link = payment_info['paymentLink']
         self.assertIsNotNone(payment_link)
+
+        self.assertEqual(Purchase.objects.get().payment_status, PaymentStatusName.PENDING.value)
 
     def test_if_exception_thrown_when_no_redirect_link_sent_with_payu_payment(self):
         payload = {
