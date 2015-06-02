@@ -30,6 +30,7 @@ from codepot.views.purchases.exceptions import (
     UserAlreadyHasPurchaseException,
     ProductNotFoundException,
     ProductInactiveException,
+    InvalidPaymentInfoException,
 )
 
 _CODE_TO_EXCEPTION = {
@@ -61,6 +62,7 @@ _CODE_TO_EXCEPTION = {
         UserAlreadyHasPurchaseException,
         ProductNotFoundException,
         ProductInactiveException,
+        InvalidPaymentInfoException,
     ],
 }
 

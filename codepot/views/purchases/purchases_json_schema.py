@@ -1,4 +1,4 @@
-from codepot.models import PurchaseTypeName
+from codepot.models import PaymentTypeName
 
 make_purchase_req_schema = {
     '$schema': 'http://json-schema.org/draft-04/schema',
@@ -10,10 +10,21 @@ make_purchase_req_schema = {
             'pattern': '^[A-Z0-9]{6}$',
         },
         'productId': {
-            'type': 'integer',
+            'type': 'string',
+            'minLength': 1,
         },
-        'purchaseType': {
-            'enum': [t.value for t in PurchaseTypeName]
+        'paymentType': {
+            'enum': [t.value for t in PaymentTypeName]
+        },
+        'paymentInfo': {
+            'type': ['object', 'null', ],
+            'properties': {
+                'redirectLink': {
+                    'type': ['string', 'null'],
+                    'minLength': 1,
+                },
+            },
+            'additionalProperties': False,
         },
         'invoice': {
             'type': ['object', 'null', ],
@@ -45,6 +56,6 @@ make_purchase_req_schema = {
             'additionalProperties': False,
         },
     },
-    'required': ['promoCode', 'productId', 'purchaseType', 'invoice', ],
+    'required': ['promoCode', 'productId', 'paymentType', 'paymentInfo', 'invoice', ],
     'additionalProperties': False,
 }

@@ -42,7 +42,7 @@ class PricesTest(TestCase):
         Product.objects.create(name='EARLY_2_BOTH_DAYS', price_tier=self.price_early_2, price_net=10000)
 
     def test_correct_prices_response(self):
-        resp = self.client.get('/api/tickets/prices/')
+        resp = self.client.get('/api/prices/')
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = resp.data
         self.assertEqual(len(data['prices']), Product.objects.count())

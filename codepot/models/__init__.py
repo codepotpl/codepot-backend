@@ -1,6 +1,6 @@
 from .purchases import (
     Purchase,
-    PurchaseTypeName,
+    PaymentTypeName,
 )
 from .promo_codes import (
     PromoCode,

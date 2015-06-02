@@ -1,5 +1,6 @@
 import datetime
 from enum import Enum
+import string
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -10,14 +11,18 @@ from codepot import (
 )
 
 
-class PurchaseTypeName(Enum):
+def _purchase_id_value():
+    return create_hash(16, string.ascii_uppercase + string.digits)
+
+
+class PaymentTypeName(Enum):
     PAYU = 'PAYU'
     TRANSFER = 'TRANSFER'
     FREE = 'FREE'
 
 
 class Purchase(models.Model):
-    id = models.CharField(primary_key=True, max_length=32, default=create_hash)
+    id = models.CharField(primary_key=True, max_length=32, default=_purchase_id_value)
     user = models.OneToOneField(User)
     promo_code = models.ForeignKey('codepot.PromoCode', default=None, null=True, blank=True)
     created = models.DateTimeField(default=datetime.datetime.now, null=False, blank=False)
@@ -28,7 +33,8 @@ class Purchase(models.Model):
     invoice_country = models.CharField(max_length=256, null=True, blank=True)
     invoice_tax_id = models.CharField(max_length=256, null=True, blank=True)
     payu_payment = models.OneToOneField('django_payu.PayuPayment', default=None, null=True, blank=True)
-    type = models.CharField(max_length=64, choices=enum_to_model_choices(PurchaseTypeName), null=False, blank=False)
+    payment_type = models.CharField(max_length=64, choices=enum_to_model_choices(PaymentTypeName), null=False,
+                                    blank=False)
     notes = models.TextField()
 
     # TODO status PENDING, FINISHED, FAILED

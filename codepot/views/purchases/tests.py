@@ -18,7 +18,7 @@ from codepot.models import (
     Ticket,
     PriceTier,
     PromoCode,
-    PurchaseTypeName,
+    PaymentTypeName,
     Product)
 
 
@@ -75,8 +75,9 @@ class NewPurchaseTest(TestCase):
         payload = {
             'promoCode': None,
             'invoice': None,
-            'productId': int(random.random()),
-            'purchaseType': PurchaseTypeName.TRANSFER.value,
+            'productId': str(int(random.random())),
+            'paymentType': PaymentTypeName.TRANSFER.value,
+            'paymentInfo': None,
         }
 
         resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
@@ -97,7 +98,8 @@ class NewPurchaseTest(TestCase):
             'promoCode': None,
             'invoice': None,
             'productId': product.id,
-            'purchaseType': PurchaseTypeName.TRANSFER.value,
+            'paymentType': PaymentTypeName.TRANSFER.value,
+            'paymentInfo': None,
         }
 
         resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
@@ -125,9 +127,10 @@ class NewPurchaseTest(TestCase):
     def test_if_new_purchase_objects_created_and_relations_established_on_successful_flow(self):
         payload = {
             'promoCode': None,
-            'purchaseType': PurchaseTypeName.PAYU.value,
             'invoice': None,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
         }
 
         self.assertEqual(Purchase.objects.count(), 0)
@@ -141,7 +144,7 @@ class NewPurchaseTest(TestCase):
         purchase = Purchase.objects.get()
 
         self.assertEqual(resp.data['purchaseId'], purchase.id)
-        self.assertEqual(purchase.type, PurchaseTypeName.PAYU.value)
+        self.assertEqual(purchase.payment_type, PaymentTypeName.PAYU.value)
         self.assertEqual(purchase.user, self.user)
         self.assertIsNone(purchase.promo_code)
         self.assertIsNotNone(purchase.payu_payment)
@@ -149,9 +152,10 @@ class NewPurchaseTest(TestCase):
     def test_if_invoice_data_ignored_when_not_sent(self):
         payload = {
             'promoCode': None,
-            'purchaseType': PurchaseTypeName.PAYU.value,
             'invoice': None,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
         }
 
         resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
@@ -177,9 +181,10 @@ class NewPurchaseTest(TestCase):
         }
         payload = {
             'promoCode': None,
-            'purchaseType': PurchaseTypeName.PAYU.value,
             'invoice': invoice,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
         }
 
         self.client.post('/api/purchases/new/', payload, format=self.req_format)
@@ -190,14 +195,15 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(purchase.invoice_tax_id, invoice['taxId'])
         self.assertEqual(purchase.invoice_zip_code, invoice['zipCode'])
         self.assertEqual(purchase.invoice_country, invoice['country'])
-        self.assertEqual(purchase.type, PurchaseTypeName.PAYU.value)
+        self.assertEqual(purchase.payment_type, PaymentTypeName.PAYU.value)
 
     def test_if_tickets_purchased_field_is_increased_when_purchase_succeeds(self):
         payload = {
             'promoCode': None,
-            'purchaseType': PurchaseTypeName.PAYU.value,
             'invoice': None,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
         }
 
         self.assertEqual(self.price_tier.tickets_purchased, 0)
@@ -211,8 +217,9 @@ class NewPurchaseTest(TestCase):
         payload = {
             'promoCode': '123456',
             'invoice': None,
-            'purchaseType': PurchaseTypeName.PAYU.value,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
         }
 
         resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
@@ -228,8 +235,9 @@ class NewPurchaseTest(TestCase):
         payload = {
             'promoCode': promo_code.code,
             'invoice': None,
-            'purchaseType': PurchaseTypeName.PAYU.value,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
         }
 
         resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
@@ -245,8 +253,9 @@ class NewPurchaseTest(TestCase):
         payload = {
             'promoCode': promo_code.code,
             'invoice': None,
-            'purchaseType': PurchaseTypeName.PAYU.value,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
         }
 
         resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
@@ -263,8 +272,9 @@ class NewPurchaseTest(TestCase):
         payload = {
             'promoCode': promo_code.code,
             'invoice': None,
-            'purchaseType': PurchaseTypeName.PAYU.value,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
         }
 
         self.client.post('/api/purchases/new/', payload, format=self.req_format)
@@ -278,8 +288,9 @@ class NewPurchaseTest(TestCase):
         payload = {
             'promoCode': promo_code.code,
             'invoice': None,
-            'purchaseType': PurchaseTypeName.PAYU.value,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
         }
 
         self.client.post('/api/purchases/new/', payload, format=self.req_format)
@@ -294,15 +305,16 @@ class NewPurchaseTest(TestCase):
         payload = {
             'promoCode': promo_code.code,
             'invoice': None,
-            'purchaseType': PurchaseTypeName.PAYU.value,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
         }
 
         self.client.post('/api/purchases/new/', payload, format=self.req_format)
 
         self.assertEqual(Purchase.objects.count(), 1)
         purchase = Purchase.objects.get()
-        self.assertEqual(purchase.type, PurchaseTypeName.FREE.value)
+        self.assertEqual(purchase.payment_type, PaymentTypeName.FREE.value)
 
     def test_in_invoice_is_skipped_for_100_percent_promo_code(self):
         promo_code = PromoCode.objects.create(discount=100)
@@ -317,8 +329,9 @@ class NewPurchaseTest(TestCase):
         payload = {
             'promoCode': promo_code.code,
             'invoice': invoice,
-            'purchaseType': PurchaseTypeName.PAYU.value,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
         }
 
         resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
@@ -346,8 +359,9 @@ class NewPurchaseTest(TestCase):
         payload = {
             'promoCode': promo_code.code,
             'invoice': invoice,
-            'purchaseType': PurchaseTypeName.PAYU.value,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
         }
 
         self.client.post('/api/purchases/new/', payload, format=self.req_format)
@@ -364,8 +378,9 @@ class NewPurchaseTest(TestCase):
         payload = {
             'promoCode': None,
             'invoice': None,
-            'purchaseType': PurchaseTypeName.TRANSFER.value,
             'productId': self.product.id,
+            'paymentType': PaymentTypeName.TRANSFER.value,
+            'paymentInfo': None,
         }
 
         self.client.post('/api/purchases/new/', payload, format=self.req_format)
@@ -373,18 +388,68 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(Purchase.objects.count(), 1)
         purchase = Purchase.objects.get()
         self.assertIsNone(purchase.payu_payment)
-        self.assertEqual(purchase.type, PurchaseTypeName.TRANSFER.value)
+        self.assertEqual(purchase.payment_type, PaymentTypeName.TRANSFER.value)
         self.assertEqual(purchase.notes, 'To pay net: {}, total: {}'.format(self.product.price_net,
                                                                             int(self.product.price_net * (
                                                                                 1 + self.product.price_vat))))
 
     def test_successful_response_for_transfer(self):
-        # TODO
-        pass
+        payload = {
+            'promoCode': None,
+            'invoice': None,
+            'productId': self.product.id,
+            'paymentType': PaymentTypeName.TRANSFER.value,
+            'paymentInfo': {'redirectLink': 'link', },
+        }
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
+
+        self.assertEqual(Purchase.objects.count(), 1)
+        purchase = Purchase.objects.get()
+
+        payment_info = resp.data['paymentInfo']
+        transfer_data = payment_info['transferData']
+        self.assertEqual(transfer_data['accountNo'], '81109028510000000122488798')
+        self.assertEqual(transfer_data['street'], 'Osowska 23/6')
+        self.assertEqual(transfer_data['zipCode'], '04-302')
+        self.assertEqual(transfer_data['city'], 'Warszawa')
+        self.assertEqual(transfer_data['amount'], self.product.price_net * (1 + self.product.price_vat))
+        self.assertEqual(transfer_data['title'], 'Codepot: {}'.format(purchase.id))
 
     def test_successful_response_for_payu(self):
-        # TODO
-        pass
+        payload = {
+            'promoCode': None,
+            'invoice': None,
+            'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
+        }
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
+
+        self.assertEqual(Purchase.objects.count(), 1)
+
+        payment_info = resp.data['paymentInfo']
+        payment_link = payment_info['paymentLink']
+        self.assertIsNotNone(payment_link)
+
+    def test_if_exception_thrown_when_no_redirect_link_sent_with_payu_payment(self):
+        payload = {
+            'promoCode': None,
+            'invoice': None,
+            'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': None,
+        }
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
+
+        self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
+        self.assertEqual(resp.data['code'], 307)
+        self.assertEqual(resp.data['detail'], "'redirectLink' is required for PAYU payment type.")
 
     def tearDown(self):
         PriceTier.objects.all().delete()

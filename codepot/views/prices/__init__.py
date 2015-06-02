@@ -14,7 +14,7 @@ from codepot.models import Product
 
 @api_view(['GET', ])
 @permission_classes((IsAuthenticated,))
-def get_tickets_prices(request, **kwargs):
+def get_prices(request, **kwargs):
     products = Product.objects.all()
     now = timezone.now()
 
@@ -24,7 +24,6 @@ def get_tickets_prices(request, **kwargs):
                 {
                     'id': p.id,
                     'name': p.name,
-                    'dateFrom': int(time.mktime(p.price_tier.date_from.timetuple()) * 1000),
                     'dateTo': int(time.mktime(p.price_tier.date_to.timetuple()) * 1000),
                     'priceNet': p.price_net,
                     'priceVat': p.price_vat,

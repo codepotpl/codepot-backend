@@ -3,7 +3,8 @@ from django.utils import timezone
 from django_payu.core import (
     Buyer,
     Product as PayUProduct,
-    DjangoPayU)
+    DjangoPayU,
+)
 from django_payu.models import PayuPayment
 from rest_framework.decorators import (
     api_view,
@@ -18,7 +19,7 @@ from codepot.logging import logger
 from codepot.models import (
     PromoCode,
     Purchase,
-    PurchaseTypeName,
+    PaymentTypeName,
     Product,
 )
 from codepot.views import parser_class_for_schema
@@ -30,6 +31,7 @@ from codepot.views.purchases.exceptions import (
     UserAlreadyHasPurchaseException,
     ProductNotFoundException,
     ProductInactiveException,
+    InvalidPaymentInfoException,
 )
 
 
@@ -49,15 +51,19 @@ def handle_new_purchase(request, **kwargs):
     code = payload['promoCode']
     invoice = payload['invoice']
     product_id = payload['productId']
-    purchase_type = payload['purchaseType']
+    payment_type = payload['paymentType']
+    payment_req_info = payload['paymentInfo']
 
     product = _find_and_validate_product(product_id)
 
+    _validate_payment_info(payment_type, payment_req_info)
+
     _increment_tickets_purchased(product.price_tier)
 
+    payment_res_info = {}
     purchase = Purchase()
     purchase.user = user
-    purchase.type = purchase_type
+    purchase.payment_type = payment_type
     purchase.product = product
     purchase.save()
     discount = None
@@ -73,25 +79,29 @@ def handle_new_purchase(request, **kwargs):
         logger.info('Found promo code: {} for user: {}, discount: {}'.format(code, user.id, discount))
 
         if discount == 100:
-            purchase.type = PurchaseTypeName.FREE.value
+            purchase.payment_type = PaymentTypeName.FREE.value
             logger.info('Found 100% discount for user: {} and promo code: {}'.format(user.id, code))
             purchase.save()
-            return _prepare_response(purchase)
+            return _prepare_response(purchase, payment_res_info)
 
     if invoice:
         _set_invoice_data(purchase, invoice)
 
     (price_net, price_total) = _calculate_price(user, product, discount)
 
-    if purchase_type == PurchaseTypeName.PAYU.value:
-        _handle_payu_payment(user, request.META['REMOTE_ADDR'], price_total, purchase)
-    elif purchase_type == PurchaseTypeName.TRANSFER.value:
+    if payment_type == PaymentTypeName.PAYU.value:
+        redirect_link = payment_req_info['redirectLink']
+        payment_link = _handle_payu_payment(user, request.META['REMOTE_ADDR'], price_total, purchase, redirect_link)
+        payment_res_info['paymentLink'] = payment_link
+    elif payment_type == PaymentTypeName.TRANSFER.value:
         purchase.notes = 'To pay net: {}, total: {}'.format(price_net, price_total)
+        payment_res_info['transferData'] = _prepare_transfer_payment_info(purchase, price_total)
         purchase.payu_payment = None
+
 
     purchase.save()
 
-    return _prepare_response(purchase)
+    return _prepare_response(purchase, payment_res_info)
 
 def _check_if_user_has_purchase(user):
     try:
@@ -124,10 +134,14 @@ def _check_if_product_is_active(product):
         raise ProductInactiveException(product.id)
 
 
+def _validate_payment_info(payment_type, payment_info):
+    if payment_type == PaymentTypeName.PAYU.value:
+        if not payment_info or not payment_info.get('redirectLink', None):
+            raise InvalidPaymentInfoException("'redirectLink' is required for PAYU payment type.")
+
 def _increment_tickets_purchased(price_tier):
     price_tier.tickets_purchased += 1
     price_tier.save()
-
 
 def _find_and_validate_promo_code(code):
     promo_code = _find_promo_code_or_raise(code)
@@ -173,22 +187,35 @@ def _calculate_price(user, product, discount):
     return (price_net, price_total)
 
 
-def _handle_payu_payment(user, ip_address, price_total, purchase):
+def _handle_payu_payment(user, ip_address, price_total, purchase, redirect_link):
     buyer = Buyer(user.first_name, user.last_name, user.email, ip_address)
     payu_product = PayUProduct(purchase.product.name, price_total, 1)
     promo_code = purchase.promo_code and purchase.promo_code.code or ''
     payment_id, follow = DjangoPayU.create_payu_payment(
         buyer, payu_product,
-        'Purchase: {}, product: {}, promo code: {}'.format(purchase.id, purchase.product.id, promo_code)
-    )
+        'Purchase: {}, product: {}, promo code: {}'.format(purchase.id, purchase.product.id, promo_code), redirect_link)
     purchase.payu_payment = PayuPayment.objects.get(payment_id=payment_id)
     purchase.save()
+    return follow
 
 
-def _prepare_response(purchase):
+def _prepare_transfer_payment_info(purchase, price):
+    return {
+        'accountNo': '81109028510000000122488798',
+        'street': 'Osowska 23/6',
+        'zipCode': '04-302',
+        'city': 'Warszawa',
+        'amount': price,
+        'title': 'Codepot: {}'.format(purchase.id)
+    }
+
+
+def _prepare_response(purchase, payment_info):
     return Response(
         data={
             'purchaseId': purchase.id,
+            'paymentType': purchase.payment_type,
+            'paymentInfo': payment_info and None or payment_info,
         },
         status=HTTP_201_CREATED
     )

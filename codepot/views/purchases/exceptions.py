@@ -38,3 +38,7 @@ class ProductNotFoundException(PurchaseException):
 class ProductInactiveException(PurchaseException):
     def __init__(self, product_id):
         super().__init__('Product for ID: {} is not active.'.format(product_id), 306)
+
+class InvalidPaymentInfoException(PurchaseException):
+    def __init__(self, message):
+        super().__init__(message, 307)
