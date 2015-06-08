@@ -2,6 +2,7 @@ from .purchases import (
     Purchase,
     PaymentTypeName,
     PaymentStatusName,
+    PurchaseInvoice,
 )
 from .promo_codes import (
     PromoCode,

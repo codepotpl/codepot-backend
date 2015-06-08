@@ -168,11 +168,7 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(resp.status_code, HTTP_201_CREATED)
         self.assertEqual(resp.data['purchaseId'], purchase.id)
 
-        self.assertIsNone(purchase.invoice_name)
-        self.assertIsNone(purchase.invoice_street)
-        self.assertIsNone(purchase.invoice_tax_id)
-        self.assertIsNone(purchase.invoice_zip_code)
-        self.assertIsNone(purchase.invoice_country)
+        self.assertIsNone(purchase.invoice)
 
     def test_if_invoice_data_saved_when_sent(self):
         invoice = {
@@ -193,11 +189,12 @@ class NewPurchaseTest(TestCase):
         self.client.post('/api/purchases/new/', payload, format=self.req_format)
 
         purchase = Purchase.objects.get()
-        self.assertEqual(purchase.invoice_name, invoice['name'])
-        self.assertEqual(purchase.invoice_street, invoice['street'])
-        self.assertEqual(purchase.invoice_tax_id, invoice['taxId'])
-        self.assertEqual(purchase.invoice_zip_code, invoice['zipCode'])
-        self.assertEqual(purchase.invoice_country, invoice['country'])
+        purchase_invoice = purchase.invoice
+        self.assertEqual(purchase_invoice.name, invoice['name'])
+        self.assertEqual(purchase_invoice.street, invoice['street'])
+        self.assertEqual(purchase_invoice.tax_id, invoice['taxId'])
+        self.assertEqual(purchase_invoice.zip_code, invoice['zipCode'])
+        self.assertEqual(purchase_invoice.country, invoice['country'])
         self.assertEqual(purchase.payment_type, PaymentTypeName.PAYU.value)
         self.assertEqual(purchase.payment_status, PaymentStatusName.PENDING.value)
 
@@ -344,11 +341,7 @@ class NewPurchaseTest(TestCase):
 
         self.assertEqual(Purchase.objects.count(), 1)
         purchase = Purchase.objects.get()
-        self.assertIsNone(purchase.invoice_name)
-        self.assertIsNone(purchase.invoice_street)
-        self.assertIsNone(purchase.invoice_tax_id)
-        self.assertIsNone(purchase.invoice_zip_code)
-        self.assertIsNone(purchase.invoice_country)
+        self.assertIsNone(purchase.invoice)
 
     def test_if_price_is_reduced_with_discount(self):
         discount = 10

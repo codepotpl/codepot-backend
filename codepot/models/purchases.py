@@ -26,17 +26,22 @@ class PaymentStatusName(Enum):
     SUCCESS = 'SUCCESS'
     FAILED = 'FAILED'
 
+class PurchaseInvoice(models.Model):
+    id = models.CharField(primary_key=True, max_length=32, default=_purchase_id_value)
+    name = models.CharField(max_length=256, null=True, blank=True)
+    street = models.CharField(max_length=256, null=True, blank=True)
+    zip_code = models.CharField(max_length=256, null=True, blank=True)
+    country = models.CharField(max_length=256, null=True, blank=True)
+    tax_id = models.CharField(max_length=256, null=True, blank=True)
+
+
 class Purchase(models.Model):
     id = models.CharField(primary_key=True, max_length=32, default=_purchase_id_value)
     user = models.OneToOneField(User)
     promo_code = models.ForeignKey('codepot.PromoCode', default=None, null=True, blank=True)
     created = models.DateTimeField(default=datetime.datetime.now, blank=False)
     product = models.ForeignKey('codepot.Product', blank=False)
-    invoice_name = models.CharField(max_length=256, null=True, blank=True)
-    invoice_street = models.CharField(max_length=256, null=True, blank=True)
-    invoice_zip_code = models.CharField(max_length=256, null=True, blank=True)
-    invoice_country = models.CharField(max_length=256, null=True, blank=True)
-    invoice_tax_id = models.CharField(max_length=256, null=True, blank=True)
+    invoice = models.OneToOneField(PurchaseInvoice, blank=True, null=True)
     payu_payment = models.OneToOneField('django_payu.PayuPayment', default=None, null=True, blank=True)
     payment_type = models.CharField(max_length=64, choices=enum_to_model_choices(PaymentTypeName), blank=False)
     payment_status = models.CharField(max_length=32, choices=enum_to_model_choices(PaymentTypeName), blank=False)

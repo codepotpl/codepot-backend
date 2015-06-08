@@ -19,6 +19,7 @@ from codepot.logging import logger
 from codepot.models import (
     PromoCode,
     Purchase,
+    PurchaseInvoice,
     PaymentTypeName,
     PaymentStatusName,
     Product,
@@ -101,7 +102,6 @@ def handle_new_purchase(request, **kwargs):
         payment_res_info['transferData'] = _prepare_transfer_payment_info(purchase, price_total)
         purchase.payu_payment = None
 
-
     purchase.save()
 
     return _prepare_response(purchase, payment_res_info)
@@ -171,11 +171,14 @@ def _check_if_promo_code_has_valid_usage_limit(promo_code):
 
 
 def _set_invoice_data(purchase, invoice):
-    purchase.invoice_name = invoice['name']
-    purchase.invoice_street = invoice['street']
-    purchase.invoice_zip_code = invoice['zipCode']
-    purchase.invoice_country = invoice['country']
-    purchase.invoice_tax_id = invoice['taxId']
+    purchase_invoice = PurchaseInvoice()
+    purchase_invoice.name = invoice['name']
+    purchase_invoice.street = invoice['street']
+    purchase_invoice.zip_code = invoice['zipCode']
+    purchase_invoice.country = invoice['country']
+    purchase_invoice.tax_id = invoice['taxId']
+    purchase_invoice.save()
+    purchase.invoice = purchase_invoice
 
 def _calculate_price(user, product, discount):
     price_net = product.price_net
