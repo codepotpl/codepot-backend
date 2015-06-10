@@ -44,7 +44,8 @@ class Purchase(models.Model):
     invoice = models.OneToOneField(PurchaseInvoice, blank=True, null=True)
     payu_payment = models.OneToOneField('django_payu.PayuPayment', default=None, null=True, blank=True)
     payment_type = models.CharField(max_length=64, choices=enum_to_model_choices(PaymentTypeName), blank=False)
-    payment_status = models.CharField(max_length=32, choices=enum_to_model_choices(PaymentTypeName), blank=False)
+    payment_status = models.CharField(max_length=32, choices=enum_to_model_choices(PaymentStatusName), blank=False,
+                                      default=PaymentStatusName.PENDING.value)
     notes = models.TextField()
 
     def __str__(self):
