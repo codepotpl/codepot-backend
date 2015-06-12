@@ -4,6 +4,7 @@ from codepot.models import (
     PromoCode,
     PromoCodeClassification,
     Purchase,
+    PurchaseInvoice,
     Ticket,
     PriceTier,
     Product,
@@ -18,6 +19,9 @@ class PromoCodeAdmin(admin.ModelAdmin):
 class PurchaseAdmin(admin.ModelAdmin):
     pass
 
+@admin.register(PurchaseInvoice)
+class PurchaseInvoiceAdmin(admin.ModelAdmin):
+    pass
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):

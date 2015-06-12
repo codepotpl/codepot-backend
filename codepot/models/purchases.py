@@ -26,14 +26,6 @@ class PaymentStatusName(Enum):
     SUCCESS = 'SUCCESS'
     FAILED = 'FAILED'
 
-class PurchaseInvoice(models.Model):
-    id = models.CharField(primary_key=True, max_length=32, default=_purchase_id_value)
-    name = models.CharField(max_length=256, null=True, blank=True)
-    street = models.CharField(max_length=256, null=True, blank=True)
-    zip_code = models.CharField(max_length=256, null=True, blank=True)
-    country = models.CharField(max_length=256, null=True, blank=True)
-    tax_id = models.CharField(max_length=256, null=True, blank=True)
-
 
 class Purchase(models.Model):
     id = models.CharField(primary_key=True, max_length=32, default=_purchase_id_value)
@@ -41,7 +33,6 @@ class Purchase(models.Model):
     promo_code = models.ForeignKey('codepot.PromoCode', default=None, null=True, blank=True)
     created = models.DateTimeField(default=datetime.datetime.now, blank=False)
     product = models.ForeignKey('codepot.Product', blank=False)
-    invoice = models.OneToOneField(PurchaseInvoice, blank=True, null=True)
     payu_payment = models.OneToOneField('django_payu.PayuPayment', default=None, null=True, blank=True)
     payment_type = models.CharField(max_length=64, choices=enum_to_model_choices(PaymentTypeName), blank=False)
     payment_status = models.CharField(max_length=32, choices=enum_to_model_choices(PaymentStatusName), blank=False,
@@ -50,3 +41,14 @@ class Purchase(models.Model):
 
     def __str__(self):
         return 'Purchase {} / {}'.format(self.id, self.user.id)
+
+
+class PurchaseInvoice(models.Model):
+    id = models.CharField(primary_key=True, max_length=32, default=_purchase_id_value)
+    purchase = models.OneToOneField('codepot.Purchase', blank=True, null=True)
+    no = models.CharField(max_length=256, blank=False)
+    name = models.CharField(max_length=256, blank=False)
+    street = models.CharField(max_length=256, blank=False)
+    zip_code = models.CharField(max_length=256, blank=False)
+    country = models.CharField(max_length=256, blank=False)
+    tax_id = models.CharField(max_length=256, blank=False)

@@ -15,6 +15,7 @@ from rest_framework.test import APIClient
 
 from codepot.models import (
     Purchase,
+    PurchaseInvoice,
     Ticket,
     PriceTier,
     PromoCode,
@@ -161,14 +162,13 @@ class NewPurchaseTest(TestCase):
             'paymentInfo': {'redirectLink': 'link', },
         }
 
+        self.assertEqual(PurchaseInvoice.objects.count(), 0)
+
         resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
 
-        purchase = Purchase.objects.get()
-
         self.assertEqual(resp.status_code, HTTP_201_CREATED)
-        self.assertEqual(resp.data['purchaseId'], purchase.id)
 
-        self.assertIsNone(purchase.invoice)
+        self.assertEqual(PurchaseInvoice.objects.count(), 0)
 
     def test_if_invoice_data_saved_when_sent(self):
         invoice = {
@@ -189,7 +189,7 @@ class NewPurchaseTest(TestCase):
         self.client.post('/api/purchases/new/', payload, format=self.req_format)
 
         purchase = Purchase.objects.get()
-        purchase_invoice = purchase.invoice
+        purchase_invoice = PurchaseInvoice.objects.get(purchase=purchase)
         self.assertEqual(purchase_invoice.name, invoice['name'])
         self.assertEqual(purchase_invoice.street, invoice['street'])
         self.assertEqual(purchase_invoice.tax_id, invoice['taxId'])
@@ -336,12 +336,14 @@ class NewPurchaseTest(TestCase):
             'paymentInfo': {'redirectLink': 'link', },
         }
 
+        self.assertEqual(PurchaseInvoice.objects.count(), 0)
+
         resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
+
         self.assertEqual(resp.status_code, HTTP_201_CREATED)
 
         self.assertEqual(Purchase.objects.count(), 1)
-        purchase = Purchase.objects.get()
-        self.assertIsNone(purchase.invoice)
+        self.assertEqual(PurchaseInvoice.objects.count(), 0)
 
     def test_if_price_is_reduced_with_discount(self):
         discount = 10

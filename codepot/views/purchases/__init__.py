@@ -177,8 +177,8 @@ def _set_invoice_data(purchase, invoice):
     purchase_invoice.zip_code = invoice['zipCode']
     purchase_invoice.country = invoice['country']
     purchase_invoice.tax_id = invoice['taxId']
+    purchase_invoice.purchase = purchase
     purchase_invoice.save()
-    purchase.invoice = purchase_invoice
 
 def _calculate_price(user, product, discount):
     price_net = product.price_net
