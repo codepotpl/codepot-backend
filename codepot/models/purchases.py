@@ -37,6 +37,7 @@ class Purchase(models.Model):
     payment_type = models.CharField(max_length=64, choices=enum_to_model_choices(PaymentTypeName), blank=False)
     payment_status = models.CharField(max_length=32, choices=enum_to_model_choices(PaymentStatusName), blank=False,
                                       default=PaymentStatusName.PENDING.value)
+    amount = models.IntegerField(blank=False, default=0)
     notes = models.TextField()
 
     def __str__(self):

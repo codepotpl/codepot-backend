@@ -94,6 +94,7 @@ def handle_new_purchase(request, **kwargs):
         _set_invoice_data(purchase, invoice)
 
     (price_net, price_total) = _calculate_price(user, product, discount)
+    purchase.amount = price_total
 
     if payment_type == PaymentTypeName.PAYU.value:
         redirect_link = payment_req_info['redirectLink']
@@ -210,7 +211,6 @@ def _handle_payu_payment(user, ip_address, price_total, purchase, redirect_link)
 def _prepare_transfer_payment_info(purchase, price):
     ret = {}
     ret.update({
-        'amount': price,
         'title': 'Codepot: {}'.format(purchase.id)
     })
     ret.update(settings.MCE_BANK_ACCOUNT)
@@ -223,6 +223,7 @@ def _prepare_response(purchase, payment_info):
             'purchaseId': purchase.id,
             'paymentType': purchase.payment_type,
             'paymentInfo': payment_info and None or payment_info,
+            'amount': purchase.amount,
         },
         status=HTTP_201_CREATED
     )

@@ -37,7 +37,7 @@ def get_user_purchase(request, **kwargs):
                 'promoCode': purchase.promo_code and purchase.promo_code.code or None,
                 'created': purchase.created,
                 'product': purchase.product.id,
-                'invoice': _get_purchase_data_or_none(purchase),
+                'invoice': _get_purchase_invoice_data_or_none(purchase),
                 'paymentType': purchase.payment_type,
                 'paymentStatus': purchase.payment_status,
             },
@@ -53,7 +53,7 @@ def _find_purchase_for_user_or_raise(user):
         raise UserPurchaseNotFoundException(user.id)
 
 
-def _get_purchase_data_or_none(purchase):
+def _get_purchase_invoice_data_or_none(purchase):
     try:
         invoice = PurchaseInvoice.objects.get(purchase=purchase)
         return {

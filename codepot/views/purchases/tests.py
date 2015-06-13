@@ -399,7 +399,7 @@ class NewPurchaseTest(TestCase):
             'invoice': None,
             'productId': self.product.id,
             'paymentType': PaymentTypeName.TRANSFER.value,
-            'paymentInfo': {'redirectLink': 'link', },
+            'paymentInfo': None,
         }
         self.assertEqual(Purchase.objects.count(), 0)
 
@@ -414,7 +414,7 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(transfer_data['street'], 'Osowska 23/6')
         self.assertEqual(transfer_data['zipCode'], '04-302')
         self.assertEqual(transfer_data['city'], 'Warszawa')
-        self.assertEqual(transfer_data['amount'], self.product.price_net * (1 + self.product.price_vat))
+        # self.assertEqual(transfer_data['amount'], self.product.price_net * (1 + self.product.price_vat))
         self.assertEqual(transfer_data['title'], 'Codepot: {}'.format(purchase.id))
 
         self.assertEqual(purchase.payment_status, PaymentStatusName.PENDING.value)
@@ -436,6 +436,63 @@ class NewPurchaseTest(TestCase):
         payment_info = resp.data['paymentInfo']
         payment_link = payment_info['paymentLink']
         self.assertIsNotNone(payment_link)
+
+        self.assertEqual(Purchase.objects.get().payment_status, PaymentStatusName.PENDING.value)
+
+    def test_whole_successful_response_for_transfer(self):
+        payload = {
+            'promoCode': None,
+            'invoice': None,
+            'productId': self.product.id,
+            'paymentType': PaymentTypeName.TRANSFER.value,
+            'paymentInfo': None,
+        }
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
+
+        self.assertEqual(Purchase.objects.count(), 1)
+        purchase = Purchase.objects.get()
+
+        resp_data = resp.data
+        payment_info = resp_data['paymentInfo']
+        transfer_data = payment_info['transferData']
+        self.assertEqual(transfer_data['accountNo'], '81109028510000000122488798')
+        self.assertEqual(transfer_data['street'], 'Osowska 23/6')
+        self.assertEqual(transfer_data['zipCode'], '04-302')
+        self.assertEqual(transfer_data['city'], 'Warszawa')
+        self.assertEqual(transfer_data['title'], 'Codepot: {}'.format(purchase.id))
+        self.assertEqual(resp_data['purchaseId'], purchase.id)
+        self.assertEqual(resp_data['paymentType'], purchase.payment_type)
+        self.assertEqual(resp_data['amount'], purchase.amount)
+        self.assertEqual(resp_data['amount'], self.product.price_net * (1 + self.product.price_vat))
+
+        self.assertEqual(purchase.payment_status, PaymentStatusName.PENDING.value)
+
+    def test_whole_successful_response_for_payu(self):
+        payload = {
+            'promoCode': None,
+            'invoice': None,
+            'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
+        }
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
+
+        self.assertEqual(Purchase.objects.count(), 1)
+
+        purchase = Purchase.objects.get()
+
+        resp_data = resp.data
+        payment_info = resp_data['paymentInfo']
+        payment_link = payment_info['paymentLink']
+        self.assertIsNotNone(payment_link)
+        self.assertEqual(resp_data['purchaseId'], purchase.id)
+        self.assertEqual(resp_data['paymentType'], purchase.payment_type)
+        self.assertEqual(resp_data['amount'], purchase.amount)
+        self.assertEqual(resp_data['amount'], self.product.price_net * (1 + self.product.price_vat))
 
         self.assertEqual(Purchase.objects.get().payment_status, PaymentStatusName.PENDING.value)
 
