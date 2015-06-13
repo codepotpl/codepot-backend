@@ -15,6 +15,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 
+from django.conf import settings
+
 from codepot.logging import logger
 from codepot.models import (
     PromoCode,
@@ -206,14 +208,13 @@ def _handle_payu_payment(user, ip_address, price_total, purchase, redirect_link)
 
 
 def _prepare_transfer_payment_info(purchase, price):
-    return {
-        'accountNo': '81109028510000000122488798',
-        'street': 'Osowska 23/6',
-        'zipCode': '04-302',
-        'city': 'Warszawa',
+    ret = {}
+    ret.update({
         'amount': price,
         'title': 'Codepot: {}'.format(purchase.id)
-    }
+    })
+    ret.update(settings.MCE_BANK_ACCOUNT)
+    return ret
 
 
 def _prepare_response(purchase, payment_info):

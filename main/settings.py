@@ -211,5 +211,13 @@ DJANGO_PAYU_BASE_URL = env('CDPT_DJANGO_PAYU_BASE_URL')
 DJANGO_PAYU_POS_ID = env('CDPT_DJANGO_PAYU_POS_ID')
 DJANGO_PAYU_POS_AUTHORIZATION_KEY = env('CDPT_DJANGO_PAYU_POS_AUTHORIZATION_KEY')
 
+# MCE bank account data
+MCE_BANK_ACCOUNT = {
+    'accountNo': '81109028510000000122488798',
+    'street': 'Osowska 23/6',
+    'zipCode': '04-302',
+    'city': 'Warszawa',
+}
+
 print('Current environment: {}'.format(env('CDPT_ENVIRONMENT')))
 print('Base dir: {}'.format(BASE_DIR))
