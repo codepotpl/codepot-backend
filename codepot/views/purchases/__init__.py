@@ -64,7 +64,6 @@ def handle_new_purchase(request, **kwargs):
 
     _increment_tickets_purchased(product.price_tier)
 
-    payment_res_info = {}
     purchase = Purchase()
     purchase.user = user
     purchase.payment_type = payment_type
@@ -88,7 +87,7 @@ def handle_new_purchase(request, **kwargs):
             purchase.payment_type = PaymentTypeName.FREE.value
             purchase.payment_status = PaymentStatusName.SUCCESS.value
             purchase.save()
-            return _prepare_response(purchase, payment_res_info)
+            return Response(build_purchase_response(purchase), HTTP_201_CREATED)
 
     if invoice:
         _set_invoice_data(purchase, invoice)
@@ -99,15 +98,14 @@ def handle_new_purchase(request, **kwargs):
     if payment_type == PaymentTypeName.PAYU.value:
         redirect_link = payment_req_info['redirectLink']
         payment_link = _handle_payu_payment(user, request.META['REMOTE_ADDR'], price_total, purchase, redirect_link)
-        payment_res_info['paymentLink'] = payment_link
+        purchase.payu_payment_link = payment_link
     elif payment_type == PaymentTypeName.TRANSFER.value:
         purchase.notes = 'To pay net: {}, total: {}'.format(price_net, price_total)
-        payment_res_info['transferData'] = _prepare_transfer_payment_info(purchase, price_total)
         purchase.payu_payment = None
 
     purchase.save()
 
-    return _prepare_response(purchase, payment_res_info)
+    return Response(build_purchase_response(purchase), HTTP_201_CREATED)
 
 def _check_if_user_has_purchase(user):
     try:
@@ -208,22 +206,53 @@ def _handle_payu_payment(user, ip_address, price_total, purchase, redirect_link)
     return follow
 
 
-def _prepare_transfer_payment_info(purchase, price):
+def build_purchase_response(purchase):
+    return {
+        'purchaseId': purchase.id,
+        'promoCode': purchase.promo_code and purchase.promo_code.code or None,
+        'created': purchase.created,
+        'product': purchase.product.id,
+        'invoice': _get_purchase_invoice_data_or_none(purchase),
+        'paymentType': purchase.payment_type,
+        'paymentStatus': purchase.payment_status,
+        'paymentInfo': _prepare_payment_info(purchase),
+        'amount': purchase.amount,
+    }
+
+
+def _get_purchase_invoice_data_or_none(purchase):
+    try:
+        invoice = PurchaseInvoice.objects.get(purchase=purchase)
+        return {
+            'name': invoice.name,
+            'street': invoice.street,
+            'zipCode': invoice.zip_code,
+            'country': invoice.country,
+            'taxId': invoice.tax_id,
+        }
+    except PurchaseInvoice.DoesNotExist as e:
+        logger.info('Skipping invoice processing, no invoice for purchase: {}, err: {}'.format(purchase.id, str(e)))
+        return None
+
+
+def _prepare_payment_info(purchase):
+    if purchase.payment_type == PaymentTypeName.FREE.value:
+        return None
+    elif purchase.payment_type == PaymentTypeName.PAYU.value:
+        return {
+            'paymentLink': purchase.payu_payment_link,
+        }
+    elif purchase.payment_type == PaymentTypeName.TRANSFER.value:
+        return _prepare_transfer_payment_info(purchase)
+    else:
+        raise Exception(
+            'Invalid purchase payment type. Purchase: {}, payment type: {}'.format(purchase.id, purchase.payment_type))
+
+
+def _prepare_transfer_payment_info(purchase):
     ret = {}
     ret.update({
         'title': 'Codepot: {}'.format(purchase.id)
     })
     ret.update(settings.MCE_BANK_ACCOUNT)
-    return ret
-
-
-def _prepare_response(purchase, payment_info):
-    return Response(
-        data={
-            'purchaseId': purchase.id,
-            'paymentType': purchase.payment_type,
-            'paymentInfo': payment_info and None or payment_info,
-            'amount': purchase.amount,
-        },
-        status=HTTP_201_CREATED
-    )
+    return {'transferData': ret}

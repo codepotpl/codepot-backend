@@ -38,6 +38,7 @@ class Purchase(models.Model):
     payment_status = models.CharField(max_length=32, choices=enum_to_model_choices(PaymentStatusName), blank=False,
                                       default=PaymentStatusName.PENDING.value)
     amount = models.IntegerField(blank=False, default=0)
+    payu_payment_link = models.URLField(max_length=4096, null=True, blank=True, default=None)
     notes = models.TextField()
 
     def __str__(self):

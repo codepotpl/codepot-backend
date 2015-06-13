@@ -414,7 +414,6 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(transfer_data['street'], 'Osowska 23/6')
         self.assertEqual(transfer_data['zipCode'], '04-302')
         self.assertEqual(transfer_data['city'], 'Warszawa')
-        # self.assertEqual(transfer_data['amount'], self.product.price_net * (1 + self.product.price_vat))
         self.assertEqual(transfer_data['title'], 'Codepot: {}'.format(purchase.id))
 
         self.assertEqual(purchase.payment_status, PaymentStatusName.PENDING.value)

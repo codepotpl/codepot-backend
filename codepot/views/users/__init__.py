@@ -9,9 +9,9 @@ from rest_framework.status import HTTP_200_OK
 
 from codepot.logging import logger
 from codepot.models import Purchase
-from codepot.models.purchases import PurchaseInvoice
 from codepot.views.auth.exceptions import InvalidUserIdException
 from codepot.views.purchases.exceptions import UserPurchaseNotFoundException
+from codepot.views.purchases import build_purchase_response
 
 
 def _compare_ids_and_raise_exception_if_different(endpoint_id, user_id):
@@ -31,17 +31,7 @@ def get_user_purchase(request, **kwargs):
 
     return Response(
         status=HTTP_200_OK,
-        data={
-            'purchase': {
-                'purchaseId': purchase.id,
-                'promoCode': purchase.promo_code and purchase.promo_code.code or None,
-                'created': purchase.created,
-                'product': purchase.product.id,
-                'invoice': _get_purchase_invoice_data_or_none(purchase),
-                'paymentType': purchase.payment_type,
-                'paymentStatus': purchase.payment_status,
-            },
-        }
+        data=build_purchase_response(purchase)
     )
 
 
@@ -51,23 +41,3 @@ def _find_purchase_for_user_or_raise(user):
     except Purchase.DoesNotExist as e:
         logger.error('No purchase found for user with ID: {}, err: {}'.format(user.id, str(e)))
         raise UserPurchaseNotFoundException(user.id)
-
-
-def _get_purchase_invoice_data_or_none(purchase):
-    try:
-        invoice = PurchaseInvoice.objects.get(purchase=purchase)
-        return {
-            'name': invoice.name,
-            'street': invoice.street,
-            'zipCode': invoice.zip_code,
-            'country': invoice.country,
-            'taxId': invoice.tax_id,
-        }
-    except PurchaseInvoice.DoesNotExist as e:
-        logger.info('Skipping invoice processing, no invoice for purchase: {}, err: {}'.format(purchase.id, str(e)))
-        return None
-
-def _all_invoice_fields_empty(purchase):
-    invoice_keys = list(filter(lambda x: x.startswith('invoice_'), purchase.__dict__.keys()))
-    invoice_values = [getattr(purchase, k) for k in invoice_keys]
-    return not bool(list(filter(lambda x: bool(x), invoice_values)))
