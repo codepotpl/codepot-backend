@@ -48,7 +48,7 @@ class Purchase(models.Model):
 class PurchaseInvoice(models.Model):
     id = models.CharField(primary_key=True, max_length=32, default=_purchase_id_value)
     purchase = models.OneToOneField('codepot.Purchase', blank=True, null=True)
-    no = models.CharField(max_length=256, blank=False)
+    no = models.CharField(max_length=256, blank=True, null=True)
     name = models.CharField(max_length=256, blank=False)
     street = models.CharField(max_length=256, blank=False)
     zip_code = models.CharField(max_length=256, blank=False)

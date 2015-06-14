@@ -97,8 +97,7 @@ def handle_new_purchase(request, **kwargs):
 
     if payment_type == PaymentTypeName.PAYU.value:
         redirect_link = payment_req_info['redirectLink']
-        payment_link = _handle_payu_payment(user, request.META['REMOTE_ADDR'], price_total, purchase, redirect_link)
-        purchase.payu_payment_link = payment_link
+        _handle_payu_payment(user, request.META['REMOTE_ADDR'], price_total, purchase, redirect_link)
     elif payment_type == PaymentTypeName.TRANSFER.value:
         purchase.notes = 'To pay net: {}, total: {}'.format(price_net, price_total)
         purchase.payu_payment = None
@@ -199,11 +198,13 @@ def _handle_payu_payment(user, ip_address, price_total, purchase, redirect_link)
     payu_product = PayUProduct(purchase.product.name, price_total, 1)
     promo_code = purchase.promo_code and purchase.promo_code.code or ''
     payment_id, follow = DjangoPayU.create_payu_payment(
-        buyer, payu_product,
-        'Purchase: {}, product: {}, promo code: {}'.format(purchase.id, purchase.product.id, promo_code), redirect_link)
+        buyer,
+        payu_product,
+        'Purchase: {}, product: {}, promo code: {}'.format(purchase.id, purchase.product.id, promo_code),
+        redirect_link
+    )
     purchase.payu_payment = PayuPayment.objects.get(payment_id=payment_id)
-    purchase.save()
-    return follow
+    purchase.payu_payment_link = follow
 
 
 def build_purchase_response(purchase):

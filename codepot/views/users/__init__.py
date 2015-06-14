@@ -23,6 +23,10 @@ def _compare_ids_and_raise_exception_if_different(endpoint_id, user_id):
 @api_view(['GET', ])
 @permission_classes((IsAuthenticated,))
 @transaction.atomic()
+# TODO checking payment status for PayU
+# TODO checking payment status for TRANSFER
+# TODO invoice generation
+# TODO setting payment status
 def get_user_purchase(request, **kwargs):
     user = request.user
     user_id = kwargs['user_id']
