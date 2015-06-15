@@ -2,6 +2,7 @@ from celery import shared_task
 from django.core.mail import send_mail as d_send_mail
 from django.db import transaction
 from django_payu.helpers import PaymentStatus as PayUPaymentStatus
+from python_ifirma.core import iFirmaAPI
 
 from codepot.logging import logger
 from codepot.models import (
@@ -9,6 +10,7 @@ from codepot.models import (
     PaymentStatusName,
 )
 
+_ifirma_client = iFirmaAPI('', '', '')
 
 @shared_task
 def send_mail(to, title, message):
@@ -40,6 +42,11 @@ def check_payment_status():
             purchase.save()
 
     return None
+
+
+@shared_task()
+def generate_and_send_invoice():
+    logger.info('Generating and sending invoices.')
 
 @shared_task
 def add(x, y):
