@@ -17,6 +17,7 @@ docker run \
 docker rm -f codepot-backend-development-celery
 docker run \
     -d \
+    --link codepot-postgres:postgres \
     --link codepot-redis:redis \
     --env-file=environment \
     -v `pwd`:/app \

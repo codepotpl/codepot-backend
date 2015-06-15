@@ -1,7 +1,7 @@
 import os
 
+from celery.schedules import crontab
 from getenv import env
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -205,6 +205,13 @@ CELERY_IMPORTS = ('celerytq.tasks',)
 CELERY_RESULT_BACKEND = BROKER_URL
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+CELERYBEAT_SCHEDULE = {
+    'every-3-minutes-check-payment-status': {
+        'task': 'celerytq.tasks.check_payment_status',
+        'schedule': crontab(minute='*/3'),
+    },
+}
 
 # PayU
 DJANGO_PAYU_BASE_URL = env('CDPT_DJANGO_PAYU_BASE_URL')
