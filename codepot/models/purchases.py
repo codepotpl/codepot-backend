@@ -37,9 +37,10 @@ class Purchase(models.Model):
     payment_type = models.CharField(max_length=64, choices=enum_to_model_choices(PaymentTypeName), blank=False)
     payment_status = models.CharField(max_length=32, choices=enum_to_model_choices(PaymentStatusName), blank=False,
                                       default=PaymentStatusName.PENDING.value)
-    amount = models.IntegerField(blank=False, default=0)
+    price_net = models.IntegerField(blank=False, default=0)
+    price_total = models.IntegerField(blank=False, default=0)
     payu_payment_link = models.URLField(max_length=4096, null=True, blank=True, default=None)
-    notes = models.TextField()
+    notes = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return 'Purchase {} / {}'.format(self.id, self.user.id)
@@ -51,6 +52,8 @@ class PurchaseInvoice(models.Model):
     no = models.CharField(max_length=256, blank=True, null=True)
     name = models.CharField(max_length=256, blank=False)
     street = models.CharField(max_length=256, blank=False)
+    city = models.CharField(max_length=256, blank=False)
     zip_code = models.CharField(max_length=256, blank=False)
     country = models.CharField(max_length=256, blank=False)
     tax_id = models.CharField(max_length=256, blank=False)
+    sent = models.BooleanField(default=False, blank=False)

@@ -42,6 +42,10 @@ make_purchase_req_schema = {
                     'minLength': 1,
                     'pattern': '^\d{2}-\d{3}$',
                 },
+                'city': {
+                    'type': 'string',
+                    'minLength': 1,
+                },
                 'taxId': {
                     'type': 'string',
                     'minLength': 1,
@@ -52,7 +56,7 @@ make_purchase_req_schema = {
                     'minLength': 1,
                 },
             },
-            'required': ['name', 'street', 'zipCode', 'taxId', 'country', ],
+            'required': ['name', 'street', 'zipCode', 'city', 'taxId', 'country', ],
             'additionalProperties': False,
         },
     },

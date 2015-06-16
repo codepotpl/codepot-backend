@@ -175,6 +175,7 @@ class NewPurchaseTest(TestCase):
             'name': 'Name',
             'street': 'Street',
             'zipCode': '00-000',
+            'city': 'City',
             'country': 'Country',
             'taxId': '0123456789',
         }
@@ -194,6 +195,7 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(purchase_invoice.street, invoice['street'])
         self.assertEqual(purchase_invoice.tax_id, invoice['taxId'])
         self.assertEqual(purchase_invoice.zip_code, invoice['zipCode'])
+        self.assertEqual(purchase_invoice.city, invoice['city'])
         self.assertEqual(purchase_invoice.country, invoice['country'])
         self.assertEqual(purchase.payment_type, PaymentTypeName.PAYU.value)
         self.assertEqual(purchase.payment_status, PaymentStatusName.PENDING.value)
@@ -324,6 +326,7 @@ class NewPurchaseTest(TestCase):
             'name': 'Name',
             'street': 'Street',
             'zipCode': '00-000',
+            'city': 'City',
             'country': 'Country',
             'taxId': '0123456789',
         }
@@ -352,6 +355,7 @@ class NewPurchaseTest(TestCase):
             'name': 'Name',
             'street': 'Street',
             'zipCode': '00-000',
+            'city': 'City',
             'country': 'Country',
             'taxId': '0123456789',
         }
@@ -463,8 +467,9 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(transfer_data['title'], 'Codepot: {}'.format(purchase.id))
         self.assertEqual(resp_data['purchaseId'], purchase.id)
         self.assertEqual(resp_data['paymentType'], purchase.payment_type)
-        self.assertEqual(resp_data['amount'], purchase.amount)
-        self.assertEqual(resp_data['amount'], self.product.price_net * (1 + self.product.price_vat))
+        self.assertEqual(resp_data['priceNet'], purchase.price_net)
+        self.assertEqual(resp_data['priceTotal'], purchase.price_total)
+        self.assertEqual(resp_data['priceTotal'], self.product.price_net * (1 + self.product.price_vat))
 
         self.assertEqual(purchase.payment_status, PaymentStatusName.PENDING.value)
 
@@ -490,8 +495,8 @@ class NewPurchaseTest(TestCase):
         self.assertIsNotNone(payment_link)
         self.assertEqual(resp_data['purchaseId'], purchase.id)
         self.assertEqual(resp_data['paymentType'], purchase.payment_type)
-        self.assertEqual(resp_data['amount'], purchase.amount)
-        self.assertEqual(resp_data['amount'], self.product.price_net * (1 + self.product.price_vat))
+        self.assertEqual(resp_data['priceNet'], purchase.price_net)
+        self.assertEqual(resp_data['priceTotal'], self.product.price_net * (1 + self.product.price_vat))
 
         self.assertEqual(Purchase.objects.get().payment_status, PaymentStatusName.PENDING.value)
 

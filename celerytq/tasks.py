@@ -1,16 +1,24 @@
+from getenv import env
 from celery import shared_task
 from django.core.mail import send_mail as d_send_mail
 from django.db import transaction
 from django_payu.helpers import PaymentStatus as PayUPaymentStatus
-from python_ifirma.core import iFirmaAPI
+from python_ifirma.core import (
+    iFirmaAPI,
+    Client as iFirmaClient,
+    Address as iFirmaAddress,
+    Position as iFirmaItem,
+    NewInvoiceParams as iFirmaInvoiceParams,
+    VAT, )
 
 from codepot.logging import logger
 from codepot.models import (
     Purchase,
     PaymentStatusName,
 )
+from codepot.models.purchases import PurchaseInvoice
 
-_ifirma_client = iFirmaAPI('', '', '')
+_ifirma_client = iFirmaAPI('$DEMO254449', env('CDPT_IFIRMA_INVOICE_KEY'), env('CDPT_IFIRMA_USER_KEY'))
 
 @shared_task
 def send_mail(to, title, message):
@@ -23,6 +31,7 @@ def check_payment_status():
     logger.info('Checking payment status.')
     with transaction.atomic():
         pending_purchases = Purchase.objects.filter(payment_status=PaymentStatusName.PENDING.value)
+        logger.info('Found: {} pending payments.'.format(pending_purchases.count()))
         for purchase in pending_purchases:
             purchase_id = purchase.id
             logger.info('Checking payment status for purchase: {}, current payment status: {}'.format(
@@ -48,6 +57,46 @@ def check_payment_status():
 def generate_and_send_invoice():
     logger.info('Generating and sending invoices.')
 
-@shared_task
-def add(x, y):
-    return x + y
+    unsent_invoices = PurchaseInvoice.objects.filter(
+        sent=False,
+        purchase__payment_status=PaymentStatusName.SUCCESS.value
+    )
+    logger.info('Found: {} unsent invoices.'.format(unsent_invoices.count()))
+
+    for invoice in unsent_invoices:
+        with transaction.atomic():
+            try:
+
+                purchase = invoice.purchase
+                logger.info('Generating invoice for purchase: {}'.format(purchase.id))
+
+                client = iFirmaClient(
+                    invoice.name,
+                    invoice.tax_id,
+                    iFirmaAddress(
+                        invoice.city,
+                        invoice.zip_code,
+                        invoice.street,
+                        invoice.country,
+                    )
+                )
+                position = iFirmaItem(
+                    VAT.VAT_23,
+                    1,
+                    purchase.amount,
+                    u"Bilet wstępu na warsztaty codepot.pl: {}".format(purchase.id),
+                    "szt."
+                )
+                ifirma_invoice = iFirmaInvoiceParams(client, [position])
+                invoice_id = _ifirma_client.generate_invoice(ifirma_invoice)
+
+                invoice.sent = True
+                invoice.save()
+
+            except Exception as e:
+                logger.error('Error while generating invoice for purchase: {}, err: {}.'.format(purchase.id, str(e)))
+
+# TODO invoice generation
+# TODO celery shutting down - screen  - supiervisord
+# TODO integracja z PayU
+# TODO mailing

@@ -14,7 +14,6 @@ from rest_framework.decorators import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
-
 from django.conf import settings
 
 from codepot.logging import logger
@@ -93,7 +92,8 @@ def handle_new_purchase(request, **kwargs):
         _set_invoice_data(purchase, invoice)
 
     (price_net, price_total) = _calculate_price(user, product, discount)
-    purchase.amount = price_total
+    purchase.price_net = price_net
+    purchase.price_total = price_total
 
     if payment_type == PaymentTypeName.PAYU.value:
         redirect_link = payment_req_info['redirectLink']
@@ -175,6 +175,7 @@ def _set_invoice_data(purchase, invoice):
     purchase_invoice.name = invoice['name']
     purchase_invoice.street = invoice['street']
     purchase_invoice.zip_code = invoice['zipCode']
+    purchase_invoice.city = invoice['city']
     purchase_invoice.country = invoice['country']
     purchase_invoice.tax_id = invoice['taxId']
     purchase_invoice.purchase = purchase
@@ -217,7 +218,8 @@ def build_purchase_response(purchase):
         'paymentType': purchase.payment_type,
         'paymentStatus': purchase.payment_status,
         'paymentInfo': _prepare_payment_info(purchase),
-        'amount': purchase.amount,
+        'priceNet': purchase.price_net,
+        'priceTotal': purchase.price_total,
     }
 
 
@@ -227,6 +229,7 @@ def _get_purchase_invoice_data_or_none(purchase):
         return {
             'name': invoice.name,
             'street': invoice.street,
+            'city': invoice.city,
             'zipCode': invoice.zip_code,
             'country': invoice.country,
             'taxId': invoice.tax_id,
