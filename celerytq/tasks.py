@@ -45,6 +45,7 @@ def check_payment_status():
                 purchase.payment_status = PaymentStatusName.SUCCESS.value
             elif payu_payment_status.lower() == PayUPaymentStatus.STATUS_FAILED:
                 purchase.payment_status = PaymentStatusName.FAILED.value
+                #TODO mailing o failu
 
             logger.info('New purchase status: {}, purchase: {}'.format(purchase.payment_status, purchase_id))
 
@@ -83,20 +84,21 @@ def generate_and_send_invoice():
                 position = iFirmaItem(
                     VAT.VAT_23,
                     1,
-                    purchase.amount,
+                    purchase.price_net,
                     u"Bilet wstępu na warsztaty codepot.pl: {}".format(purchase.id),
                     "szt."
                 )
                 ifirma_invoice = iFirmaInvoiceParams(client, [position])
                 invoice_id = _ifirma_client.generate_invoice(ifirma_invoice)
+                # TODO PDF
+                # TODO email sending
 
+                invoice.ifirma_id = invoice_id
                 invoice.sent = True
                 invoice.save()
 
             except Exception as e:
                 logger.error('Error while generating invoice for purchase: {}, err: {}.'.format(purchase.id, str(e)))
 
-# TODO invoice generation
-# TODO celery shutting down - screen  - supiervisord
 # TODO integracja z PayU
-# TODO mailing
+# TODO celery shutting down - screen  - supiervisord

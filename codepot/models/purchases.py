@@ -56,4 +56,5 @@ class PurchaseInvoice(models.Model):
     zip_code = models.CharField(max_length=256, blank=False)
     country = models.CharField(max_length=256, blank=False)
     tax_id = models.CharField(max_length=256, blank=False)
+    ifirma_id = models.CharField(max_length=256, blank=True, null=True)
     sent = models.BooleanField(default=False, blank=False)
