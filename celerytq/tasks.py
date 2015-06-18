@@ -17,14 +17,9 @@ from codepot.models import (
     PaymentStatusName,
 )
 from codepot.models.purchases import PurchaseInvoice
+from codepot.utils import get_rendered_template
 
-_ifirma_client = iFirmaAPI('$DEMO254449', env('CDPT_IFIRMA_INVOICE_KEY'), env('CDPT_IFIRMA_USER_KEY'))
-
-@shared_task
-def send_mail(to, title, message):
-    logger.info('Sending email to: {}, title: {}, message: {}'.format(to, title, message))
-    return d_send_mail(title, message, 'donotreply@codepot.pl', [to])
-
+_ifirma_client = iFirmaAPI(env('CDPT_IFIRMA_USER'), env('CDPT_IFIRMA_INVOICE_KEY'), env('CDPT_IFIRMA_USER_KEY'))
 
 @shared_task
 def check_payment_status():
@@ -45,14 +40,20 @@ def check_payment_status():
                 purchase.payment_status = PaymentStatusName.SUCCESS.value
             elif payu_payment_status.lower() == PayUPaymentStatus.STATUS_FAILED:
                 purchase.payment_status = PaymentStatusName.FAILED.value
-                #TODO mailing o failu
-
+                __send_payu_failed_notification_email(purchase.user.email, purchase.user.first_name, purchase_id)
             logger.info('New purchase status: {}, purchase: {}'.format(purchase.payment_status, purchase_id))
 
             purchase.save()
 
     return None
 
+
+def __send_payu_failed_notification_email(email, name, purchase_id):
+    send_mail.delay(
+        email,
+        'Payment failed',
+        get_rendered_template('mail/payu_failed', {'name': name, 'purchase_id': purchase_id})
+    )
 
 @shared_task()
 def generate_and_send_invoice():
@@ -89,16 +90,26 @@ def generate_and_send_invoice():
                     "szt."
                 )
                 ifirma_invoice = iFirmaInvoiceParams(client, [position])
-                invoice_id = _ifirma_client.generate_invoice(ifirma_invoice)
+                ifirma_invoice_id = _ifirma_client.generate_invoice(ifirma_invoice)
+                print(ifirma_invoice_id)
+                ifirma_invoice_pdf = _ifirma_client.get_invoice_pdf(ifirma_invoice_id)
+                open('filename', 'wb').write(ifirma_invoice_pdf.read())
                 # TODO PDF
                 # TODO email sending
 
-                invoice.ifirma_id = invoice_id
+                invoice.ifirma_id = ifirma_invoice_id
                 invoice.sent = True
-                invoice.save()
 
+                invoice.save()
             except Exception as e:
                 logger.error('Error while generating invoice for purchase: {}, err: {}.'.format(purchase.id, str(e)))
+                continue
+
+
+@shared_task
+def send_mail(to, title, message):
+    logger.info('Sending email to: {}, title: {}, message: {}'.format(to, title, message))
+    return d_send_mail(title, message, 'donotreply@codepot.pl', [to])
 
 # TODO integracja z PayU
 # TODO celery shutting down - screen  - supiervisord
