@@ -210,7 +210,8 @@ def _handle_payu_payment(user, ip_address, price_total, purchase, redirect_link)
 
 def build_purchase_response(purchase):
     return {
-        'purchaseId': purchase.id,
+        'purchase': {
+        'id': purchase.id,
         'promoCode': purchase.promo_code and purchase.promo_code.code or None,
         'created': purchase.created,
         'product': purchase.product.id,
@@ -220,6 +221,7 @@ def build_purchase_response(purchase):
         'paymentInfo': _prepare_payment_info(purchase),
         'priceNet': purchase.price_net,
         'priceTotal': purchase.price_total,
+        }
     }
 
 

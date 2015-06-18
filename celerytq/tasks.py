@@ -1,6 +1,8 @@
 from getenv import env
 from celery import shared_task
-from django.core.mail import send_mail as d_send_mail
+from django.core.mail import (
+    EmailMessage,
+)
 from django.db import transaction
 from django_payu.helpers import PaymentStatus as PayUPaymentStatus
 from python_ifirma.core import (
@@ -9,14 +11,15 @@ from python_ifirma.core import (
     Address as iFirmaAddress,
     Position as iFirmaItem,
     NewInvoiceParams as iFirmaInvoiceParams,
-    VAT, )
+    VAT,
+)
 
 from codepot.logging import logger
 from codepot.models import (
     Purchase,
+    PurchaseInvoice,
     PaymentStatusName,
 )
-from codepot.models.purchases import PurchaseInvoice
 from codepot.utils import get_rendered_template
 
 _ifirma_client = iFirmaAPI(env('CDPT_IFIRMA_USER'), env('CDPT_IFIRMA_INVOICE_KEY'), env('CDPT_IFIRMA_USER_KEY'))
@@ -25,12 +28,16 @@ _ifirma_client = iFirmaAPI(env('CDPT_IFIRMA_USER'), env('CDPT_IFIRMA_INVOICE_KEY
 def check_payment_status():
     logger.info('Checking payment status.')
     with transaction.atomic():
+
         pending_purchases = Purchase.objects.filter(payment_status=PaymentStatusName.PENDING.value)
         logger.info('Found: {} pending payments.'.format(pending_purchases.count()))
+
         for purchase in pending_purchases:
+
             purchase_id = purchase.id
             logger.info('Checking payment status for purchase: {}, current payment status: {}'.format(
-                purchase_id, purchase.payment_status))
+                purchase_id, purchase.payment_status
+            ))
             payu_payment = purchase.payu_payment
             payu_payment_status = payu_payment.payment_status
 
@@ -40,7 +47,7 @@ def check_payment_status():
                 purchase.payment_status = PaymentStatusName.SUCCESS.value
             elif payu_payment_status.lower() == PayUPaymentStatus.STATUS_FAILED:
                 purchase.payment_status = PaymentStatusName.FAILED.value
-                __send_payu_failed_notification_email(purchase.user.email, purchase.user.first_name, purchase_id)
+
             logger.info('New purchase status: {}, purchase: {}'.format(purchase.payment_status, purchase_id))
 
             purchase.save()
@@ -48,12 +55,32 @@ def check_payment_status():
     return None
 
 
-def __send_payu_failed_notification_email(email, name, purchase_id):
-    send_mail.delay(
-        email,
-        'Payment failed',
-        get_rendered_template('mail/payu_failed', {'name': name, 'purchase_id': purchase_id})
-    )
+@shared_task
+def send_payment_notification():
+    logger.info('Sending payment notification')
+
+    with transaction.atomic():
+        finished_purchases = Purchase.objects.filter(
+            payment_status__in=[PaymentStatusName.SUCCESS.value, PaymentStatusName.FAILED.value],
+            confirmation_sent=False
+        )
+        logger.info('Found: {} finished payments.'.format(finished_purchases.count()))
+
+        for purchase in finished_purchases:
+            completed = purchase.payment_status == PaymentStatusName.SUCCESS.value
+            subject = 'Purchase completed' if completed else 'Purchase failed'
+            user = purchase.user
+            template = 'completed' if completed else 'failed'
+
+            send_mail.delay(
+                user.email,
+                subject,
+                get_rendered_template('mail/purchase/{}'.format(template),
+                                      {'name': user.first_name, 'purchase_id': purchase.id})
+            )
+
+            purchase.confirmation_sent = True
+            purchase.save()
 
 @shared_task()
 def generate_and_send_invoice():
@@ -61,8 +88,10 @@ def generate_and_send_invoice():
 
     unsent_invoices = PurchaseInvoice.objects.filter(
         sent=False,
-        purchase__payment_status=PaymentStatusName.SUCCESS.value
+        purchase__payment_status=PaymentStatusName.SUCCESS.value,
+        purchase__confirmation_sent=True
     )
+
     logger.info('Found: {} unsent invoices.'.format(unsent_invoices.count()))
 
     for invoice in unsent_invoices:
@@ -91,12 +120,19 @@ def generate_and_send_invoice():
                 )
                 ifirma_invoice = iFirmaInvoiceParams(client, [position])
                 ifirma_invoice_id = _ifirma_client.generate_invoice(ifirma_invoice)
-                print(ifirma_invoice_id)
                 ifirma_invoice_pdf = _ifirma_client.get_invoice_pdf(ifirma_invoice_id)
-                open('filename', 'wb').write(ifirma_invoice_pdf.read())
-                # TODO PDF
-                # TODO email sending
 
+                send_mail(
+                    purchase.user.email,
+                    'Payment completed',
+                    get_rendered_template(
+                        'mail/purchase/invoice',
+                        {'name': purchase.user.first_name, 'purchase_id': purchase.id}
+                    ),
+                    ['tickets@codepot.pl'],
+                    ('{}.pdf'.format(ifirma_invoice_id), ifirma_invoice_pdf.getvalue(), 'application/pdf')
+                    # TODO numer faktury, nie jej ID
+                )
                 invoice.ifirma_id = ifirma_invoice_id
                 invoice.sent = True
 
@@ -107,9 +143,28 @@ def generate_and_send_invoice():
 
 
 @shared_task
-def send_mail(to, title, message):
-    logger.info('Sending email to: {}, title: {}, message: {}'.format(to, title, message))
-    return d_send_mail(title, message, 'donotreply@codepot.pl', [to])
+def send_mail(to, title, message, bcc=None, attachment=[]):
+    '''
+    :param to:
+    :param title:
+    :param message:
+    :param bcc:
+    :param attachment: (filename, content, mimetype)
+    :return:
+    '''
+    logger.info('Sending email to: {}, title: {}, message: {}, bcc: {}, attachment: {}'.format(to, title, message, bcc,
+                                                                                               bool(attachment)))
+    email = EmailMessage(
+        subject=title,
+        body=message,
+        from_email='donotreply@codepot.pl',
+        to=[to],
+        bcc=bcc,
+        attachments=attachment and [attachment] or []
+    )
+    email.send()
 
 # TODO integracja z PayU
+# TODO kasa w groszach
+# TODO numer faktury, nie jej ID
 # TODO celery shutting down - screen  - supiervisord

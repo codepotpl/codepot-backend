@@ -1,8 +1,0 @@
-Hi {{ name }}!
-
-Unfortunately your PayU payment has failed. Please contact us at tickets@codepot.pl.
-
-Your purchase ID is: {{ purchase_id }}.
-
-Kind regards,
-The Codepot Team

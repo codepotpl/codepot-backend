@@ -41,6 +41,8 @@ class Purchase(models.Model):
     price_total = models.IntegerField(blank=False, default=0)
     payu_payment_link = models.URLField(max_length=4096, null=True, blank=True, default=None)
     notes = models.TextField(blank=True, null=True)
+    fake = models.BooleanField(default=False)
+    confirmation_sent = models.BooleanField(default=False)
 
     def __str__(self):
         return 'Purchase {} / {}'.format(self.id, self.user.id)

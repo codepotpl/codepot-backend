@@ -215,6 +215,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'celerytq.tasks.check_payment_status',
         'schedule': crontab(minute='*/3'),
     },
+    'every-3-minutes-send-payment-notification': {
+        'task': 'celerytq.tasks.send_payment_notification',
+        'schedule': crontab(minute='*/3'),
+    },
     'every-5-generate-and-send-invoice': {
         'task': 'celerytq.tasks.generate_and_send_invoice',
         'schedule': crontab(minute='*/5'),
