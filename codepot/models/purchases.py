@@ -25,6 +25,7 @@ class PaymentStatusName(Enum):
     PENDING = 'PENDING'
     SUCCESS = 'SUCCESS'
     FAILED = 'FAILED'
+    STARTED = 'STARTED'  # PayU dedicated only
 
 
 class Purchase(models.Model):
