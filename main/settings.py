@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from celery.schedules import crontab
 from getenv import env
@@ -211,17 +212,17 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 CELERYBEAT_SCHEDULE = {
-    'every-3-minutes-check-payment-status': {
+    'every-5-seconds-check-payment-status': {
         'task': 'celerytq.tasks.check_payment_status',
-        'schedule': crontab(minute='*/3'),
+        'schedule': timedelta(seconds=5),
     },
-    'every-3-minutes-send-payment-notification': {
+    'every-15-seconds-send-payment-notification': {
         'task': 'celerytq.tasks.send_payment_notification',
-        'schedule': crontab(minute='*/3'),
+        'schedule': timedelta(seconds=15),
     },
-    'every-5-generate-and-send-invoice': {
+    'every-3-generate-and-send-invoice': {
         'task': 'celerytq.tasks.generate_and_send_invoice',
-        'schedule': crontab(minute='*/5'),
+        'schedule': crontab(minute='*/3'),
     },
 }
 
