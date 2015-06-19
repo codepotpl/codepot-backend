@@ -15,7 +15,7 @@ celery:
     - redis
   environment:
     - C_FORCE_ROOT=true
-  command: celeryd -A main.celery.app worker -B -E --loglevel=DEBUG
+  command: celery worker -A main.celery.app -B -E --loglevel=DEBUG
 
 postgres:
   image: postgres:9.4.1
