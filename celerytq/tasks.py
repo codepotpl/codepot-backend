@@ -47,7 +47,7 @@ def check_payment_status():
                 purchase.payment_status = PaymentStatusName.SUCCESS.value
             elif payu_payment_status.lower() == PayUPaymentStatus.STATUS_FAILED:
                 purchase.payment_status = PaymentStatusName.FAILED.value
-            elif payu_payment_status.lower() == PayUPaymentStatus.STATUS_STARTED.value:
+            elif payu_payment_status.lower() == PayUPaymentStatus.STATUS_STARTED:
                 purchase.payment_status = PaymentStatusName.STARTED.value
 
             logger.info('New purchase status: {}, purchase: {}'.format(purchase.payment_status, purchase_id))
