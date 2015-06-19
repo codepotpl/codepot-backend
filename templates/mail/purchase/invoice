@@ -1,0 +1,8 @@
+Hi {{ name }}!
+
+Your invoice for codepot.pl ticket is enclosed to this email.
+
+Your purchase ID: {{ purchase_id }}
+
+Kind regards,
+The Codepot Team

@@ -1,0 +1,10 @@
+Hi {{ name }}!
+
+Unfortunately your purchase has failed.
+
+Please contact us at: tickets@codepot.pl
+
+Your purchase ID: {{ purchase_id }}
+
+Kind regards,
+The Codepot Team

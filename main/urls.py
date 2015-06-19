@@ -15,4 +15,10 @@ api_patterns = patterns(
     '',
     url(r'^api/', include('codepot.urls', namespace='codepot')),
 )
-urlpatterns = admin_patterns + api_patterns
+
+django_payu_patterns = patterns(
+    '',
+    url(r'^django_payu/', include('django_payu.urls')),
+)
+
+urlpatterns = admin_patterns + api_patterns + django_payu_patterns

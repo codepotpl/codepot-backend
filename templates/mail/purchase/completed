@@ -1,0 +1,12 @@
+Hi {{ name }}!
+
+Your purchase has been completed, see you at codepot.pl!
+
+In case of any problems, please contact us at tickets@codepot.pl
+
+Invoice, if requested, will be attached to an another email.
+
+Your purchase ID: {{ purchase_id }}
+
+Kind regards,
+The Codepot Team

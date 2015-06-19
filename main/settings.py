@@ -1,7 +1,7 @@
 import os
 
+from celery.schedules import crontab
 from getenv import env
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -11,7 +11,14 @@ REQUIRED_ENVIRONMENT_VARIABLES = [
     'CDPT_MAILGUN_USER',
     'CDPT_MAILGUN_PASS',
     'CDPT_ADMIN_PASS',
+    'CDPT_DJANGO_PAYU_BASE_URL',
+    'CDPT_DJANGO_PAYU_POS_ID',
+    'CDPT_DJANGO_PAYU_POS_AUTHORIZATION_KEY',
+    'CDPT_IFIRMA_USER',
+    'CDPT_IFIRMA_INVOICE_KEY',
+    'CDPT_IFIRMA_USER_KEY',
 ]
+
 MISSING_ENVIRONMENT_VARIABLES = []
 for e in REQUIRED_ENVIRONMENT_VARIABLES:
     if not env(e, required=False):
@@ -50,6 +57,7 @@ INSTALLED_THIRD_PARTY_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'django_payu',
 )
 
 INSTALLED_HOME_GROWN_APPS = (
@@ -70,6 +78,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'codepot.middleware.DisableCSRF',
+    'django_payu.middleware.DjangoPayExceptionsMiddleware',
 )
 
 # Disable https forcing on development environment
@@ -157,7 +166,6 @@ NOSE_ARGS = [
 ]
 
 
-# TODO
 # http://www.webforefront.com/django/setupdjangologging.html
 LOGGING = {
     'version': 1,
@@ -201,6 +209,34 @@ CELERY_IMPORTS = ('celerytq.tasks',)
 CELERY_RESULT_BACKEND = BROKER_URL
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+CELERYBEAT_SCHEDULE = {
+    'every-3-minutes-check-payment-status': {
+        'task': 'celerytq.tasks.check_payment_status',
+        'schedule': crontab(minute='*/3'),
+    },
+    'every-3-minutes-send-payment-notification': {
+        'task': 'celerytq.tasks.send_payment_notification',
+        'schedule': crontab(minute='*/3'),
+    },
+    'every-5-generate-and-send-invoice': {
+        'task': 'celerytq.tasks.generate_and_send_invoice',
+        'schedule': crontab(minute='*/5'),
+    },
+}
+
+# PayU
+DJANGO_PAYU_BASE_URL = env('CDPT_DJANGO_PAYU_BASE_URL')
+DJANGO_PAYU_POS_ID = env('CDPT_DJANGO_PAYU_POS_ID')
+DJANGO_PAYU_POS_AUTHORIZATION_KEY = env('CDPT_DJANGO_PAYU_POS_AUTHORIZATION_KEY')
+
+# MCE bank account data
+MCE_BANK_ACCOUNT = {
+    'accountNo': '81109028510000000122488798',
+    'street': 'Osowska 23/6',
+    'zipCode': '04-302',
+    'city': 'Warszawa',
+}
 
 print('Current environment: {}'.format(env('CDPT_ENVIRONMENT')))
 print('Base dir: {}'.format(BASE_DIR))

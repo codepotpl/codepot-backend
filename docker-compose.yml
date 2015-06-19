@@ -11,10 +11,11 @@ celery:
   build: .
   env_file: environment
   links:
+    - postgres
     - redis
   environment:
     - C_FORCE_ROOT=true
-  command: celery -A main.celery.app worker -B -E --loglevel=DEBUG
+  command: celeryd -A main.celery.app worker -B -E --loglevel=DEBUG
 
 postgres:
   image: postgres:9.4.1

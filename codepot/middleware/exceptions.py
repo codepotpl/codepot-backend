@@ -1,10 +1,11 @@
+from rest_framework.exceptions import NotAuthenticated, AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_401_UNAUTHORIZED,
     HTTP_409_CONFLICT,
     HTTP_500_INTERNAL_SERVER_ERROR,
-    HTTP_403_FORBIDDEN)
+    HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND)
 
 from codepot.logging import logger
 from codepot.views.auth.exceptions import (
@@ -13,13 +14,24 @@ from codepot.views.auth.exceptions import (
     UserNotFoundException,
     InvalidPasswordException,
     LoginFailedException,
+    InvalidUserIdException,
 )
 from codepot.views.exceptions import (
     ParseException,
     BadRequestException,
     ForbiddenException,
 )
-
+from codepot.views.promo_codes.exceptions import PromoCodeNotFoundException
+from codepot.views.purchases.exceptions import (
+    UserPurchaseNotFoundException,
+    PromoCodeForPurchaseNotFoundException,
+    PromoCodeForPurchaseNotActiveException,
+    PromoCodeForPurchaseHasExceededUsageLimit,
+    UserAlreadyHasPurchaseException,
+    ProductNotFoundException,
+    ProductInactiveException,
+    InvalidPaymentInfoException,
+)
 
 _CODE_TO_EXCEPTION = {
     HTTP_400_BAD_REQUEST: [
@@ -30,13 +42,27 @@ _CODE_TO_EXCEPTION = {
     HTTP_401_UNAUTHORIZED: [
         UserNotFoundException,
         InvalidPasswordException,
+        NotAuthenticated,
+        AuthenticationFailed,
     ],
     HTTP_403_FORBIDDEN: [
         ForbiddenException,
+        InvalidUserIdException,
+    ],
+    HTTP_404_NOT_FOUND: [
+        PromoCodeNotFoundException,
+        UserPurchaseNotFoundException,
     ],
     HTTP_409_CONFLICT: [
         EmailAddressAlreadyUsedException,
         LoginFailedException,
+        PromoCodeForPurchaseNotFoundException,
+        PromoCodeForPurchaseNotActiveException,
+        PromoCodeForPurchaseHasExceededUsageLimit,
+        UserAlreadyHasPurchaseException,
+        ProductNotFoundException,
+        ProductInactiveException,
+        InvalidPaymentInfoException,
     ],
 }
 

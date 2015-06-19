@@ -27,4 +27,9 @@ class InvalidPasswordException(AuthException):
 
 class LoginFailedException(AuthException):
     def __init__(self):
-        super().__init__('Incorrect username or password', 104)
+        super().__init__('Incorrect username or password.', 104)
+
+
+class InvalidUserIdException(AuthException):
+    def __init__(self):
+        super().__init__('Invalid user ID exception.', 105)
