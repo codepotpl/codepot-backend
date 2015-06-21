@@ -11,7 +11,7 @@ from django_payu.helpers import ErrorMessages, BadParamValueException, PaymentSt
 
 @csrf_exempt
 @require_POST
-@require_JSON
+# @require_JSON
 def payu_notify(request):
     body = request.body
     print("LOL {}".format(body))
