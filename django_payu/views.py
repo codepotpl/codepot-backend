@@ -14,6 +14,7 @@ from django_payu.helpers import ErrorMessages, BadParamValueException, PaymentSt
 @require_JSON
 def payu_notify(request):
     body = request.body
+    print("LOL {}".format(body))
     Logger.i("PayU notification body: {}".format(body.decode("utf-8")))
     data = json.loads(body.decode("utf-8"))
     if "order" not in data:
