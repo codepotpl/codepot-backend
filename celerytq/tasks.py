@@ -125,7 +125,7 @@ def generate_and_send_invoice():
                     "szt."
                 )
                 ifirma_invoice = iFirmaInvoiceParams(client, [position])
-                ifirma_invoice_id = _ifirma_client.generate_invoice(ifirma_invoice)
+                (ifirma_invoice_id, ifirma_invoice_no) = _ifirma_client.generate_invoice(ifirma_invoice)
                 ifirma_invoice_pdf = _ifirma_client.get_invoice_pdf(ifirma_invoice_id)
 
                 send_mail(
@@ -136,10 +136,10 @@ def generate_and_send_invoice():
                         {'name': purchase.user.first_name, 'purchase_id': purchase.id}
                     ),
                     ['tickets@codepot.pl'],
-                    ('{}.pdf'.format(ifirma_invoice_id), ifirma_invoice_pdf.getvalue(), 'application/pdf')
-                    # TODO numer faktury, nie jej ID
+                    ('{}.pdf'.format(ifirma_invoice_no), ifirma_invoice_pdf.getvalue(), 'application/pdf')
                 )
                 invoice.ifirma_id = ifirma_invoice_id
+                invoice.no = ifirma_invoice_no
                 invoice.sent = True
 
                 invoice.save()

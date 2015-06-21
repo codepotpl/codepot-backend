@@ -230,6 +230,7 @@ CELERYBEAT_SCHEDULE = {
 DJANGO_PAYU_BASE_URL = env('CDPT_DJANGO_PAYU_BASE_URL')
 DJANGO_PAYU_POS_ID = env('CDPT_DJANGO_PAYU_POS_ID')
 DJANGO_PAYU_POS_AUTHORIZATION_KEY = env('CDPT_DJANGO_PAYU_POS_AUTHORIZATION_KEY')
+DJANGO_PAYU_LOG_FILE = os.path.join(os.path.abspath(os.path.join(BASE_DIR, os.pardir)), 'log', 'codepot-payu.log'),
 
 # MCE bank account data
 MCE_BANK_ACCOUNT = {
