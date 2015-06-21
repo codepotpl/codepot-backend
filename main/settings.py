@@ -212,8 +212,8 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 CELERYBEAT_SCHEDULE = {
-    'every-5-seconds-check-payment-status': {
-        'task': 'celerytq.tasks.check_payment_status',
+    'every-5-seconds-check-payu-payment-status': {
+        'task': 'celerytq.tasks.check_payu_payment_status',
         'schedule': timedelta(seconds=5),
     },
     'every-15-seconds-send-payment-notification': {

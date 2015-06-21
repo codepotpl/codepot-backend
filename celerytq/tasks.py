@@ -20,16 +20,20 @@ from codepot.models import (
     PurchaseInvoice,
     PaymentStatusName,
 )
+from codepot.models.purchases import PaymentTypeName
 from codepot.utils import get_rendered_template
 
 _ifirma_client = iFirmaAPI(env('CDPT_IFIRMA_USER'), env('CDPT_IFIRMA_INVOICE_KEY'), env('CDPT_IFIRMA_USER_KEY'))
 
 @shared_task
-def check_payment_status():
+def check_payu_payment_status():
     logger.info('Checking payment status.')
     with transaction.atomic():
 
-        pending_purchases = Purchase.objects.filter(payment_status=PaymentStatusName.PENDING.value)
+        pending_purchases = Purchase.objects.filter(
+            payment_status=PaymentStatusName.PENDING.value,
+            payment_type=PaymentTypeName.PAYU.value
+        )
         logger.info('Found: {} pending payments.'.format(pending_purchases.count()))
 
         for purchase in pending_purchases:
