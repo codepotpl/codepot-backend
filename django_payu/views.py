@@ -15,6 +15,9 @@ from django_payu.helpers import ErrorMessages, BadParamValueException, PaymentSt
 def payu_notify(request):
     body = request.body
     print("LOL {}".format(body))
+    for h, v in request.META.items():
+        if h.startswith('HTTP_'):
+            print("H: {}, V: {}".format(h, v))
     Logger.i("PayU notification body: {}".format(body.decode("utf-8")))
     data = json.loads(body.decode("utf-8"))
     if "order" not in data:
