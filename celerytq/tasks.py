@@ -4,7 +4,6 @@ from django.core.mail import (
     EmailMessage,
 )
 from django.db import transaction
-from django_payu.helpers import PaymentStatus as PayUPaymentStatus
 from python_ifirma.core import (
     iFirmaAPI,
     Client as iFirmaClient,
@@ -14,6 +13,7 @@ from python_ifirma.core import (
     VAT,
 )
 
+from django_payu.helpers import PaymentStatus as PayUPaymentStatus
 from codepot.logging import logger
 from codepot.models import (
     Purchase,
@@ -31,7 +31,7 @@ def check_payu_payment_status():
     with transaction.atomic():
 
         pending_purchases = Purchase.objects.filter(
-            payment_status=PaymentStatusName.PENDING.value,
+            payment_status__in=[PaymentStatusName.PENDING.value, PaymentStatusName.STARTED.value],
             payment_type=PaymentTypeName.PAYU.value
         )
         logger.info('Found: {} pending payments.'.format(pending_purchases.count()))
@@ -120,7 +120,7 @@ def generate_and_send_invoice():
                 position = iFirmaItem(
                     VAT.VAT_23,
                     1,
-                    purchase.price_net,
+                    float("{0:.2f}".format(purchase.price_total / 100.0)),
                     u"Bilet wstępu na warsztaty codepot.pl: {}".format(purchase.id),
                     "szt."
                 )
