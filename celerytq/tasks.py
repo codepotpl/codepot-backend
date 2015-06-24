@@ -169,8 +169,3 @@ def send_mail(to, title, message, bcc=None, attachment=[]):
         attachments=attachment and [attachment] or []
     )
     email.send()
-
-# TODO integracja z PayU
-# TODO kasa w groszach
-# TODO numer faktury, nie jej ID
-# TODO celery shutting down - screen  - supiervisord
