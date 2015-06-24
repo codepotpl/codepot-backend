@@ -4,6 +4,9 @@ import string
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
+from django.db import transaction
 
 from codepot import (
     create_hash,
@@ -47,6 +50,14 @@ class Purchase(models.Model):
 
     def __str__(self):
         return 'Purchase {} / {}'.format(self.id, self.user.id)
+
+
+@receiver(post_delete, sender=Purchase)
+def decrement_tickets_sold_counter_on_purchase_deletion(sender, instance, **kwargs):
+    with transaction.atomic():
+        price_tier = instance.product.price_tier
+        price_tier.tickets_purchased -= 1
+        price_tier.save()
 
 
 class PurchaseInvoice(models.Model):

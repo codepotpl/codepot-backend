@@ -8,6 +8,7 @@ from codepot.models import (
     Ticket,
     PriceTier,
     Product,
+    AppSettings,
 )
 
 @admin.register(PromoCode)
@@ -50,4 +51,12 @@ class ProductAdmin(admin.ModelAdmin):
         'price_tier',
         'price_net',
         'price_vat',
+    )
+
+
+@admin.register(AppSettings)
+class AppSettingsAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'value',
     )

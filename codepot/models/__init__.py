@@ -15,3 +15,7 @@ from .tickets import (
 
 from .products import Product
 from .prices import PriceTier
+from .app_settings import (
+    AppSettings,
+    AppSettingName,
+)

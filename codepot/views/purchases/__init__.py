@@ -1,11 +1,5 @@
 from django.db import transaction
 from django.utils import timezone
-from django_payu.core import (
-    Buyer,
-    Product as PayUProduct,
-    DjangoPayU,
-)
-from django_payu.models import PayuPayment
 from rest_framework.decorators import (
     api_view,
     permission_classes,
@@ -16,6 +10,13 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 from django.conf import settings
 
+from codepot.exceptions import RegistrationClosedException
+from django_payu.core import (
+    Buyer,
+    Product as PayUProduct,
+    DjangoPayU,
+)
+from django_payu.models import PayuPayment
 from codepot.logging import logger
 from codepot.models import (
     PromoCode,
@@ -24,6 +25,7 @@ from codepot.models import (
     PaymentTypeName,
     PaymentStatusName,
     Product,
+    AppSettings,
 )
 from codepot.views import parser_class_for_schema
 from codepot.views.purchases import purchases_json_schema
@@ -43,6 +45,8 @@ from codepot.views.purchases.exceptions import (
 @parser_classes((parser_class_for_schema(purchases_json_schema.make_purchase_req_schema),))
 @transaction.atomic()
 def handle_new_purchase(request, **kwargs):
+    _check_if_registration_open()
+
     user = request.user
 
     _check_if_user_has_purchase(user)
@@ -105,6 +109,11 @@ def handle_new_purchase(request, **kwargs):
     purchase.save()
 
     return Response(build_purchase_response(purchase), HTTP_201_CREATED)
+
+
+def _check_if_registration_open():
+    if not AppSettings.objects.is_registration_open():
+        raise RegistrationClosedException()
 
 def _check_if_user_has_purchase(user):
     try:
