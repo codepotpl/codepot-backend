@@ -5,8 +5,9 @@ from rest_framework.status import (
     HTTP_401_UNAUTHORIZED,
     HTTP_409_CONFLICT,
     HTTP_500_INTERNAL_SERVER_ERROR,
-    HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND)
+    HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND, HTTP_410_GONE)
 
+from codepot.exceptions import RegistrationClosedException
 from codepot.logging import logger
 from codepot.views.auth.exceptions import (
     EmailAddressAlreadyUsedException,
@@ -64,6 +65,9 @@ _CODE_TO_EXCEPTION = {
         ProductInactiveException,
         InvalidPaymentInfoException,
     ],
+    HTTP_410_GONE: [
+        RegistrationClosedException,
+    ]
 }
 
 

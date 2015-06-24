@@ -42,3 +42,4 @@ class ProductInactiveException(PurchaseException):
 class InvalidPaymentInfoException(PurchaseException):
     def __init__(self, message):
         super().__init__(message, 307)
+

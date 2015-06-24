@@ -10,6 +10,7 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_409_CONFLICT,
     HTTP_201_CREATED,
+    HTTP_410_GONE,
 )
 from rest_framework.test import APIClient
 
@@ -22,6 +23,8 @@ from codepot.models import (
     PaymentTypeName,
     Product,
     PaymentStatusName,
+    AppSettings,
+    AppSettingName,
 )
 
 
@@ -111,6 +114,24 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
         self.assertEqual(resp.data['code'], 306)
         self.assertEqual(resp.data['detail'], 'Product for ID: {} is not active.'.format(product.id))
+
+    def test_if_exception_raised_when_registration_closed(self):
+        payload = {
+            'promoCode': None,
+            'invoice': None,
+            'productId': 'random',
+            'paymentType': PaymentTypeName.TRANSFER.value,
+            'paymentInfo': None,
+        }
+        open = AppSettings.objects.get(name=AppSettingName.CDPT_REGISTRATION_OPEN.value)
+        open.value = False
+        open.save()
+
+        resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
+
+        self.assertEqual(resp.status_code, HTTP_410_GONE)
+        self.assertEqual(resp.data['code'], 400)
+        self.assertEqual(resp.data['detail'], 'Registration closed')
 
     def test_if_no_new_objects_created_when_exception_occurs(self):
         Purchase.objects.create(user=self.user, product=self.product)
