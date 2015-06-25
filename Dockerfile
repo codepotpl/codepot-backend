@@ -1,13 +1,13 @@
 FROM python:3.4.3-slim
 
-RUN ["apt-get", "update", "--fix-missing"]
-RUN ["pip", "install", "--upgrade", "pip"]
-RUN ["apt-get", "install", "-y", "build-essential"]
-RUN ["apt-get", "install", "-y", "python3.4-dev"]
-RUN ["apt-get", "install", "-y", "libpq-dev"]
-RUN ["apt-get", "install", "-y", "git"]
-RUN ["apt-get", "install", "-y", "libreadline-dev"]
-RUN ["apt-get", "install", "-y", "libncurses5-dev"]
+RUN apt-get update --fix-missing && \
+    apt-get install -y build-essential && \
+    apt-get install -y python3.4-dev && \
+    apt-get install -y libpq-dev && \
+    apt-get install -y git && \
+    apt-get install -y libreadline-dev && \
+    apt-get install -y libncurses5-dev && \
+    pip install --upgrade pip
 
 ADD requirements.txt /app/requirements.txt
 WORKDIR /app
