@@ -1,7 +1,7 @@
 from getenv import env
 from celery import shared_task
 from django.core.mail import (
-    EmailMessage,
+    EmailMultiAlternatives,
 )
 from django.db import transaction
 from python_ifirma.core import (
@@ -81,7 +81,9 @@ def send_payment_notification():
             send_mail.delay(
                 user.email,
                 subject,
-                get_rendered_template('mail/purchase/{}'.format(template),
+                get_rendered_template('mail/purchase/{}.txt'.format(template),
+                                      {'name': user.first_name, 'purchase_id': purchase.id}),
+                get_rendered_template('mail/purchase/{}.html'.format(template),
                                       {'name': user.first_name, 'purchase_id': purchase.id})
             )
 
@@ -132,7 +134,11 @@ def generate_and_send_invoice():
                     purchase.user.email,
                     'Payment completed',
                     get_rendered_template(
-                        'mail/purchase/invoice',
+                        'mail/purchase/invoice.txt',
+                        {'name': purchase.user.first_name, 'purchase_id': purchase.id}
+                    ),
+                    get_rendered_template(
+                        'mail/purchase/invoice.html',
                         {'name': purchase.user.first_name, 'purchase_id': purchase.id}
                     ),
                     ['tickets@codepot.pl'],
@@ -149,18 +155,19 @@ def generate_and_send_invoice():
 
 
 @shared_task
-def send_mail(to, title, message, bcc=None, attachment=[]):
+def send_mail(to, title, messageTXT, messageHTML, bcc=None, attachment=[]):
     '''
     :param to:
     :param title:
-    :param message:
+    :param messageTXT:
+    :param messageHTML:
     :param bcc:
     :param attachment: (filename, content, mimetype)
     :return:
     '''
-    logger.info('Sending email to: {}, title: {}, message: {}, bcc: {}, attachment: {}'.format(to, title, message, bcc,
+    logger.info('Sending email to: {}, title: {}, messageTXT: {}, messageHTML: {}, bcc: {}, attachment: {}'.format(to, title, messageTXT, messageHTML, bcc,
                                                                                                bool(attachment)))
-    email = EmailMessage(
+    email = EmailMultiAlternatives(
         subject=title,
         body=message,
         from_email='donotreply@codepot.pl',
@@ -168,4 +175,5 @@ def send_mail(to, title, message, bcc=None, attachment=[]):
         bcc=bcc,
         attachments=attachment and [attachment] or []
     )
+    email.attach_alternative(messageHTML, "text/html")
     email.send()
