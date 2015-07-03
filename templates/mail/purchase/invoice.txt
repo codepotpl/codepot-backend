@@ -4,5 +4,9 @@ Your invoice for codepot.pl ticket is enclosed to this email.
 
 Your purchase ID: {{ purchase_id }}
 
+--
 Kind regards,
 The Codepot Team
+http://codepot.pl
+http://twitter.com/codepot_pl
+http://www.facebook.com/codepotpl
