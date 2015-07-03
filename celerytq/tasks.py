@@ -169,7 +169,7 @@ def send_mail(to, title, messageTXT, messageHTML, bcc=None, attachment=[]):
                                                                                                bool(attachment)))
     email = EmailMultiAlternatives(
         subject=title,
-        body=message,
+        body=messageTXT,
         from_email='donotreply@codepot.pl',
         to=[to],
         bcc=bcc,
