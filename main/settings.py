@@ -221,7 +221,7 @@ CELERYBEAT_SCHEDULE = {
         'task': 'celerytq.tasks.send_payment_notification',
         'schedule': timedelta(seconds=15),
     },
-    'every-3-generate-and-send-invoice': {
+    'every-3-minutes-generate-and-send-invoice': {
         'task': 'celerytq.tasks.generate_and_send_invoice',
         'schedule': crontab(minute='*/3'),
     },
