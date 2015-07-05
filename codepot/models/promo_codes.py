@@ -18,6 +18,9 @@ def _promo_code_value():
 class PromoCodeClassification(models.Model):
     name = models.CharField(max_length=128, null=False, blank=False, unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class PromoCode(models.Model):
     code = models.CharField(primary_key=True, max_length=6, default=_promo_code_value)
