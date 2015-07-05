@@ -13,7 +13,6 @@ from codepot.models import Product
 
 
 @api_view(['GET', ])
-@permission_classes((IsAuthenticated,))
 def get_prices(request, **kwargs):
     products = Product.objects.all()
     now = timezone.now()
