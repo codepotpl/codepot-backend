@@ -12,7 +12,7 @@ docker run \
     --name codepot-redis \
     -v `pwd`/redis-data:/data \
     -d \
-    redis:3.0.0
+    codepot-redis
 
 docker rm -f codepot-backend-development-celery
 docker run \
