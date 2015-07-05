@@ -240,7 +240,7 @@ class NewPurchaseTest(TestCase):
 
     def test_response_when_non_existing_promo_code_used(self):
         payload = {
-            'promoCode': '123456',
+            'promoCode': '1234567890',
             'invoice': None,
             'productId': self.product.id,
             'paymentType': PaymentTypeName.PAYU.value,
@@ -250,7 +250,7 @@ class NewPurchaseTest(TestCase):
         resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
         self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
         self.assertEqual(resp.data['code'], 301)
-        self.assertEqual(resp.data['detail'], 'Given promo code: 123456, does not exist.')
+        self.assertEqual(resp.data['detail'], 'Given promo code: 1234567890, does not exist.')
 
         self.assertEqual(Purchase.objects.count(), 0)
 

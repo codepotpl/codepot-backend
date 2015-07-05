@@ -4,7 +4,8 @@ import string
 from django.core.validators import (
     MinValueValidator,
     MaxValueValidator,
-)
+    MinLengthValidator)
+
 from django.db import models
 
 from codepot import create_hash
@@ -23,7 +24,8 @@ class PromoCodeClassification(models.Model):
 
 
 class PromoCode(models.Model):
-    code = models.CharField(primary_key=True, max_length=20, default=_promo_code_value)
+    code = models.CharField(primary_key=True, max_length=10, validators=[MinLengthValidator(10)],
+                            default=_promo_code_value)
     usage_limit = models.IntegerField(default=1, validators=[MinValueValidator(0)], null=False, blank=False)
     active = models.BooleanField(default=True)
     discount = models.IntegerField(default=10, validators=[MinValueValidator(0), MaxValueValidator(100)],
