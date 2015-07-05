@@ -7,7 +7,7 @@ make_purchase_req_schema = {
         'promoCode': {
             'type': ['string', 'null', ],
             'minLength': 1,
-            'pattern': '^[A-Z0-9]{6}$',
+            'pattern': '^[A-Z0-9]{,20}$',
         },
         'productId': {
             'type': 'string',
