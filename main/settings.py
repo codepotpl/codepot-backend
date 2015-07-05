@@ -83,7 +83,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 # Disable https forcing on development environment
-SSLIFY_DISABLE = env('CDPT_ENVIRONMENT') == 'DEVELOPMENT'
+SSLIFY_DISABLE = env('CDPT_ENVIRONMENT') == 'staging'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 REST_FRAMEWORK = {
