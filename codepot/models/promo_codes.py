@@ -12,7 +12,7 @@ from codepot.logging import logger
 
 
 def _promo_code_value():
-    return create_hash(6, char_set=string.ascii_uppercase + string.digits)
+    return create_hash(10, char_set=string.ascii_uppercase + string.digits)
 
 
 class PromoCodeClassification(models.Model):
@@ -23,7 +23,7 @@ class PromoCodeClassification(models.Model):
 
 
 class PromoCode(models.Model):
-    code = models.CharField(primary_key=True, max_length=6, default=_promo_code_value)
+    code = models.CharField(primary_key=True, max_length=20, default=_promo_code_value)
     usage_limit = models.IntegerField(default=1, validators=[MinValueValidator(0)], null=False, blank=False)
     active = models.BooleanField(default=True)
     discount = models.IntegerField(default=10, validators=[MinValueValidator(0), MaxValueValidator(100)],
