@@ -13,7 +13,14 @@ from codepot.models import (
 
 @admin.register(PromoCode)
 class PromoCodeAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        'code',
+        'usage_limit',
+        'discount',
+        'active',
+        'classification',
+        'sent',
+    )
 
 
 @admin.register(Purchase)
