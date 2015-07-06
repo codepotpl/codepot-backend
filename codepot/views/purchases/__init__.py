@@ -10,7 +10,10 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 from django.conf import settings
 
-from codepot.exceptions import RegistrationClosedException
+from codepot.exceptions import (
+    RegistrationClosedException,
+    TicketsLimitExceededException,
+)
 from django_payu.core import (
     Buyer,
     Product as PayUProduct,
@@ -46,6 +49,7 @@ from codepot.views.purchases.exceptions import (
 @transaction.atomic()
 def handle_new_purchase(request, **kwargs):
     _check_if_registration_open()
+    _check_if_tickets_limit_exceeded()
 
     user = request.user
 
@@ -114,6 +118,11 @@ def handle_new_purchase(request, **kwargs):
 def _check_if_registration_open():
     if not AppSettings.objects.is_registration_open():
         raise RegistrationClosedException()
+
+
+def _check_if_tickets_limit_exceeded():
+    if Purchase.objects.count() >= 350:
+        raise TicketsLimitExceededException()
 
 def _check_if_user_has_purchase(user):
     try:
