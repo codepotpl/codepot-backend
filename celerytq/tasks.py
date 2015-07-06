@@ -84,7 +84,8 @@ def send_payment_notification():
                 get_rendered_template('mail/purchase/{}.txt'.format(template),
                                       {'name': user.first_name, 'purchase_id': purchase.id}),
                 get_rendered_template('mail/purchase/{}.html'.format(template),
-                                      {'name': user.first_name, 'purchase_id': purchase.id})
+                                      {'name': user.first_name, 'purchase_id': purchase.id}),
+                ['tickets@codepot.pl']
             )
 
             purchase.confirmation_sent = True

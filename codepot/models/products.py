@@ -9,3 +9,6 @@ class Product(models.Model):
     price_tier = models.ForeignKey('codepot.PriceTier', blank=False)
     price_net = models.IntegerField(blank=False)
     price_vat = models.FloatField(default=.23)
+
+    def __str__(self):
+        return '{}/{}'.format(self.name, self.id)
