@@ -25,7 +25,16 @@ class PromoCodeAdmin(admin.ModelAdmin):
 
 @admin.register(Purchase)
 class PurchaseAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        'id',
+        'user',
+        'promo_code',
+        'payment_type',
+        'payment_status',
+        'product',
+        'confirmation_sent',
+        'fake',
+    )
 
 @admin.register(PurchaseInvoice)
 class PurchaseInvoiceAdmin(admin.ModelAdmin):

@@ -1,4 +1,5 @@
 from unittest.case import TestCase
+from django.utils import unittest
 
 from python_ifirma.core import Client, iFirmaAPI, NewInvoiceParams, Position, VAT, Address
 from python_ifirma import exceptions
@@ -104,6 +105,7 @@ class TestCreateInvoice(TestCase):
 
         self.position = Position(VAT.VAT_23, 1, 1000, "nazwa", "szt")
 
+    @unittest.skip
     def test_generate_invoice(self):
         invoice = NewInvoiceParams(self.client, [self.position])
         self.assertIsNotNone(self.ifirma_client.generate_invoice(invoice))
@@ -115,6 +117,7 @@ class TestCreateInvoice(TestCase):
             invoice = NewInvoiceParams(self.client, [bad_position])
             self.ifirma_client.generate_invoice(invoice)
 
+    @unittest.skip
     def test_download_invoice(self):
         invoice = NewInvoiceParams(self.client, [self.position])
         invoice_id, invoice_number = self.ifirma_client.generate_invoice(invoice)
