@@ -4,6 +4,7 @@ from django.core.mail import (
     EmailMultiAlternatives,
 )
 from django.db import transaction
+
 from python_ifirma.core import (
     iFirmaAPI,
     Client as iFirmaClient,
@@ -12,7 +13,6 @@ from python_ifirma.core import (
     NewInvoiceParams as iFirmaInvoiceParams,
     VAT,
 )
-
 from django_payu.helpers import PaymentStatus as PayUPaymentStatus
 from codepot.logging import logger
 from codepot.models import (
@@ -74,7 +74,8 @@ def send_payment_notification():
 
         for purchase in finished_purchases:
             completed = purchase.payment_status == PaymentStatusName.SUCCESS.value
-            subject = 'Purchase completed' if completed else 'Purchase failed'
+            subject = 'Purchase completed [{}]'.format(purchase.id) if completed else 'Purchase failed [{}]'.format(
+                purchase.id)
             user = purchase.user
             template = 'completed' if completed else 'failed'
 
@@ -133,7 +134,7 @@ def generate_and_send_invoice():
 
                 send_mail(
                     purchase.user.email,
-                    'Payment completed',
+                    'Payment completed [{}]'.format(purchase.id),
                     get_rendered_template(
                         'mail/purchase/invoice.txt',
                         {'name': purchase.user.first_name, 'purchase_id': purchase.id}
