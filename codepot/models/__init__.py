@@ -23,6 +23,9 @@ from .workshops import (
     WorkshopTag,
     Workshop,
     WorkshopMessage,
-    WorkshopMentor,
-    WorkshopAttendee,
+)
+
+from .timeslots import (
+    TimeSlotTierDayName,
+    TimeSlotTier,
 )

@@ -12,9 +12,9 @@ from codepot.models import (
     Workshop,
     WorkshopTag,
     WorkshopMessage,
-    WorkshopMentor,
-    WorkshopAttendee,
+    TimeSlotTier,
 )
+
 
 @admin.register(PromoCode)
 class PromoCodeAdmin(admin.ModelAdmin):
@@ -95,21 +95,14 @@ class WorkshopMessageAdmin(admin.ModelAdmin):
     pass  # TODO workshop title / message id
 
 
-@admin.register(WorkshopMentor)
-class WorkshopMentorAdmin(admin.ModelAdmin):
+@admin.register(TimeSlotTier)
+class TimeSlotTierAdmin(admin.ModelAdmin):
     list_display = (
-        'workshop',
-        'mentor',
+        'id',
+        'day',
+        'date_from',
+        'date_to',
     )
-
-
-@admin.register(WorkshopAttendee)
-class WorkshopAttendeeAdmin(admin.ModelAdmin):
-    list_display = (
-        'workshop',
-        'attendee',
-    )
-
 
 @admin.register(AppSettings)
 class AppSettingsAdmin(admin.ModelAdmin):

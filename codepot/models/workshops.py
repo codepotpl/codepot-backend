@@ -2,11 +2,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from codepot import create_hash
-
-
-def _primary_key():
-    return create_hash(10)
+from codepot import primary_key
 
 
 class WorkshopTag(models.Model):
@@ -17,45 +13,27 @@ class WorkshopTag(models.Model):
 
 
 class Workshop(models.Model):
-    id = models.CharField(primary_key=True, max_length=32, default=_primary_key)
+    id = models.CharField(primary_key=True, max_length=32, default=primary_key)
     title = models.CharField(max_length=512, blank=False)
     description = models.TextField(blank=False)
+    tags = models.ManyToManyField('codepot.WorkshopTag')
+    mentors = models.ManyToManyField(User, related_name='mentors')
+    attendees = models.ManyToManyField(User, related_name='attendees')
     max_attendees = models.IntegerField(default=50, validators=[MinValueValidator(0)], blank=False)
-    tags = models.ManyToManyField(WorkshopTag)
+    room_no = models.IntegerField(validators=[MinValueValidator(0)])
+    timeslots = models.ManyToManyField('codepot.TimeSlotTier')
 
     def __str__(self):
         return self.title
 
 
 class WorkshopMessage(models.Model):
-    id = models.CharField(primary_key=True, max_length=32, default=_primary_key)
-    workshop = models.ForeignKey(Workshop)
+    id = models.CharField(primary_key=True, max_length=32, default=primary_key)
+    workshop = models.ForeignKey('codepot.Workshop')
     message = models.TextField(blank=False)
 
     def __str__(self):
         return '{} / {}'.format(self.workshop.title, self.id)
-
-
-class WorkshopMentor(models.Model):
-    mentor = models.ForeignKey(User)
-    workshop = models.ForeignKey(Workshop)
-
-    class Meta:
-        unique_together = ('mentor', 'workshop',)
-
-    def __str__(self):
-        return '{} / {} / {}'.format(self.workshop, self.mentor, self.id)
-
-
-class WorkshopAttendee(models.Model):
-    attendee = models.ForeignKey(User)
-    workshop = models.ForeignKey(Workshop)
-
-    class Meta:
-        unique_together = ('attendee', 'workshop',)
-
-    def __str__(self):
-        return '{} / {}'.format(self.workshop, self.attendee)
 
 #TODO mentor can't attend to own workshop
 #TODO no one can sign for single workshop more than once
