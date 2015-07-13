@@ -36,6 +36,7 @@ from codepot.views.purchases.exceptions import (
     ProductInactiveException,
     InvalidPaymentInfoException,
 )
+from codepot.views.workshops.exceptions import IllegalWorkshopAttendee
 
 _CODE_TO_EXCEPTION = {
     HTTP_400_BAD_REQUEST: [
@@ -67,6 +68,7 @@ _CODE_TO_EXCEPTION = {
         ProductNotFoundException,
         ProductInactiveException,
         InvalidPaymentInfoException,
+        IllegalWorkshopAttendee,
     ],
     HTTP_410_GONE: [
         RegistrationClosedException,

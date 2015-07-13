@@ -9,6 +9,11 @@ from codepot.models import (
     PriceTier,
     Product,
     AppSettings,
+    Workshop,
+    WorkshopTag,
+    WorkshopMessage,
+    WorkshopMentor,
+    WorkshopAttendee,
 )
 
 @admin.register(PromoCode)
@@ -67,6 +72,42 @@ class ProductAdmin(admin.ModelAdmin):
         'price_tier',
         'price_net',
         'price_vat',
+    )
+
+
+@admin.register(Workshop)
+class WorkshopAdmin(admin.ModelAdmin):
+    list_display = (
+        'title',
+        'max_attendees',
+    )
+
+
+@admin.register(WorkshopTag)
+class WorkshopTagAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+    )
+
+
+@admin.register(WorkshopMessage)
+class WorkshopMessageAdmin(admin.ModelAdmin):
+    pass  # TODO workshop title / message id
+
+
+@admin.register(WorkshopMentor)
+class WorkshopMentorAdmin(admin.ModelAdmin):
+    list_display = (
+        'workshop',
+        'mentor',
+    )
+
+
+@admin.register(WorkshopAttendee)
+class WorkshopAttendeeAdmin(admin.ModelAdmin):
+    list_display = (
+        'workshop',
+        'attendee',
     )
 
 

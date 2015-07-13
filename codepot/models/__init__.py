@@ -19,3 +19,10 @@ from .app_settings import (
     AppSettings,
     AppSettingName,
 )
+from .workshops import (
+    WorkshopTag,
+    Workshop,
+    WorkshopMessage,
+    WorkshopMentor,
+    WorkshopAttendee,
+)
