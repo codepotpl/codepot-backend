@@ -28,4 +28,5 @@ from .workshops import (
 from .timeslots import (
     TimeSlotTierDayName,
     TimeSlotTier,
+    TimeSlot,
 )

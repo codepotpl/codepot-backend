@@ -20,8 +20,6 @@ class Workshop(models.Model):
     mentors = models.ManyToManyField(User, related_name='mentors')
     attendees = models.ManyToManyField(User, related_name='attendees')
     max_attendees = models.IntegerField(default=50, validators=[MinValueValidator(0)], blank=False)
-    room_no = models.IntegerField(validators=[MinValueValidator(0)])
-    timeslots = models.ManyToManyField('codepot.TimeSlotTier')
 
     def __str__(self):
         return self.title

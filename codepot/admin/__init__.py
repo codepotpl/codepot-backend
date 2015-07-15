@@ -13,8 +13,8 @@ from codepot.models import (
     WorkshopTag,
     WorkshopMessage,
     TimeSlotTier,
+    TimeSlot,
 )
-
 
 @admin.register(PromoCode)
 class PromoCodeAdmin(admin.ModelAdmin):
@@ -103,6 +103,17 @@ class TimeSlotTierAdmin(admin.ModelAdmin):
         'date_from',
         'date_to',
     )
+
+
+@admin.register(TimeSlot)
+class TimeSlotAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'room_no',
+        'timeslot_tier',
+        'workshop',
+    )
+
 
 @admin.register(AppSettings)
 class AppSettingsAdmin(admin.ModelAdmin):
