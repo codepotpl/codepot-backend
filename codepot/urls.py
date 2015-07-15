@@ -8,6 +8,7 @@ from codepot.views import (
     promo_codes as promo_codes_views,
     prices as prices_views,
     users as users_views,
+    workshops as workshops_views,
 )
 
 auth_patterns = patterns(
@@ -36,9 +37,15 @@ user_patterns = patterns(
     url(r'^users/(?P<user_id>.+)/purchase/$', users_views.get_user_purchase)
 )
 
+workshops_patterns = patterns(
+    '',
+    url(r'^workshops/$', workshops_views.get_workshops)
+)
+
 urlpatterns = \
     auth_patterns + \
     purchase_patterns + \
     promo_codes_patterns + \
     tickets_patterns + \
-    user_patterns
+    user_patterns + \
+    workshops_patterns
