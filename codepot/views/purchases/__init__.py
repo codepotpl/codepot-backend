@@ -122,18 +122,21 @@ def _check_if_registration_open():
 
 def _check_if_tickets_limit_exceeded():
     all_purchases = _count_success_purchases()
+
     organizers_purchases = _count_organizers_purchases()
     volunteers_purchases = _count_volunteers_purchases()
     speakers_purchases = _count_speakers_purchases()
     sponsors_staff_purchases = _count_sponsors_staff_purchases()
     sum_excluded = sum([organizers_purchases, volunteers_purchases, speakers_purchases, sponsors_staff_purchases, ])
 
+    purchases_limit = settings.MAX_TICKETS
+
     logger.info(
         'Success purchases: {}, sum excluded: {}, free: {}'.format(all_purchases, sum_excluded,
-                                                                   all_purchases - sum_excluded)
+                                                                   purchases_limit - all_purchases + sum_excluded)
     )
 
-    if (all_purchases - sum_excluded) >= settings.MAX_TICKETS:
+    if (all_purchases - sum_excluded) >= purchases_limit:
         raise TicketsLimitExceededException()
 
 

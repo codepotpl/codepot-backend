@@ -187,7 +187,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': os.path.join(os.path.abspath(os.path.join(BASE_DIR, os.pardir)), 'log', 'codepot.log'),
-            'backupCount': 2,
+            'backupCount': 90,
             'formatter': 'verbose',
         },
     },
