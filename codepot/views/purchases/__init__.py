@@ -121,8 +121,44 @@ def _check_if_registration_open():
 
 
 def _check_if_tickets_limit_exceeded():
-    if Purchase.objects.count() >= 350:
+    all_purchases = _count_success_purchases()
+    organizers_purchases = _count_organizers_purchases()
+    volunteers_purchases = _count_volunteers_purchases()
+    speakers_purchases = _count_speakers_purchases()
+    sponsors_staff_purchases = _count_sponsors_staff_purchases()
+    sum_excluded = sum([organizers_purchases, volunteers_purchases, speakers_purchases, sponsors_staff_purchases, ])
+
+    logger.info(
+        'Success purchases: {}, sum excluded: {}, free: {}'.format(all_purchases, sum_excluded,
+                                                                   all_purchases - sum_excluded)
+    )
+
+    if (all_purchases - sum_excluded) >= settings.MAX_TICKETS:
         raise TicketsLimitExceededException()
+
+
+def _count_success_purchases():
+    return Purchase.objects.filter(payment_status=PaymentStatusName.SUCCESS.value).count()
+
+
+def _count_organizers_purchases():
+    return __count_purchases_for_promo_code_classification('organizers')
+
+
+def _count_volunteers_purchases():
+    return __count_purchases_for_promo_code_classification('volunteers')
+
+
+def _count_speakers_purchases():
+    return __count_purchases_for_promo_code_classification('speakers')
+
+
+def _count_sponsors_staff_purchases():
+    return __count_purchases_for_promo_code_classification('sponsors staff')
+
+
+def __count_purchases_for_promo_code_classification(classification):
+    return Purchase.objects.filter(promo_code__classification__name__istartswith=classification).count()
 
 def _check_if_user_has_purchase(user):
     try:
