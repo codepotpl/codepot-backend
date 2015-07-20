@@ -286,7 +286,7 @@ def _get_purchase_invoice_data_or_none(purchase):
         return None
 
 def _prepare_payment_info(purchase):
-    if purchase.payment_type == PaymentTypeName.FREE.value:
+    if purchase.payment_type in [PaymentTypeName.FREE.value, PaymentTypeName.GROUP.value]:
         return None
     elif purchase.payment_type == PaymentTypeName.PAYU.value:
         return {
