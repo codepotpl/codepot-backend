@@ -42,6 +42,7 @@ from codepot.views.purchases.exceptions import (
     InvalidPaymentInfoException,
 )
 
+
 @api_view(['POST', ])
 @permission_classes((IsAuthenticated,))
 @parser_classes((parser_class_for_schema(purchases_json_schema.make_purchase_req_schema),))
@@ -90,7 +91,9 @@ def handle_new_purchase(request, **kwargs):
 
         if discount == 100:
             logger.info('Found 100% discount for user: {} and promo code: {}'.format(user.id, code))
-            purchase.payment_type = PaymentTypeName.FREE.value
+            classification = promo_code.classification
+            is_group_purchase = classification and classification.name.startswith('group') or False
+            purchase.payment_type = is_group_purchase and PaymentTypeName.GROUP.value or PaymentTypeName.FREE.value
             purchase.payment_status = PaymentStatusName.SUCCESS.value
             purchase.save()
             return Response(build_purchase_response(purchase), HTTP_201_CREATED)
