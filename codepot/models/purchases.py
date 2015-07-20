@@ -22,6 +22,7 @@ class PaymentTypeName(Enum):
     PAYU = 'PAYU'
     TRANSFER = 'TRANSFER'
     FREE = 'FREE'
+    GROUP = 'GROUP'
 
 
 class PaymentStatusName(Enum):

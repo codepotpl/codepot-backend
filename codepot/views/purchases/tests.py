@@ -20,6 +20,7 @@ from codepot.models import (
     Ticket,
     PriceTier,
     PromoCode,
+    PromoCodeClassification,
     PaymentTypeName,
     Product,
     PaymentStatusName,
@@ -342,6 +343,26 @@ class NewPurchaseTest(TestCase):
         self.assertEqual(purchase.payment_type, PaymentTypeName.FREE.value)
         self.assertEqual(purchase.payment_status, PaymentStatusName.SUCCESS.value)
 
+    def test_if_GROUP_purchase_type_set_for_100_percent_discount_promo_code(self):
+        promo_code_classification = PromoCodeClassification.objects.create(name='group-lol')
+        promo_code = PromoCode.objects.create(discount=100, classification=promo_code_classification)
+
+        payload = {
+            'promoCode': promo_code.code,
+            'invoice': None,
+            'productId': self.product.id,
+            'paymentType': PaymentTypeName.PAYU.value,
+            'paymentInfo': {'redirectLink': 'link', },
+        }
+
+        self.client.post('/api/purchases/new/', payload, format=self.req_format)
+
+        self.assertEqual(Purchase.objects.count(), 1)
+        purchase = Purchase.objects.get()
+        self.assertEqual(purchase.payment_type, PaymentTypeName.GROUP.value)
+        self.assertEqual(purchase.payment_status, PaymentStatusName.SUCCESS.value)
+
+
     def test_in_invoice_is_skipped_for_100_percent_promo_code(self):
         promo_code = PromoCode.objects.create(discount=100)
         invoice = {
@@ -545,3 +566,4 @@ class NewPurchaseTest(TestCase):
         Ticket.objects.all().delete()
         User.objects.all().delete()
         PromoCode.objects.all().delete()
+        PromoCodeClassification.objects.all().delete()
