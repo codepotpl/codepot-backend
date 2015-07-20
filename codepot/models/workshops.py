@@ -32,7 +32,3 @@ class WorkshopMessage(models.Model):
 
     def __str__(self):
         return '{} / {}'.format(self.workshop.title, self.id)
-
-#TODO mentor can't attend to own workshop
-#TODO no one can sign for single workshop more than once
-#TODO it impossible to sign for two workshops in a single slot
