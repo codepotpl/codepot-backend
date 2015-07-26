@@ -5,4 +5,5 @@ from .messages import (
 )
 from .workshsops import (
   get_workshops,
+  get_workshop_attendees,
 )
