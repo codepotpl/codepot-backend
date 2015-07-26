@@ -106,3 +106,41 @@ workshops_list_res_schema = {
   'required': ['workshops', ],
   'additionalProperties': False,
 }
+
+workshop_message_req_schema = {
+  '$schema': 'http://json-schema.org/draft-04/schema',
+  'type': 'object',
+  'properties': {
+    'content': {
+      'type': 'string',
+      'minLength': 1,
+    },
+  },
+  'required': ['content', ],
+  'additionalProperties': False,
+}
+
+workshop_message_res_schema = {
+  '$schema': 'http://json-schema.org/draft-04/schema',
+  'type': 'object',
+  'properties': {
+    'id': {
+      'type': 'string',
+      'minLength': 1,
+    },
+    'author': {
+      'type': 'string',
+      'minLength': 1,
+    },
+    'content': {
+      'type': 'string',
+      'minLength': 1,
+    },
+    'created': {
+      'type': 'string',
+      'minLength': 1,
+    }
+  },
+  'required': ['id', 'author', 'created', 'content', ],
+  'additionalProperties': False,
+}

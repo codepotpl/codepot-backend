@@ -9,6 +9,7 @@ from rest_framework.status import (
     HTTP_404_NOT_FOUND,
     HTTP_410_GONE,
 )
+from jsonschema.exceptions import ValidationError as JSONValidationError
 
 from codepot.exceptions import (
     RegistrationClosedException,
@@ -50,6 +51,7 @@ _CODE_TO_EXCEPTION = {
         InvalidEmailAddressException,
         ParseException,
         BadRequestException,
+        JSONValidationError,
     ],
     HTTP_401_UNAUTHORIZED: [
         UserNotFoundException,
