@@ -8,7 +8,10 @@ from rest_framework.status import (
   HTTP_404_NOT_FOUND,
   HTTP_403_FORBIDDEN,
   HTTP_200_OK,
-  HTTP_400_BAD_REQUEST)
+  HTTP_400_BAD_REQUEST,
+  HTTP_204_NO_CONTENT,
+  HTTP_201_CREATED,
+)
 from rest_framework.test import APIClient
 
 from codepot.models import (
@@ -122,7 +125,7 @@ class WorkshopsMessagesTests(TestCase):
       body = {'content': 'New message: {}'.format(idx)}
       resp = self.client.post('/api/workshops/{}/messages/'.format(self.workshop.id), body, format=self.req_format)
 
-      self.assertEqual(resp.status_code, HTTP_200_OK)
+      self.assertEqual(resp.status_code, HTTP_201_CREATED)
 
       data = resp.data
 
@@ -149,6 +152,84 @@ class WorkshopsMessagesTests(TestCase):
       self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
 
     self.assertEqual(WorkshopMessage.objects.count(), 1)
+
+  def test_if_workshop_not_found_exception_raised_when_deleting_message(self):
+    self.assertEqual(WorkshopMessage.objects.count(), 1)
+
+    self.client.credentials(HTTP_AUTHORIZATION='Token {}'.format(self.attendee_token.key))
+    workshop_id = datetime.datetime.now()
+    resp = self.client.delete('/api/workshops/{}/messages/1/'.format(workshop_id), None, format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
+
+    data = resp.data
+    self.assertEqual(data['code'], 501)
+    self.assertEqual(data['detail'], 'Workshop with ID: {} not found'.format(workshop_id))
+
+    self.assertEqual(WorkshopMessage.objects.count(), 1)
+
+  def test_if_message_not_found_exception_raised_when_deleting_message(self):
+    self.assertEqual(WorkshopMessage.objects.count(), 1)
+
+    self.client.credentials(HTTP_AUTHORIZATION='Token {}'.format(self.attendee_token.key))
+    message_id = datetime.datetime.now()
+    resp = self.client.delete('/api/workshops/{}/messages/{}/'.format(self.workshop.id, message_id), None,
+                              format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
+
+    data = resp.data
+    self.assertEqual(data['code'], 503)
+    self.assertEqual(data['detail'], 'Workshop message with ID: {} not found'.format(message_id))
+
+    self.assertEqual(WorkshopMessage.objects.count(), 1)
+
+  def test_if_forbidden_exception_raised_when_not_author_nor_mentor_deletes_the_message(self):
+    self.assertEqual(WorkshopMessage.objects.count(), 1)
+
+
+    client = APIClient()
+    user = User.objects.create(username='u2', first_name='F', last_name='L')
+    token = Token.objects.create(user=user)
+    client.credentials(HTTP_AUTHORIZATION='Token {}'.format(token.key))
+
+    self.assertNotEqual(self.workshop_message.author, user)
+
+    resp = client.delete('/api/workshops/{}/messages/{}/'.format(self.workshop.id, self.workshop_message.id), None,
+                         format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_403_FORBIDDEN)
+
+    data = resp.data
+    self.assertEqual(data['code'], 502)
+    self.assertEqual(data['detail'], 'Only mentor or author can delete workshop message')
+
+    self.assertEqual(WorkshopMessage.objects.count(), 1)
+
+  def test_if_workshop_mentor_deletes_message(self):
+    self.assertEqual(WorkshopMessage.objects.count(), 1)
+
+    self.client.credentials(HTTP_AUTHORIZATION='Token {}'.format(self.mentor_token.key))
+    resp = self.client.delete('/api/workshops/{}/messages/{}/'.format(self.workshop.id, self.workshop_message.id), None,
+                              format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
+    self.assertIsNone(resp.data)
+
+    self.assertEqual(WorkshopMessage.objects.count(), 0)
+
+  def test_if_workshop_author_deletes_message(self):
+    self.assertEqual(WorkshopMessage.objects.count(), 1)
+    self.assertEqual(self.workshop_message.author, self.attendee)
+
+    self.client.credentials(HTTP_AUTHORIZATION='Token {}'.format(self.attendee_token.key))
+    resp = self.client.delete('/api/workshops/{}/messages/{}/'.format(self.workshop.id, self.workshop_message.id), None,
+                              format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
+    self.assertIsNone(resp.data)
+
+    self.assertEqual(WorkshopMessage.objects.count(), 0)
 
 
   def tearDown(self):

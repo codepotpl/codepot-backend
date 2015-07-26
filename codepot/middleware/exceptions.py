@@ -44,6 +44,7 @@ from codepot.views.workshops.exceptions import (
   IllegalWorkshopAttendee,
   WorkshopNotFoundException,
   WorkshopIllegalAccessException,
+  WorkshopMessageNotFoundException,
 )
 
 _CODE_TO_EXCEPTION = {
@@ -68,6 +69,7 @@ _CODE_TO_EXCEPTION = {
         PromoCodeNotFoundException,
         UserPurchaseNotFoundException,
       WorkshopNotFoundException,
+      WorkshopMessageNotFoundException,
     ],
     HTTP_409_CONFLICT: [
         EmailAddressAlreadyUsedException,

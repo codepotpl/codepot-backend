@@ -6,14 +6,21 @@ from rest_framework.decorators import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import (
+  HTTP_200_OK,
+  HTTP_204_NO_CONTENT,
+  HTTP_201_CREATED,
+)
 
 from .__utils import (
   find_workshop_for_id_or_raise,
+  find_message_for_id_or_raise,
   check_if_user_is_workshop_mentor_or_attendee,
 )
+from codepot.logging import logger
 from codepot.models.workshops import WorkshopMessage
 from codepot.views.workshops import workshops_json_schema
+from codepot.views.workshops.exceptions import WorkshopIllegalAccessException
 
 
 @api_view(['GET', 'POST', ])
@@ -68,12 +75,34 @@ def _create_new_message(workshop, user, payload):
         'created': message.created.isoformat(),
       },
     },
-    status=HTTP_200_OK
+    status=HTTP_201_CREATED
   )
 
 
 @api_view(['DELETE', ])
 @permission_classes((IsAuthenticated,))
 def delete_workshop_message(request, **kwargs):
-  return Response(
-    data={'method': request.method, 'workshopId': kwargs['workshop_id'], 'messageId': kwargs['message_id']})
+  workshop_id = kwargs['workshop_id']
+  find_workshop_for_id_or_raise(workshop_id)
+
+  message_id = kwargs['message_id']
+  message = find_message_for_id_or_raise(message_id)
+
+  user = request.user
+
+  _check_if_user_is_author_of_message_or_workshop_mentor(message, user)
+
+  logger.info('User with ID: {}, deletes messages with ID: {}'.format(user.id, message.id))
+
+  message.delete()
+
+  return Response(status=HTTP_204_NO_CONTENT)
+
+
+def _check_if_user_is_author_of_message_or_workshop_mentor(message, user):
+  author = message.author
+  mentors = message.workshop.mentors.all()
+
+  if (user != author) and (user not in mentors):
+    logger.error('User with ID: {} tried to delete message with ID: {}'.format(user.id, message.id))
+    raise WorkshopIllegalAccessException('Only mentor or author can delete workshop message')

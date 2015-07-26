@@ -18,3 +18,8 @@ class WorkshopNotFoundException(WorkshopException):
 class WorkshopIllegalAccessException(WorkshopException):
   def __init__(self, detail):
     super().__init__(detail, 502)
+
+
+class WorkshopMessageNotFoundException(WorkshopException):
+  def __init__(self, workshop_id=None):
+    super().__init__('Workshop message with ID: {} not found'.format(workshop_id), 503)
