@@ -5,7 +5,10 @@ from rest_framework.status import (
     HTTP_401_UNAUTHORIZED,
     HTTP_409_CONFLICT,
     HTTP_500_INTERNAL_SERVER_ERROR,
-    HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND, HTTP_410_GONE)
+    HTTP_403_FORBIDDEN,
+    HTTP_404_NOT_FOUND,
+    HTTP_410_GONE,
+)
 
 from codepot.exceptions import (
     RegistrationClosedException,
@@ -36,7 +39,11 @@ from codepot.views.purchases.exceptions import (
     ProductInactiveException,
     InvalidPaymentInfoException,
 )
-from codepot.views.workshops.exceptions import IllegalWorkshopAttendee
+from codepot.views.workshops.exceptions import (
+  IllegalWorkshopAttendee,
+  WorkshopNotFoundException,
+  WorkshopIllegalAccessException,
+)
 
 _CODE_TO_EXCEPTION = {
     HTTP_400_BAD_REQUEST: [
@@ -53,10 +60,12 @@ _CODE_TO_EXCEPTION = {
     HTTP_403_FORBIDDEN: [
         ForbiddenException,
         InvalidUserIdException,
+      WorkshopIllegalAccessException,
     ],
     HTTP_404_NOT_FOUND: [
         PromoCodeNotFoundException,
         UserPurchaseNotFoundException,
+      WorkshopNotFoundException,
     ],
     HTTP_409_CONFLICT: [
         EmailAddressAlreadyUsedException,

@@ -42,10 +42,17 @@ workshops_patterns = patterns(
     url(r'^workshops/$', workshops_views.get_workshops)
 )
 
+workshops_messages_patterns = patterns(
+  '',
+  url(r'^workshops/(?P<workshop_id>.+)/messages/$', workshops_views.list_or_create_workshop_message),
+  url(r'^workshops/(?P<workshop_id>.+)/messages/(?P<message_id>.+)/$', workshops_views.delete_workshop_message)
+)
+
 urlpatterns = \
     auth_patterns + \
     purchase_patterns + \
     promo_codes_patterns + \
     tickets_patterns + \
     user_patterns + \
-    workshops_patterns
+    workshops_patterns + \
+    workshops_messages_patterns
