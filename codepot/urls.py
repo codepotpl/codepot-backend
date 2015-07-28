@@ -34,7 +34,9 @@ tickets_patterns = patterns(
 
 user_patterns = patterns(
     '',
-    url(r'^users/(?P<user_id>.+)/purchase/$', users_views.get_user_purchase)
+    url(r'^users/(?P<user_id>.+)/purchase/$', users_views.get_user_purchase),
+    url(r'^users/(?P<user_id>.+)/workshops/$', workshops_views.list_user_workshops_or_sign_for_workshops),
+    url(r'^users/(?P<user_id>.+)/workshops/(?P<workshop_id>.+)/$', workshops_views.delete_user_workshop)
 )
 
 workshops_patterns = patterns(

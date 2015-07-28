@@ -23,3 +23,28 @@ class WorkshopIllegalAccessException(WorkshopException):
 class WorkshopMessageNotFoundException(WorkshopException):
   def __init__(self, workshop_id=None):
     super().__init__('Workshop message with ID: {} not found'.format(workshop_id), 503)
+
+
+class WorkshopWithoutPurchaseSignAttemptException(WorkshopException):
+  def __init__(self, user_id):
+    super().__init__('User with ID: {} does not have valid purchase.'.format(user_id), 504)
+
+
+class UserAlreadySignedForWorkshopException(WorkshopException):
+  def __init__(self, user_id, workshop_id):
+    super().__init__('User with ID: {} already signed for workshop with ID: {}.'.format(user_id, workshop_id), 505)
+
+class MentorCannotSignForOwnWorkshopException(WorkshopException):
+  def __init__(self, user_id, workshop_id):
+    super().__init__('User with ID: {} is workshop with ID: {} mentor.'.format(user_id, workshop_id), 506)
+
+
+class WorkshopMaxAttendeesLimitExceededException(WorkshopException):
+  def __init__(self, workshop):
+    super().__init__(
+      'Max attendees limit ({}) reached for workshop with ID: {}.'.format(workshop.max_attendees, workshop.id), 507)
+
+
+class UserAlreadySignedForWorkshopInTierException(WorkshopException):
+  def __init__(self, detail):
+    super().__init__(detail, 508)

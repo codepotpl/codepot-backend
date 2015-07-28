@@ -1,3 +1,4 @@
+from django.db import transaction
 import jsonschema
 
 from rest_framework.decorators import (
@@ -25,6 +26,7 @@ from codepot.views.workshops.exceptions import WorkshopIllegalAccessException
 
 @api_view(['GET', 'POST', ])
 @permission_classes((IsAuthenticated,))
+@transaction.atomic()
 def list_or_create_workshop_message(request, **kwargs):
   workshop_id = kwargs['workshop_id']
   workshop = find_workshop_for_id_or_raise(workshop_id)
@@ -81,6 +83,7 @@ def _create_new_message(workshop, user, payload):
 
 @api_view(['DELETE', ])
 @permission_classes((IsAuthenticated,))
+@transaction.atomic()
 def delete_workshop_message(request, **kwargs):
   workshop_id = kwargs['workshop_id']
   find_workshop_for_id_or_raise(workshop_id)

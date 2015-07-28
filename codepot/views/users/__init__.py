@@ -7,9 +7,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 
 from codepot.logging import logger
-from codepot.models import (
-    Purchase,
-)
+from codepot.models import Purchase
 from codepot.views.auth.exceptions import InvalidUserIdException
 from codepot.views.purchases.exceptions import UserPurchaseNotFoundException
 from codepot.views.purchases import build_purchase_response

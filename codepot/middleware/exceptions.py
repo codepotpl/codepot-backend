@@ -1,4 +1,7 @@
-from rest_framework.exceptions import NotAuthenticated, AuthenticationFailed
+from rest_framework.exceptions import (
+    NotAuthenticated,
+    AuthenticationFailed,
+)
 from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
@@ -45,6 +48,11 @@ from codepot.views.workshops.exceptions import (
   WorkshopNotFoundException,
   WorkshopIllegalAccessException,
   WorkshopMessageNotFoundException,
+  WorkshopWithoutPurchaseSignAttemptException,
+  UserAlreadySignedForWorkshopException,
+  MentorCannotSignForOwnWorkshopException,
+  WorkshopMaxAttendeesLimitExceededException,
+  UserAlreadySignedForWorkshopInTierException,
 )
 
 _CODE_TO_EXCEPTION = {
@@ -82,6 +90,11 @@ _CODE_TO_EXCEPTION = {
         ProductInactiveException,
         InvalidPaymentInfoException,
         IllegalWorkshopAttendee,
+        WorkshopWithoutPurchaseSignAttemptException,
+      UserAlreadySignedForWorkshopException,
+      MentorCannotSignForOwnWorkshopException,
+      WorkshopMaxAttendeesLimitExceededException,
+        UserAlreadySignedForWorkshopInTierException,
     ],
     HTTP_410_GONE: [
         RegistrationClosedException,
