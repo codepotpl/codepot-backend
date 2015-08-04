@@ -242,7 +242,7 @@ MCE_BANK_ACCOUNT = {
     'city': 'Warszawa',
 }
 
-MAX_TICKETS = 350
+MAX_TICKETS = 270
 
 print('Current environment: {}'.format(env('CDPT_ENVIRONMENT')))
 print('Base dir: {}'.format(BASE_DIR))
