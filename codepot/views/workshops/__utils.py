@@ -1,3 +1,6 @@
+from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK
+
 from codepot.logging import logger
 from codepot.models import (
   Workshop,
@@ -29,3 +32,40 @@ def check_if_user_is_workshop_mentor_or_attendee(workshop, user):
   if (user not in workshop.attendees.all()) and (user not in workshop.mentors.all()):
     logger.error('User with ID: {} tried to access workshop with ID: {} illegally.'.format(user.id, workshop.id))
     raise WorkshopIllegalAccessException('Only mentors and attendees are allowed to access workshop data')
+
+
+def prepare_list_of_workshops_response(workshops):
+  return Response(
+    {
+      'workshops': [
+        {
+          'id': w.id,
+          'title': w.title,
+          'description': w.description,
+          'timeSlots': [
+            {
+              'id': ts.id,
+              'day': ts.timeslot_tier.day,
+              'startTime': ts.timeslot_tier.date_from.isoformat(),
+              'endTime': ts.timeslot_tier.date_to.isoformat(),
+              'room': ts.room_no,
+            } for ts in w.timeslot_set.all()
+            ],
+          'mentors': [
+            {
+              'id': m.id,
+              'firstName': m.first_name,
+              'lastName': m.last_name,
+            } for m in w.mentors.all()
+            ],
+          'tags': [
+            {
+              'id': t.name,
+              'name': t.name,
+            } for t in w.tags.all()
+            ],
+        } for w in workshops
+        ]
+    },
+    HTTP_200_OK
+  )

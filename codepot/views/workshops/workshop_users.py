@@ -7,7 +7,6 @@ from rest_framework.decorators import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import (
-  HTTP_200_OK,
   HTTP_204_NO_CONTENT,
 )
 
@@ -17,9 +16,13 @@ from codepot.models import (
   PaymentStatusName,
   TimeSlot,
 )
+from codepot.models.workshops import Workshop
 from codepot.views.users import _compare_ids_and_raise_exception_if_different
 from codepot.views.workshops import workshops_json_schema
-from codepot.views.workshops.__utils import find_workshop_for_id_or_raise
+from codepot.views.workshops.__utils import (
+  find_workshop_for_id_or_raise,
+  prepare_list_of_workshops_response,
+)
 from codepot.views.workshops.exceptions import (
   WorkshopWithoutPurchaseSignAttemptException,
   UserAlreadySignedForWorkshopException,
@@ -50,8 +53,9 @@ def list_user_workshops_or_sign_for_workshops(request, **kwargs):
 
 
 def _get_user_workshops(user):
-  return Response(status=HTTP_200_OK)
+  workshops = Workshop.objects.filter(attendees__in=[user])
 
+  return prepare_list_of_workshops_response(workshops)
 
 def _sign_user_for_workshop(user, payload):
   __validate_sign_for_workshop_payload(payload)

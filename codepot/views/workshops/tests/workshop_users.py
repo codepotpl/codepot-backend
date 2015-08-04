@@ -4,13 +4,14 @@ from random import randint
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.test import TestCase
+import jsonschema
 from rest_framework.authtoken.models import Token
 from rest_framework.status import (
   HTTP_400_BAD_REQUEST,
   HTTP_403_FORBIDDEN,
   HTTP_404_NOT_FOUND,
   HTTP_409_CONFLICT,
-  HTTP_204_NO_CONTENT)
+  HTTP_204_NO_CONTENT, HTTP_200_OK)
 from rest_framework.test import APIClient
 
 from codepot.models import (
@@ -22,13 +23,17 @@ from codepot.models import (
   TimeSlotTier,
   TimeSlotTierDayName,
   TimeSlot,
+  WorkshopTag,
 )
+from codepot.views.workshops import workshops_json_schema
 
 
 class UserWorkshopsTest(TestCase):
   def setUp(self):
     self.req_format = 'json'
     self.client = APIClient()
+
+    self.mentor = User.objects.create(username='mentor', first_name='F', last_name='L')
 
     self.attendee = User.objects.create(username='a', first_name='FA', last_name='LA')
     self.attendee_token = Token.objects.create(user=self.attendee)
@@ -51,6 +56,12 @@ class UserWorkshopsTest(TestCase):
 
     TimeSlot.objects.create(room_no=102, timeslot_tier=self.timeslot_tier, workshop=self.workshop)
 
+    workshop_tag1 = WorkshopTag.objects.create(name='tag1')
+    workshop_tag2 = WorkshopTag.objects.create(name='tag2')
+    self.workshop.tags.add(workshop_tag1, workshop_tag2)
+
+    self.workshop.mentors.add(self.mentor)
+
     self.req_format = 'json'
     self.client.credentials(HTTP_AUTHORIZATION='Token {}'.format(self.attendee_token.key))
 
@@ -62,6 +73,27 @@ class UserWorkshopsTest(TestCase):
     data = resp.data
     self.assertEqual(data['code'], 105)
     self.assertEqual(data['detail'], 'Invalid user ID exception.')
+
+  def test_if_list_of_workshops_matches_schema_if_user_has_no_workshops(self):
+    resp = self.client.get('/api/users/{}/workshops/'.format(self.attendee.id), None, format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_200_OK)
+
+    jsonschema.validate(resp.data, workshops_json_schema.workshops_list_res_schema)
+
+    workshops = resp.data['workshops']
+    self.assertEqual(len(workshops), 0)
+
+  def test_if_list_of_workshops_matches_schema_if_user_has_workshops(self):
+    self.workshop.attendees.add(self.attendee)
+    resp = self.client.get('/api/users/{}/workshops/'.format(self.attendee.id), None, format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_200_OK)
+
+    jsonschema.validate(resp.data, workshops_json_schema.workshops_list_res_schema)
+
+    workshops = resp.data['workshops']
+    self.assertEqual(len(workshops), 1)
 
   def test_if_validation_fails_when_invalid_body_sent_with_sign_request(self):
     resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), {}, format=self.req_format)
