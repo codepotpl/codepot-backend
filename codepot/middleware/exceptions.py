@@ -53,6 +53,7 @@ from codepot.views.workshops.exceptions import (
   MentorCannotSignForOwnWorkshopException,
   WorkshopMaxAttendeesLimitExceededException,
   UserAlreadySignedForWorkshopInTierException,
+  UserNotSignedForWorkshopException,
 )
 
 _CODE_TO_EXCEPTION = {
@@ -95,6 +96,7 @@ _CODE_TO_EXCEPTION = {
       MentorCannotSignForOwnWorkshopException,
       WorkshopMaxAttendeesLimitExceededException,
         UserAlreadySignedForWorkshopInTierException,
+      UserNotSignedForWorkshopException,
     ],
     HTTP_410_GONE: [
         RegistrationClosedException,

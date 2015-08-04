@@ -253,6 +253,81 @@ class UserWorkshopsTest(TestCase):
     self.assertEqual(self.workshop.attendees.count(), 1)
     self.assertIn(self.attendee, self.workshop.attendees.all())
 
+  def test_if_exception_raised_when_user_id_and_token_does_not_match_when_signing_out_from_workshop(self):
+    resp = self.client.delete('/api/users/{}/workshops/{}/'.format(randint(3000, 4000), self.workshop.id), None,
+                              format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_403_FORBIDDEN)
+
+    data = resp.data
+    self.assertEqual(data['code'], 105)
+    self.assertEqual(data['detail'], 'Invalid user ID exception.')
+
+  def test_if_exception_raised_if_user_signs_out_from_workshop_that_does_not_exist(self):
+    workshop_id = '0123456789'
+    resp = self.client.delete('/api/users/{}/workshops/{}/'.format(self.attendee.id, workshop_id), None,
+                              format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
+
+    data = resp.data
+    self.assertEqual(data['code'], 501)
+    self.assertEqual(data['detail'], 'Workshop with ID: {} not found'.format(workshop_id))
+
+  def test_if_exception_raised_if_user_signs_out_from_workshop_which_it_is_not_an_attendee(self):
+    resp = self.client.delete('/api/users/{}/workshops/{}/'.format(self.attendee.id, self.workshop.id), None,
+                              format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
+
+    data = resp.data
+    self.assertEqual(data['code'], 509)
+    self.assertEqual(data['detail'], 'User with ID: {} is not signed for workshop with ID: {}'.format(self.attendee.id,
+                                                                                                      self.workshop.id))
+
+  def test_if_user_successfully_signs_out_from_workshop(self):
+    self.workshop.attendees.add(self.attendee)
+
+    self.assertIn(self.attendee, self.workshop.attendees.all())
+    self.assertEqual(self.workshop.attendees.count(), 1)
+
+    resp = self.client.delete('/api/users/{}/workshops/{}/'.format(self.attendee.id, self.workshop.id), None,
+                              format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
+    self.assertIsNone(resp.data)
+
+    self.assertEqual(self.workshop.attendees.count(), 0)
+    self.assertNotIn(self.attendee, self.workshop.attendees.all())
+
+  def test_if_user_successfully_signs_out_from_workshop_and_fails_after(self):
+    self.workshop.attendees.add(self.attendee)
+
+    self.assertIn(self.attendee, self.workshop.attendees.all())
+    self.assertEqual(self.workshop.attendees.count(), 1)
+
+    resp = self.client.delete('/api/users/{}/workshops/{}/'.format(self.attendee.id, self.workshop.id), None,
+                              format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
+    self.assertIsNone(resp.data)
+
+    self.assertEqual(self.workshop.attendees.count(), 0)
+    self.assertNotIn(self.attendee, self.workshop.attendees.all())
+
+    resp = self.client.delete('/api/users/{}/workshops/{}/'.format(self.attendee.id, self.workshop.id), None,
+                              format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
+
+    data = resp.data
+    self.assertEqual(data['code'], 509)
+    self.assertEqual(data['detail'], 'User with ID: {} is not signed for workshop with ID: {}'.format(self.attendee.id,
+                                                                                                      self.workshop.id))
+
+    self.assertEqual(self.workshop.attendees.count(), 0)
+    self.assertNotIn(self.attendee, self.workshop.attendees.all())
+
   def tearDown(self):
     self.client.credentials(HTTP_AUTHORIZATION=None)
     Workshop.objects.all().delete()

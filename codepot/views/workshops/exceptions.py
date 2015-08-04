@@ -48,3 +48,8 @@ class WorkshopMaxAttendeesLimitExceededException(WorkshopException):
 class UserAlreadySignedForWorkshopInTierException(WorkshopException):
   def __init__(self, detail):
     super().__init__(detail, 508)
+
+
+class UserNotSignedForWorkshopException(WorkshopException):
+  def __init__(self, user_id, workshop_id):
+    super().__init__('User with ID: {} is not signed for workshop with ID: {}'.format(user_id, workshop_id), 509)

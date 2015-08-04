@@ -26,6 +26,7 @@ from codepot.views.workshops.exceptions import (
   MentorCannotSignForOwnWorkshopException,
   WorkshopMaxAttendeesLimitExceededException,
   UserAlreadySignedForWorkshopInTierException,
+  UserNotSignedForWorkshopException,
 )
 
 
@@ -140,4 +141,19 @@ def delete_user_workshop(request, **kwargs):
   user = request.user
   user_id = kwargs['user_id']
 
+  _compare_ids_and_raise_exception_if_different(user_id, user.id)
+
+  workshop_id = kwargs['workshop_id']
+
+  workshop = find_workshop_for_id_or_raise(workshop_id)
+
+  __check_if_user_is_not_workshop_attendee(workshop, user)
+
+  workshop.attendees.remove(user)
+
   return Response(status=HTTP_204_NO_CONTENT)
+
+
+def __check_if_user_is_not_workshop_attendee(workshop, user):
+  if user not in workshop.attendees.all():
+    raise UserNotSignedForWorkshopException(user.id, workshop.id)
