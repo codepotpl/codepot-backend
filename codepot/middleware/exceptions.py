@@ -1,11 +1,18 @@
-from rest_framework.exceptions import NotAuthenticated, AuthenticationFailed
+from rest_framework.exceptions import (
+    NotAuthenticated,
+    AuthenticationFailed,
+)
 from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_401_UNAUTHORIZED,
     HTTP_409_CONFLICT,
     HTTP_500_INTERNAL_SERVER_ERROR,
-    HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND, HTTP_410_GONE)
+    HTTP_403_FORBIDDEN,
+    HTTP_404_NOT_FOUND,
+    HTTP_410_GONE,
+)
+from jsonschema.exceptions import ValidationError as JSONValidationError
 
 from codepot.exceptions import (
     RegistrationClosedException,
@@ -36,12 +43,25 @@ from codepot.views.purchases.exceptions import (
     ProductInactiveException,
     InvalidPaymentInfoException,
 )
+from codepot.views.workshops.exceptions import (
+  IllegalWorkshopAttendee,
+  WorkshopNotFoundException,
+  WorkshopIllegalAccessException,
+  WorkshopMessageNotFoundException,
+  WorkshopWithoutPurchaseSignAttemptException,
+  UserAlreadySignedForWorkshopException,
+  MentorCannotSignForOwnWorkshopException,
+  WorkshopMaxAttendeesLimitExceededException,
+  UserAlreadySignedForWorkshopInTierException,
+  UserNotSignedForWorkshopException,
+)
 
 _CODE_TO_EXCEPTION = {
     HTTP_400_BAD_REQUEST: [
         InvalidEmailAddressException,
         ParseException,
         BadRequestException,
+        JSONValidationError,
     ],
     HTTP_401_UNAUTHORIZED: [
         UserNotFoundException,
@@ -52,10 +72,13 @@ _CODE_TO_EXCEPTION = {
     HTTP_403_FORBIDDEN: [
         ForbiddenException,
         InvalidUserIdException,
+      WorkshopIllegalAccessException,
     ],
     HTTP_404_NOT_FOUND: [
         PromoCodeNotFoundException,
         UserPurchaseNotFoundException,
+      WorkshopNotFoundException,
+      WorkshopMessageNotFoundException,
     ],
     HTTP_409_CONFLICT: [
         EmailAddressAlreadyUsedException,
@@ -67,6 +90,13 @@ _CODE_TO_EXCEPTION = {
         ProductNotFoundException,
         ProductInactiveException,
         InvalidPaymentInfoException,
+        IllegalWorkshopAttendee,
+        WorkshopWithoutPurchaseSignAttemptException,
+      UserAlreadySignedForWorkshopException,
+      MentorCannotSignForOwnWorkshopException,
+      WorkshopMaxAttendeesLimitExceededException,
+        UserAlreadySignedForWorkshopInTierException,
+      UserNotSignedForWorkshopException,
     ],
     HTTP_410_GONE: [
         RegistrationClosedException,
