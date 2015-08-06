@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('codepot', '0014_merge'),
+        ('codepot', '0013_workshopmessage_created'),
     ]
 
     operations = [
