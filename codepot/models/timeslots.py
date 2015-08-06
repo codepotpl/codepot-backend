@@ -1,7 +1,5 @@
 from enum import Enum
 
-from django.core.validators import MinValueValidator
-
 from django.db import models
 
 from codepot import enum_to_model_choices, primary_key
@@ -27,7 +25,7 @@ class TimeSlotTier(models.Model):
 
 class TimeSlot(models.Model):
     id = models.CharField(primary_key=True, max_length=32, default=primary_key)
-    room_no = models.IntegerField(validators=[MinValueValidator(0)])
+    room_no = models.CharField(max_length=10, blank=False)
     timeslot_tier = models.ForeignKey('codepot.TimeSlotTier', blank=False)
     workshop = models.ForeignKey('codepot.Workshop', blank=False)
 

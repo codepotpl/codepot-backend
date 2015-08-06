@@ -45,8 +45,7 @@ workshops_list_res_schema = {
                   'minLength': 1,
                 },
                 'room': {
-                  'type': 'integer',
-                  'minimum': 0,
+                  'type': 'string',
                 },
               },
               'required': ['id', 'day', 'startTime', 'endTime', 'room', ],
