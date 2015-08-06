@@ -14,7 +14,6 @@ class WorkshopTag(models.Model):
         return self.name
 
 class Workshop(models.Model):
-  id = models.CharField(primary_key=True, max_length=32, default=primary_key)
   title = models.CharField(max_length=512, blank=False)
   description = models.TextField(blank=False)
   tags = models.ManyToManyField('codepot.WorkshopTag')

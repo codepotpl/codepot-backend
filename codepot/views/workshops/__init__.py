@@ -10,4 +10,5 @@ from .workshop_users import (
 from .workshsops import (
   get_workshops,
   get_workshop_attendees,
+  search_workshops,
 )

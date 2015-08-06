@@ -49,7 +49,7 @@ class WorkshopsMessagesTests(TestCase):
 
   def test_if_not_found_exception_raised_when_fetching_messages_for_non_existing_workshop(self):
     self.client.credentials(HTTP_AUTHORIZATION='Token {}'.format(self.attendee_token.key))
-    workshop_id = datetime.datetime.now()
+    workshop_id = int(datetime.datetime.now().timestamp())
     resp = self.client.get('/api/workshops/{}/messages/'.format(workshop_id), None, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
@@ -108,7 +108,7 @@ class WorkshopsMessagesTests(TestCase):
     self.assertEqual(data['detail'], 'Only mentors and attendees are allowed to access workshop data')
 
   def test_if_not_found_exception_raised_when_creating_message_for_non_existing_workshop(self):
-    workshop_id = datetime.datetime.now()
+    workshop_id = int(datetime.datetime.now().timestamp())
     resp = self.client.post('/api/workshops/{}/messages/'.format(workshop_id), None, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
@@ -157,7 +157,7 @@ class WorkshopsMessagesTests(TestCase):
     self.assertEqual(WorkshopMessage.objects.count(), 1)
 
     self.client.credentials(HTTP_AUTHORIZATION='Token {}'.format(self.attendee_token.key))
-    workshop_id = datetime.datetime.now()
+    workshop_id = int(datetime.datetime.now().timestamp())
     resp = self.client.delete('/api/workshops/{}/messages/1/'.format(workshop_id), None, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)

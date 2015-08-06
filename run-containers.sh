@@ -14,6 +14,13 @@ docker run \
     -d \
     codepot-redis
 
+docker rm -f codepot-elasticsearch
+docker run \
+    --name codepot-elasticsearch \
+    -v `pwd`:/es-data:/usr/share/elasticsearch/data \
+    -d \
+    elasticsearch:1.7.1
+
 docker rm -f codepot-backend-development-celery
 docker run \
     -d \
@@ -31,6 +38,7 @@ docker run \
     -d \
     --link codepot-postgres:postgres \
     --link codepot-redis:redis \
+    --link codepot-elasticsearch:elasticsearch \
     --env-file=environment \
     -p 8080:8080 \
     -p 2222:22 \
@@ -38,4 +46,3 @@ docker run \
     -v `pwd`/.pycharm_helpers/:/root/.pycharm_helpers \
     --name codepot-backend-development \
     codepot-backend-development
-
