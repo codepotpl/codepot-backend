@@ -4,6 +4,7 @@ from django.core.mail import (
     EmailMultiAlternatives,
 )
 from django.db import transaction
+from haystack.management.commands import update_index
 
 from python_ifirma.core import (
     iFirmaAPI,
@@ -179,3 +180,13 @@ def send_mail(to, title, messageTXT, messageHTML, bcc=None, attachment=[]):
     )
     email.attach_alternative(messageHTML, "text/html")
     email.send()
+
+
+@shared_task
+def update_workshops_full_text_search():
+  try:
+    update_index.Command().handle(using=['default'], verbosity=2, remove=True)
+  except Exception as e:
+    logger.error('Caught exception while updating workshop index: %s' % e)
+
+  return None

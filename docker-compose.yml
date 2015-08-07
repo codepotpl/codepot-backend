@@ -6,6 +6,7 @@ django:
   links:
     - postgres
     - redis
+    - elasticsearch
 
 celery:
   build: .
@@ -26,3 +27,9 @@ redis:
   image: redis:3.0.0
   volumes:
     - ./redis-data:/data
+
+elasticsearch:
+  image: elasticsearch:1.7.1
+  volumes:
+    - ./es-data:/usr/share/elasticsearch/data
+

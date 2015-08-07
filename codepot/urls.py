@@ -42,6 +42,7 @@ user_patterns = patterns(
 workshops_patterns = patterns(
     '',
     url(r'^workshops/$', workshops_views.get_workshops),
+    url(r'^workshops/search/$', workshops_views.search_workshops),
     url(r'^workshops/(?P<workshop_id>.+)/attendees/$', workshops_views.get_workshop_attendees)
 )
 

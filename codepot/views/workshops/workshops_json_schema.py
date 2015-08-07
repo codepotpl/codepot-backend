@@ -11,8 +11,7 @@ workshops_list_res_schema = {
         'type': 'object',
         'properties': {
           'id': {
-            'type': 'string',
-            'minLength': 1,
+            'type': 'integer',
           },
           'title': {
             'type': 'string',
@@ -155,5 +154,18 @@ sign_for_workshop_req_schema = {
     },
   },
   'required': ['workshopId', ],
+  'additionalProperties': False,
+}
+
+workshop_search_req_schema = {
+  '$schema': 'http://json-schema.org/draft-04/schema',
+  'type': 'object',
+  'properties': {
+    'query': {
+      'type': 'string',
+      'minLength': 3,
+    },
+  },
+  'required': ['query', ],
   'additionalProperties': False,
 }
