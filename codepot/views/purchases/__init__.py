@@ -49,17 +49,19 @@ from codepot.views.purchases.exceptions import (
 @transaction.atomic()
 def handle_new_purchase(request, **kwargs):
     _check_if_registration_open()
-    _check_if_tickets_limit_exceeded()
+
+    payload = request.DATA
+
+    code = payload['promoCode']
+
+    __check_if_tickets_limit_exceeded_but_honor_100_discount(code)
 
     user = request.user
 
     _check_if_user_has_purchase(user)
 
-    payload = request.DATA
-
     logger.info('Handling new purchase for user: {} and payload: {}'.format(user.id, payload))
 
-    code = payload['promoCode']
     invoice = payload['invoice']
     product_id = payload['productId']
     payment_type = payload['paymentType']
@@ -120,7 +122,8 @@ def _check_if_registration_open():
     if not AppSettings.objects.is_registration_open():
         raise RegistrationClosedException()
 
-def _check_if_tickets_limit_exceeded():
+
+def __check_if_tickets_limit_exceeded_but_honor_100_discount(promo_code):
     all_purchases = _count_success_purchases()
 
     organizers_purchases = _count_organizers_purchases()
@@ -136,8 +139,22 @@ def _check_if_tickets_limit_exceeded():
                                                                    purchases_limit - all_purchases + sum_excluded)
     )
 
-    if (all_purchases - sum_excluded) >= purchases_limit:
+    is_100_discount = __is_100_discount_promo_code(promo_code)
+
+    if ((all_purchases - sum_excluded) >= purchases_limit) and (not is_100_discount):
         raise TicketsLimitExceededException()
+
+
+def __is_100_discount_promo_code(code):
+  if code is None:
+    return False
+
+  try:
+    promo_code = PromoCode.objects.get(code=code)
+    return promo_code.discount == 100
+  except PromoCode.DoesNotExist as e:
+    logger.error('Promo code for code: {} not found, err: {}'.format(code, e))
+    return False
 
 def _count_success_purchases():
     return Purchase.objects.filter(payment_status=PaymentStatusName.SUCCESS.value).count()
