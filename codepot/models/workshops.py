@@ -16,9 +16,9 @@ class WorkshopTag(models.Model):
 class Workshop(models.Model):
   title = models.CharField(max_length=512, blank=False)
   description = models.TextField(blank=False)
-  tags = models.ManyToManyField('codepot.WorkshopTag')
-  mentors = models.ManyToManyField(User, related_name='mentors')
-  attendees = models.ManyToManyField(User, related_name='attendees')
+  tags = models.ManyToManyField('codepot.WorkshopTag', blank=True)
+  mentors = models.ManyToManyField(User, related_name='mentors', blank=True)
+  attendees = models.ManyToManyField(User, related_name='attendees', blank=True)
   max_attendees = models.IntegerField(default=50, validators=[MinValueValidator(0)], blank=False)
 
   def __str__(self):
