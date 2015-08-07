@@ -68,9 +68,11 @@ class NewPurchaseTest(TestCase):
         purchase = Purchase.objects.create(user=self.user, product=self.product)
 
         payload = {
-            'promoCode': None,
-            'invoice': None,
-            'productId': self.product.id,
+          'promoCode': None,
+          'invoice': None,
+          'productId': self.product.id,
+          'paymentType': PaymentTypeName.TRANSFER.value,
+          'paymentInfo': None,
         }
 
         resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
