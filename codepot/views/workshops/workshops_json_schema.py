@@ -46,8 +46,12 @@ workshops_list_res_schema = {
                 'room': {
                   'type': 'string',
                 },
+                'order': {
+                  'type': 'integer',
+                  'minimum': 0,
+                }
               },
-              'required': ['id', 'day', 'startTime', 'endTime', 'room', ],
+              'required': ['id', 'day', 'startTime', 'endTime', 'room', 'order', ],
               'additionalProperties': False,
             },
           },

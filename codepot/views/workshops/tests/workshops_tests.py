@@ -13,7 +13,6 @@ from rest_framework.status import (
 from rest_framework.test import APIClient
 
 from celerytq.tasks import update_workshops_full_text_search
-
 from codepot.models import (
   Workshop,
   WorkshopTag,
@@ -46,9 +45,18 @@ class WorkshopsListTests(TestCase):
     self.workshop.mentors.add(self.mentor)
     self.workshop.attendees.add(self.attendee)
 
-    self.timeslot_tier = TimeSlotTier.objects.create(date_from=datetime.datetime.now(), date_to=datetime.datetime.now(),
-                                                day=TimeSlotTierDayName.FIRST.value)
+    self.timeslot_tier = TimeSlotTier.objects.create(
+      date_from=datetime.datetime.now(),
+      date_to=datetime.datetime.now(),
+      day=TimeSlotTierDayName.FIRST.value
+    )
+    self.timeslot_tier2 = TimeSlotTier.objects.create(
+      date_from=datetime.datetime.now(),
+      date_to=datetime.datetime.now(),
+      day=TimeSlotTierDayName.FIRST.value
+    )
     TimeSlot.objects.create(room_no=102, timeslot_tier=self.timeslot_tier, workshop=self.workshop)
+    TimeSlot.objects.create(room_no=102, timeslot_tier=self.timeslot_tier2, workshop=self.workshop)
 
   def test_if_workshops_not_requires_authorization(self):
     resp = self.client.get('/api/workshops/', None, format=self.req_format)
@@ -207,6 +215,22 @@ class WorkshopsListTests(TestCase):
     self.assertEqual(len(workshops), 2)
     self.assertEqual(workshops[0]['id'], self.workshop.id)
     self.assertEqual(workshops[1]['id'], workshop.id)
+
+  def test_if_workshop_timeslots_are_ordered_properly(self):
+    client = APIClient()
+
+    resp = client.get('/api/workshops/', None, format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_200_OK)
+
+    jsonschema.validate(resp.data, workshops_json_schema.workshops_list_res_schema)
+
+    timeslots = resp.data['workshops'][0]['timeSlots']
+    self.assertEqual(timeslots[0]['order'], 0)
+    self.assertEqual(timeslots[0]['room'], '102')
+    self.assertEqual(timeslots[1]['order'], 1)
+    self.assertEqual(timeslots[1]['room'], '102')
+
 
   def tearDown(self):
     self.client.credentials(HTTP_AUTHORIZATION=None)
