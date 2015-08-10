@@ -33,3 +33,13 @@ class LoginFailedException(AuthException):
 class InvalidUserIdException(AuthException):
     def __init__(self):
         super().__init__('Invalid user ID exception.', 105)
+
+
+class UserNotFoundForPasswordResetException(AuthException):
+    def __init__(self):
+        super().__init__('User not found for given email.', 106)
+
+
+class ResetPasswordNotFoundException(AuthException):
+    def __init__(self):
+        super().__init__('No entry found for token sent.', 107)
