@@ -15,6 +15,8 @@ auth_patterns = patterns(
     '',
     url(r'^auth/sign-in/$', auth_views.sign_in),
     url(r'^auth/sign-up/$', auth_views.sign_up),
+    url(r'^auth/reset-pass/initialize/$', auth_views.reset_pass_initialize),
+    url(r'^auth/reset-pass/finalize/$', auth_views.reset_pass_finalize)
 )
 
 purchase_patterns = patterns(

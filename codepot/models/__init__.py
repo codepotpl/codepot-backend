@@ -30,3 +30,5 @@ from .timeslots import (
     TimeSlotTier,
     TimeSlot,
 )
+
+from .auth import ResetPassword
