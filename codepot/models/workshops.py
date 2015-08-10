@@ -3,9 +3,14 @@ import datetime
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models.signals import (
+  post_save,
+  post_delete,
+)
+from django.dispatch import receiver
 
 from codepot import primary_key
-
+from celerytq.tasks import update_workshops_full_text_search
 
 class WorkshopTag(models.Model):
     name = models.CharField(primary_key=True, max_length=256, blank=False, unique=True)
@@ -24,6 +29,11 @@ class Workshop(models.Model):
   def __str__(self):
     return self.title
 
+
+@receiver(post_save, sender=Workshop)
+@receiver(post_delete, sender=Workshop)
+def _update_workshop_full_text_search_index(**kwargs):
+  update_workshops_full_text_search.delay()
 
 class WorkshopMessage(models.Model):
     id = models.CharField(primary_key=True, max_length=32, default=primary_key)

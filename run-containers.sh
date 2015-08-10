@@ -26,6 +26,7 @@ docker run \
     -d \
     --link codepot-postgres:postgres \
     --link codepot-redis:redis \
+    --link codepot-elasticsearch:elasticsearch \
     --env-file=environment \
     -v `pwd`:/app \
     -e C_FORCE_ROOT=true \
