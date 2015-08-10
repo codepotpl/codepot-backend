@@ -184,6 +184,7 @@ def send_mail(to, title, messageTXT, messageHTML, bcc=None, attachment=[]):
 
 @shared_task
 def update_workshops_full_text_search():
+  logger.info('Updating workshop full-text search index.')
   try:
     update_index.Command().handle(using=['default'], verbosity=2, remove=True)
   except Exception as e:
