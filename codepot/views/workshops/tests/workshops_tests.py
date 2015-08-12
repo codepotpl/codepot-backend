@@ -18,7 +18,6 @@ from codepot.models import (
   WorkshopTag,
   TimeSlot,
   TimeSlotTier,
-  TimeSlotTierDayName,
 )
 from codepot.views.workshops import workshops_json_schema
 
@@ -45,16 +44,9 @@ class WorkshopsListTests(TestCase):
     self.workshop.mentors.add(self.mentor)
     self.workshop.attendees.add(self.attendee)
 
-    self.timeslot_tier = TimeSlotTier.objects.create(
-      date_from=datetime.datetime.now(),
-      date_to=datetime.datetime.now(),
-      day=TimeSlotTierDayName.FIRST.value
-    )
-    self.timeslot_tier2 = TimeSlotTier.objects.create(
-      date_from=datetime.datetime.now(),
-      date_to=datetime.datetime.now(),
-      day=TimeSlotTierDayName.FIRST.value
-    )
+    self.timeslot_tier = TimeSlotTier.objects.get(id='wGSj2UozkT')
+    self.timeslot_tier2 = TimeSlotTier.objects.get(id='6DNs2lvvZH')
+
     TimeSlot.objects.create(room_no=102, timeslot_tier=self.timeslot_tier, workshop=self.workshop)
     TimeSlot.objects.create(room_no=102, timeslot_tier=self.timeslot_tier2, workshop=self.workshop)
 
@@ -238,4 +230,3 @@ class WorkshopsListTests(TestCase):
     WorkshopTag.objects.all().delete()
     User.objects.all().delete()
     TimeSlot.objects.all().delete()
-    TimeSlotTier.objects.all().delete()

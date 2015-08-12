@@ -11,7 +11,9 @@ from rest_framework.status import (
   HTTP_403_FORBIDDEN,
   HTTP_404_NOT_FOUND,
   HTTP_409_CONFLICT,
-  HTTP_204_NO_CONTENT, HTTP_200_OK)
+  HTTP_204_NO_CONTENT,
+  HTTP_200_OK,
+)
 from rest_framework.test import APIClient
 
 from codepot.models import (
@@ -51,8 +53,7 @@ class UserWorkshopsTest(TestCase):
       description='Description with a few words'
     )
 
-    self.timeslot_tier = TimeSlotTier.objects.create(date_from=datetime.datetime.now(), date_to=datetime.datetime.now(),
-                                                     day=TimeSlotTierDayName.FIRST.value)
+    self.timeslot_tier = TimeSlotTier.objects.get(id='wGSj2UozkT')
 
     TimeSlot.objects.create(room_no=102, timeslot_tier=self.timeslot_tier, workshop=self.workshop)
 
@@ -120,7 +121,7 @@ class UserWorkshopsTest(TestCase):
     self.client.credentials(HTTP_AUTHORIZATION='Token {}'.format(attendee_token.key))
 
     payload = {
-      'workshopId': '0123456789'
+      'workshopId': 123456789
     }
 
     resp = self.client.post('/api/users/{}/workshops/'.format(attendee.id), payload, format=self.req_format)
@@ -140,7 +141,7 @@ class UserWorkshopsTest(TestCase):
     self.client.credentials(HTTP_AUTHORIZATION='Token {}'.format(attendee_token.key))
 
     payload = {
-      'workshopId': '0123456789'
+      'workshopId': 123456789
     }
 
     resp = self.client.post('/api/users/{}/workshops/'.format(attendee.id), payload, format=self.req_format)
@@ -153,7 +154,7 @@ class UserWorkshopsTest(TestCase):
 
   def test_if_exception_raised_if_user_signs_for_workshop_that_does_not_exist(self):
     payload = {
-      'workshopId': '0123456789'
+      'workshopId': 123456789
     }
     resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
 

@@ -152,9 +152,7 @@ sign_for_workshop_req_schema = {
   'type': 'object',
   'properties': {
     'workshopId': {
-      'type': 'string',
-      'minLength': 1,
-      'pattern': '^[A-Za-z0-9]{10}$',
+      'type': 'integer',
     },
   },
   'required': ['workshopId', ],
