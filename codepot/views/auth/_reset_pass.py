@@ -69,7 +69,7 @@ def __create_new_reset_password(email):
 
 
 def __prepare_reset_pw_link(token):
-  return '{}/reset-password/{}/'.format(settings.WEB_CLIENT_ADDRESS, token)
+  return '{}reset-password/{}/'.format(settings.WEB_CLIENT_ADDRESS, token)
 
 
 def __send_reset_pw_email(email, reset_link):
