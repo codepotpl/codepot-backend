@@ -39,7 +39,7 @@ def reset_pass_initialize(request, **kwargs):
   logger.info('Starting reset password process for: {}'.format(email))
 
   user = __find_user_auth_for_email(email)
-  
+
   if user is not None:
     __remove_previous_reset_pw_attempts(email)
     reset_pw = __create_new_reset_password(email)
