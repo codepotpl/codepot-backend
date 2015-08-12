@@ -26,10 +26,8 @@ class ResetPasswordTest(TestCase):
   def test_if_exception_raised_if_email_not_found(self):
     payload = {'email': 'lol@lol.com'}
     resp = self.client.post('/api/auth/reset-pass/initialize/', payload, format='json')
-    self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)
-    self.assertEqual(resp.data['code'], 106)
-    self.assertEqual(resp.data['detail'], 'User not found for given email.')
-    self.assertFalse(resp.has_header('Token'))
+    self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+    self.assertIsNone(resp.data)
 
   def test_if_previous_reset_pw_attempts_are_removed(self):
     email = 'lol@lol.com'

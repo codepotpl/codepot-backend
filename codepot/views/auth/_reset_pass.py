@@ -38,12 +38,14 @@ def reset_pass_initialize(request, **kwargs):
 
   logger.info('Starting reset password process for: {}'.format(email))
 
-  __find_user_auth_for_email(email)
-  __remove_previous_reset_pw_attempts(email)
-  reset_pw = __create_new_reset_password(email)
-  reset_pw_link = __prepare_reset_pw_link(reset_pw.token)
+  user = __find_user_auth_for_email(email)
+  
+  if user is not None:
+    __remove_previous_reset_pw_attempts(email)
+    reset_pw = __create_new_reset_password(email)
+    reset_pw_link = __prepare_reset_pw_link(reset_pw.token)
 
-  __send_reset_pw_email(email, reset_pw_link)
+    __send_reset_pw_email(email, reset_pw_link)
 
   return Response(status=HTTP_204_NO_CONTENT)
 
@@ -53,8 +55,7 @@ def __find_user_auth_for_email(email):
     return User.objects.get(email=email.lower())
   except User.DoesNotExist:
     logger.error('No user found for email: {}'.format(email))
-    raise UserNotFoundForPasswordResetException()
-
+    return None
 
 def __remove_previous_reset_pw_attempts(email):
   ResetPassword.objects.filter(email=email).delete()
