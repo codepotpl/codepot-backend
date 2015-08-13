@@ -3,11 +3,8 @@ import sys
 from optparse import make_option
 
 from django.contrib.auth.models import User
-
-from django.core.management.base import (
-  BaseCommand
-)
-
+from django.core.management.base import BaseCommand
+from django.db import transaction
 from getenv import env
 
 from rest_framework.test import APIRequestFactory
@@ -95,14 +92,18 @@ class Command(BaseCommand):
       for entry in data:
         email = entry['email']
 
-        self.stdout.write('Processing user with email: {}'.format(email))
+        self.stdout.write(
+          'Processing user with email: {}, first name: {}, last name: {}'.
+            format(email, entry['firstName'], entry['lastName'])
+        )
 
-        try:
-          self._sign_up(entry)
-          user = User.objects.get(email=email)
-          self._add_purchase(user)
-          self._send_reset_password_message(user)
-          self._create_workshop_mentor_model(user, entry)
+        with transaction.atomic():
+          try:
+            self._sign_up(entry)
+            user = User.objects.get(email=email)
+            self._add_purchase(user)
+            self._send_reset_password_message(user)
+            self._create_workshop_mentor_model(user, entry)
 
-        except Exception as e:
-          self.stderr.write('Error while processing user with email: {}, err: {}'.format(email, e))
+          except Exception as e:
+            self.stderr.write('Error while processing user with email: {}, err: {}'.format(email, e))
