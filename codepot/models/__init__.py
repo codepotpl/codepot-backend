@@ -23,6 +23,7 @@ from .workshops import (
     WorkshopTag,
     Workshop,
     WorkshopMessage,
+    WorkshopMentor,
 )
 
 from .timeslots import (

@@ -1,5 +1,6 @@
 from enum import Enum
 
+import pytz
 from django.db import models
 
 from codepot import (
@@ -7,6 +8,7 @@ from codepot import (
     primary_key,
 )
 
+_warsaw_tz = pytz.timezone('Europe/Warsaw')
 
 class TimeSlotTierDayName(Enum):
   FIRST = 'FIRST'

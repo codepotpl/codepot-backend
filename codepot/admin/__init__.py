@@ -12,6 +12,7 @@ from codepot.models import (
     Workshop,
     WorkshopTag,
     WorkshopMessage,
+    WorkshopMentor,
     TimeSlotTier,
     TimeSlot,
     ResetPassword,
@@ -133,4 +134,13 @@ class ResetPasswordAdmin(admin.ModelAdmin):
     'email',
     'token',
     'active',
+  )
+
+
+@admin.register(WorkshopMentor)
+class WorkshopMentorAdmin(admin.ModelAdmin):
+  list_display = (
+    'first_name',
+    'last_name',
+    'tagline',
   )
