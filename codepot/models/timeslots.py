@@ -20,6 +20,7 @@ class TimeSlotTier(models.Model):
   date_from = models.DateTimeField(blank=False)
   date_to = models.DateTimeField(blank=False)
   day = models.CharField(max_length=16, choices=enum_to_model_choices(TimeSlotTierDayName), blank=False)
+  order = models.IntegerField()
 
   class Meta:
     unique_together = ('date_to', 'date_from', 'day')
