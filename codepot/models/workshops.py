@@ -32,17 +32,17 @@ class Workshop(models.Model):
 
 class WorkshopMentor(models.Model):
   user = models.OneToOneField(User)
-  first_name = models.CharField(max_length=256, blank=True)
-  last_name = models.CharField(max_length=256, blank=True)
-  tagline = models.CharField(max_length=512, blank=True)
-  picture_url = models.CharField(max_length=512, blank=True)
-  twitter_username = models.CharField(max_length=256, blank=True)
-  github_username = models.CharField(max_length=256, blank=True)
-  linkedin_profile_url = models.URLField(blank=True)
-  stackoverflow_id = models.CharField(max_length=128, blank=True)
-  googleplus_handler = models.CharField(max_length=128, blank=True)
-  website_url = models.URLField(blank=True)
-  bio_in_md = models.TextField(blank=True)
+  first_name = models.CharField(max_length=256, blank=True, null=True)
+  last_name = models.CharField(max_length=256, blank=True, null=True)
+  tagline = models.CharField(max_length=512, blank=True, null=True)
+  picture_url = models.CharField(max_length=512, blank=True, null=True)
+  twitter_username = models.CharField(max_length=256, blank=True, null=True)
+  github_username = models.CharField(max_length=256, blank=True, null=True)
+  linkedin_profile_url = models.URLField(blank=True, null=True)
+  stackoverflow_id = models.CharField(max_length=128, blank=True, null=True)
+  googleplus_handler = models.CharField(max_length=128, blank=True, null=True)
+  website_url = models.URLField(blank=True, null=True)
+  bio_in_md = models.TextField(blank=True, null=True)
 
   def __str__(self):
     return '{} / {}'.format(self.user.username, self.id)
