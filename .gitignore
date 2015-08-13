@@ -67,3 +67,7 @@ postgres
 
 environment
 src/
+
+postgres-data
+redis-data
+es-data

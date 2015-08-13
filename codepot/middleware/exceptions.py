@@ -1,11 +1,18 @@
-from rest_framework.exceptions import NotAuthenticated, AuthenticationFailed
+from rest_framework.exceptions import (
+    NotAuthenticated,
+    AuthenticationFailed,
+)
 from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_401_UNAUTHORIZED,
     HTTP_409_CONFLICT,
     HTTP_500_INTERNAL_SERVER_ERROR,
-    HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND, HTTP_410_GONE)
+    HTTP_403_FORBIDDEN,
+    HTTP_404_NOT_FOUND,
+    HTTP_410_GONE,
+)
+from jsonschema.exceptions import ValidationError as JSONValidationError
 
 from codepot.exceptions import (
     RegistrationClosedException,
@@ -19,6 +26,8 @@ from codepot.views.auth.exceptions import (
     InvalidPasswordException,
     LoginFailedException,
     InvalidUserIdException,
+    UserNotFoundForPasswordResetException,
+    ResetPasswordNotFoundException,
 )
 from codepot.views.exceptions import (
     ParseException,
@@ -36,63 +45,88 @@ from codepot.views.purchases.exceptions import (
     ProductInactiveException,
     InvalidPaymentInfoException,
 )
+from codepot.views.workshops.exceptions import (
+  IllegalWorkshopAttendee,
+  WorkshopNotFoundException,
+  WorkshopIllegalAccessException,
+  WorkshopMessageNotFoundException,
+  WorkshopWithoutPurchaseSignAttemptException,
+  UserAlreadySignedForWorkshopException,
+  MentorCannotSignForOwnWorkshopException,
+  WorkshopMaxAttendeesLimitExceededException,
+  UserAlreadySignedForWorkshopInTierException,
+  UserNotSignedForWorkshopException,
+)
 
 _CODE_TO_EXCEPTION = {
-    HTTP_400_BAD_REQUEST: [
-        InvalidEmailAddressException,
-        ParseException,
-        BadRequestException,
-    ],
-    HTTP_401_UNAUTHORIZED: [
-        UserNotFoundException,
-        InvalidPasswordException,
-        NotAuthenticated,
-        AuthenticationFailed,
-    ],
-    HTTP_403_FORBIDDEN: [
-        ForbiddenException,
-        InvalidUserIdException,
-    ],
-    HTTP_404_NOT_FOUND: [
-        PromoCodeNotFoundException,
-        UserPurchaseNotFoundException,
-    ],
-    HTTP_409_CONFLICT: [
-        EmailAddressAlreadyUsedException,
-        LoginFailedException,
-        PromoCodeForPurchaseNotFoundException,
-        PromoCodeForPurchaseNotActiveException,
-        PromoCodeForPurchaseHasExceededUsageLimit,
-        UserAlreadyHasPurchaseException,
-        ProductNotFoundException,
-        ProductInactiveException,
-        InvalidPaymentInfoException,
-    ],
-    HTTP_410_GONE: [
-        RegistrationClosedException,
-        TicketsLimitExceededException,
-    ]
+  HTTP_400_BAD_REQUEST: [
+    InvalidEmailAddressException,
+    ParseException,
+    BadRequestException,
+    JSONValidationError,
+  ],
+  HTTP_401_UNAUTHORIZED: [
+    UserNotFoundException,
+    InvalidPasswordException,
+    NotAuthenticated,
+    AuthenticationFailed,
+  ],
+  HTTP_403_FORBIDDEN: [
+    ForbiddenException,
+    InvalidUserIdException,
+    WorkshopIllegalAccessException,
+  ],
+  HTTP_404_NOT_FOUND: [
+    PromoCodeNotFoundException,
+    UserPurchaseNotFoundException,
+    WorkshopNotFoundException,
+    WorkshopMessageNotFoundException,
+  ],
+  HTTP_409_CONFLICT: [
+    EmailAddressAlreadyUsedException,
+    LoginFailedException,
+    PromoCodeForPurchaseNotFoundException,
+    PromoCodeForPurchaseNotActiveException,
+    PromoCodeForPurchaseHasExceededUsageLimit,
+    UserAlreadyHasPurchaseException,
+    ProductNotFoundException,
+    ProductInactiveException,
+    InvalidPaymentInfoException,
+    IllegalWorkshopAttendee,
+    WorkshopWithoutPurchaseSignAttemptException,
+    UserAlreadySignedForWorkshopException,
+    MentorCannotSignForOwnWorkshopException,
+    WorkshopMaxAttendeesLimitExceededException,
+    UserAlreadySignedForWorkshopInTierException,
+    UserNotSignedForWorkshopException,
+    UserNotFoundForPasswordResetException,
+    ResetPasswordNotFoundException,
+  ],
+  HTTP_410_GONE: [
+    RegistrationClosedException,
+    TicketsLimitExceededException,
+  ]
 }
 
 
 def _find_code_for_exception(exc):
-    exc_type = type(exc)
-    for code in _CODE_TO_EXCEPTION:
-        if (exc_type in _CODE_TO_EXCEPTION[code]):
-            return code
-    return HTTP_500_INTERNAL_SERVER_ERROR
+  exc_type = type(exc)
+  for code in _CODE_TO_EXCEPTION:
+    if (exc_type in _CODE_TO_EXCEPTION[code]):
+      return code
+  return HTTP_500_INTERNAL_SERVER_ERROR
 
 
 def custom_exception_handler(exc):
-    logger.error('Exception caught: {}, error: {}.'.format(type(exc).__name__, exc))
+  logger.error('Exception caught: {}, error: {}.'.format(type(exc).__name__, exc))
 
-    status_code = _find_code_for_exception(exc)
-    response = Response(status=status_code,
-                        data={
-                            'detail': (hasattr(exc, 'detail') and exc.detail) or
-                                      (hasattr(exc, 'message') and exc.message) or
-                                      'No detail',
-                            'code': (hasattr(exc, 'code')) and exc.code or 0
-                        })
+  status_code = _find_code_for_exception(exc)
+  response = Response(status=status_code,
+                      data={
+                        'detail': (hasattr(exc, 'detail') and exc.detail) or
+                                  (hasattr(exc, 'message') and exc.message) or
+                                  'No detail',
+                        'code': (hasattr(exc, 'code')) and exc.code or 0
+                      })
 
-    return response
+  return response

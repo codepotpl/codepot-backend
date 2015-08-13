@@ -4,6 +4,7 @@ from django.core.mail import (
     EmailMultiAlternatives,
 )
 from django.db import transaction
+from haystack.management.commands import update_index
 
 from python_ifirma.core import (
     iFirmaAPI,
@@ -132,6 +133,7 @@ def generate_and_send_invoice():
                 (ifirma_invoice_id, ifirma_invoice_no) = _ifirma_client.generate_invoice(ifirma_invoice)
                 ifirma_invoice_pdf = _ifirma_client.get_invoice_pdf(ifirma_invoice_id)
 
+                invoice.ifirma_id = ifirma_invoice_id
                 send_mail(
                     purchase.user.email,
                     'Payment completed [{}]'.format(purchase.id),
@@ -146,7 +148,6 @@ def generate_and_send_invoice():
                     ['tickets@codepot.pl'],
                     ('{}.pdf'.format(ifirma_invoice_no), ifirma_invoice_pdf.getvalue(), 'application/pdf')
                 )
-                invoice.ifirma_id = ifirma_invoice_id
                 invoice.no = ifirma_invoice_no
                 invoice.sent = True
 
@@ -179,3 +180,14 @@ def send_mail(to, title, messageTXT, messageHTML, bcc=None, attachment=[]):
     )
     email.attach_alternative(messageHTML, "text/html")
     email.send()
+
+
+@shared_task
+def update_workshops_full_text_search():
+  logger.info('Updating workshop full-text search index.')
+  try:
+    update_index.Command().handle(using=['default'], verbosity=2, remove=True)
+  except Exception as e:
+    logger.error('Caught exception while updating workshop index: %s' % e)
+
+  return None

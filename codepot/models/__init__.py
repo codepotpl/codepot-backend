@@ -19,3 +19,16 @@ from .app_settings import (
     AppSettings,
     AppSettingName,
 )
+from .workshops import (
+    WorkshopTag,
+    Workshop,
+    WorkshopMessage,
+)
+
+from .timeslots import (
+    TimeSlotTierDayName,
+    TimeSlotTier,
+    TimeSlot,
+)
+
+from .auth import ResetPassword

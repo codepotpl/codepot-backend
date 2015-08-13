@@ -67,3 +67,35 @@ auth_res_schema = {
     'required': ['id', 'email', 'firstName', 'lastName', ],
     'additionalProperties': False,
 }
+
+reset_pass_initialize_req_schema = {
+    '$schema': 'http://json-schema.org/draft-04/schema',
+    'type': 'object',
+    'properties': {
+        'email': {
+            'type': 'string',
+            'minLength': 1,
+            'format': 'email',
+        },
+    },
+    'required': ['email', ],
+    'additionalProperties': False,
+}
+
+reset_pass_finalize_req_schema = {
+    '$schema': 'http://json-schema.org/draft-04/schema',
+    'type': 'object',
+    'properties': {
+        'token': {
+            'type': 'string',
+            'minLength': 1,
+        },
+        'password': {
+            'type': 'string',
+            'minLength': 1,
+        }
+    },
+    'required': ['token', 'password', ],
+    'additionalProperties': False,
+}
+

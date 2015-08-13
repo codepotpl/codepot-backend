@@ -18,6 +18,7 @@ REQUIRED_ENVIRONMENT_VARIABLES = [
     'CDPT_IFIRMA_USER',
     'CDPT_IFIRMA_INVOICE_KEY',
     'CDPT_IFIRMA_USER_KEY',
+    'CDPT_WEB_CLIENT_ADDRESS',
 ]
 
 MISSING_ENVIRONMENT_VARIABLES = []
@@ -59,6 +60,7 @@ INSTALLED_THIRD_PARTY_APPS = (
     'rest_framework.authtoken',
     'corsheaders',
     'django_payu',
+    'haystack',
 )
 
 INSTALLED_HOME_GROWN_APPS = (
@@ -226,7 +228,22 @@ CELERYBEAT_SCHEDULE = {
         'task': 'celerytq.tasks.generate_and_send_invoice',
         'schedule': crontab(minute='*/3'),
     },
+    'every-10-minutes-update-workshops-full-text-search': {
+        'task': 'celerytq.tasks.update_workshops_full_text_search',
+        'schedule': crontab(minute='*/10'),
+    },
 }
+
+# Haystack
+HAYSTACK_CONNECTIONS = {
+  'default': {
+    'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+    'URL': 'http://{}:{}'.format(env('ELASTICSEARCH_PORT_9200_TCP_ADDR'), env('ELASTICSEARCH_PORT_9200_TCP_PORT')),
+    'INDEX_NAME': 'haystack',
+  },
+}
+
+print(HAYSTACK_CONNECTIONS)
 
 # PayU
 DJANGO_PAYU_BASE_URL = env('CDPT_DJANGO_PAYU_BASE_URL')
@@ -243,6 +260,8 @@ MCE_BANK_ACCOUNT = {
 }
 
 MAX_TICKETS = 240
+
+WEB_CLIENT_ADDRESS = env('CDPT_WEB_CLIENT_ADDRESS')
 
 print('Current environment: {}'.format(env('CDPT_ENVIRONMENT')))
 print('Base dir: {}'.format(BASE_DIR))
