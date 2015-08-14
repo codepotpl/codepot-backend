@@ -87,6 +87,17 @@ class WorkshopAdmin(admin.ModelAdmin):
     'max_attendees',
   )
 
+class LimitedWorkshop(Workshop):
+    class Meta:
+        proxy = True
+
+@admin.register(LimitedWorkshop)
+class LimitedWorkshopAdmin(admin.ModelAdmin):
+  list_display = (
+    'title',
+    'max_attendees',
+  ),
+  exclude = ['attendees']
 
 @admin.register(WorkshopTag)
 class WorkshopTagAdmin(admin.ModelAdmin):
