@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from getenv import env
-
 from rest_framework.test import APIRequestFactory
 
 from codepot import create_hash
@@ -30,6 +29,12 @@ class Command(BaseCommand):
                 help='Path to file with mentors JSON data'),
   )
   factory = APIRequestFactory()
+
+  def _find_user_for_email_or_none(self, email):
+    try:
+      return User.objects.get(email=email)
+    except User.DoesNotExist:
+      return None
 
   def _sign_up(self, entry):
     request = self.factory.post('', {
@@ -97,13 +102,22 @@ class Command(BaseCommand):
             format(email, entry['firstName'], entry['lastName'])
         )
 
-        with transaction.atomic():
-          try:
-            self._sign_up(entry)
-            user = User.objects.get(email=email)
-            self._add_purchase(user)
-            self._send_reset_password_message(user)
-            self._create_workshop_mentor_model(user, entry)
+        try:
 
-          except Exception as e:
-            self.stderr.write('Error while processing user with email: {}, err: {}'.format(email, e))
+          with transaction.atomic():
+
+            user = self._find_user_for_email_or_none(email)
+
+            if user is None:
+
+              self._sign_up(entry)
+              user = self._find_user_for_email_or_none(email)
+              self._add_purchase(user)
+              self._send_reset_password_message(user)
+              self._create_workshop_mentor_model(user, entry)
+
+            else:
+              self.stderr.write('User with email: {} (ID: {}) already exists, skipping.'.format(email, user.id))
+
+        except Exception as e:
+          self.stderr.write('Error while processing user with email: {}, err: {}'.format(email, e))
