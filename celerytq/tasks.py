@@ -1,3 +1,5 @@
+from django.core.mail import EmailMultiAlternatives
+
 from getenv import env
 from celery import shared_task
 from django.db import transaction
@@ -173,17 +175,16 @@ def send_mail(to, title, messageTXT, messageHTML, bcc=None, attachment=[]):
                                                                                                        messageHTML, bcc,
                                                                                                        bool(
                                                                                                          attachment)))
-  #TODO unlock mailing
-  # email = EmailMultiAlternatives(
-  #   subject=title,
-  #   body=messageTXT,
-  #   from_email='donotreply@codepot.pl',
-  #   to=[to],
-  #   bcc=bcc,
-  #   attachments=attachment and [attachment] or []
-  # )
-  # email.attach_alternative(messageHTML, "text/html")
-  # email.send()
+  email = EmailMultiAlternatives(
+    subject=title,
+    body=messageTXT,
+    from_email='donotreply@codepot.pl',
+    to=[to],
+    bcc=bcc,
+    attachments=attachment and [attachment] or []
+  )
+  email.attach_alternative(messageHTML, "text/html")
+  email.send()
 
 
 @shared_task
