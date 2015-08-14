@@ -96,7 +96,7 @@ class LimitedWorkshopAdmin(admin.ModelAdmin):
   list_display = (
     'title',
     'max_attendees',
-  ),
+  )
   exclude = ['attendees']
 
 @admin.register(WorkshopTag)
