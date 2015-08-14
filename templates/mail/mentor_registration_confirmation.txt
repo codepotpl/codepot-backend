@@ -1,0 +1,14 @@
+Hi {{ name }}!
+
+We have just created Codepot account for you.
+
+Please reset your password with this link: {{ reset_link }} and using the email address this message was sent to.
+
+--
+Kind regards,
+The Codepot Team
+
+Follow us:
+http://codepot.pl
+http://twitter.com/codepot_pl
+http://www.facebook.com/codepotpl

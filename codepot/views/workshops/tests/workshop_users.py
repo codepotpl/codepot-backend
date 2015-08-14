@@ -1,10 +1,10 @@
 import datetime
 from random import randint
 
+import jsonschema
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.test import TestCase
-import jsonschema
 from rest_framework.authtoken.models import Token
 from rest_framework.status import (
   HTTP_400_BAD_REQUEST,
@@ -13,6 +13,7 @@ from rest_framework.status import (
   HTTP_409_CONFLICT,
   HTTP_204_NO_CONTENT,
   HTTP_200_OK,
+  HTTP_410_GONE,
 )
 from rest_framework.test import APIClient
 
@@ -23,9 +24,10 @@ from codepot.models import (
   Purchase,
   PaymentStatusName,
   TimeSlotTier,
-  TimeSlotTierDayName,
   TimeSlot,
   WorkshopTag,
+  AppSettings,
+  AppSettingName,
 )
 from codepot.views.workshops import workshops_json_schema
 
@@ -65,6 +67,10 @@ class UserWorkshopsTest(TestCase):
 
     self.req_format = 'json'
     self.client.credentials(HTTP_AUTHORIZATION='Token {}'.format(self.attendee_token.key))
+
+    self.open = AppSettings.objects.get(name=AppSettingName.CDPT_WORKSHOP_REGISTRATION_OPEN.value)
+    self.open.value = True
+    self.open.save()
 
   def test_if_exception_raised_when_user_id_and_token_does_not_match_when_getting_list_of_workshops(self):
     resp = self.client.get('/api/users/{}/workshops/'.format(randint(3000, 4000)), None, format=self.req_format)
@@ -360,6 +366,116 @@ class UserWorkshopsTest(TestCase):
 
     self.assertEqual(self.workshop.attendees.count(), 0)
     self.assertNotIn(self.attendee, self.workshop.attendees.all())
+
+  def test_if_middle_time_slot_layers_are_mutually_exclusive_day_1(self):
+    timeslot_tier_2 = TimeSlotTier.objects.get(id='6DNs2lvvZH')
+    timeslot_tier_3 = TimeSlotTier.objects.get(id='XurOSgWLtg')
+
+    workshop_2 = Workshop.objects.create(title='W1', description='D1')
+    workshop_3 = Workshop.objects.create(title='W2', description='D2')
+
+    TimeSlot.objects.create(room_no=102, timeslot_tier=timeslot_tier_2, workshop=workshop_2)
+    TimeSlot.objects.create(room_no=103, timeslot_tier=timeslot_tier_3, workshop=workshop_3)
+
+    workshop_2.attendees.add(self.attendee)
+
+    self.assertEqual(workshop_2.attendees.count(), 1)
+    self.assertEqual(workshop_3.attendees.count(), 0)
+
+    payload = {
+      'workshopId': workshop_3.id
+    }
+
+    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
+
+    data = resp.data
+    self.assertEqual(data['code'], 510)
+    self.assertEqual(data['detail'], 'Cannot sign for workshop when tiers are mutually exclusive.')
+
+    self.assertEqual(workshop_2.attendees.count(), 1)
+    self.assertEqual(workshop_3.attendees.count(), 0)
+
+  def test_if_middle_time_slot_layers_are_mutually_exclusive_day_2(self):
+    timeslot_tier_2 = TimeSlotTier.objects.get(id='VZG2dH6HoX')
+    timeslot_tier_3 = TimeSlotTier.objects.get(id='Rf0gaLELyI')
+
+    workshop_2 = Workshop.objects.create(title='W1', description='D1')
+    workshop_3 = Workshop.objects.create(title='W2', description='D2')
+
+    TimeSlot.objects.create(room_no=102, timeslot_tier=timeslot_tier_2, workshop=workshop_2)
+    TimeSlot.objects.create(room_no=103, timeslot_tier=timeslot_tier_3, workshop=workshop_3)
+
+    workshop_2.attendees.add(self.attendee)
+
+    self.assertEqual(workshop_2.attendees.count(), 1)
+    self.assertEqual(workshop_3.attendees.count(), 0)
+
+    payload = {
+      'workshopId': workshop_3.id
+    }
+
+    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
+
+    data = resp.data
+    self.assertEqual(data['code'], 510)
+    self.assertEqual(data['detail'], 'Cannot sign for workshop when tiers are mutually exclusive.')
+
+    self.assertEqual(workshop_2.attendees.count(), 1)
+    self.assertEqual(workshop_3.attendees.count(), 0)
+
+  def test_if_all_cross_day_pairs_are_not_mutually_exclusive(self):
+    for p in [
+      ('6DNs2lvvZH', 'VZG2dH6HoX'),
+      ('6DNs2lvvZH', 'Rf0gaLELyI'),
+      ('XurOSgWLtg', 'VZG2dH6HoX'),
+      ('XurOSgWLtg', 'Rf0gaLELyI')
+    ]:
+      timeslot_tier_1 = TimeSlotTier.objects.get(id=p[0])
+      timeslot_tier_2 = TimeSlotTier.objects.get(id=p[1])
+
+      workshop_2 = Workshop.objects.create(title='W1', description='D1')
+      workshop_3 = Workshop.objects.create(title='W2', description='D2')
+
+      TimeSlot.objects.create(room_no='102', timeslot_tier=timeslot_tier_1, workshop=workshop_2)
+      TimeSlot.objects.create(room_no='103', timeslot_tier=timeslot_tier_2, workshop=workshop_3)
+
+      workshop_2.attendees.add(self.attendee)
+
+      self.assertEqual(workshop_2.attendees.count(), 1)
+      self.assertEqual(workshop_3.attendees.count(), 0)
+
+      payload = {
+        'workshopId': workshop_3.id
+      }
+
+      resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+
+      self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
+
+      self.assertEqual(workshop_2.attendees.count(), 1)
+      self.assertEqual(workshop_3.attendees.count(), 1)
+
+      TimeSlot.objects.all().delete()
+
+      workshop_2.delete()
+      workshop_3.delete()
+
+  def test_if_exception_raised_when_registration_closed(self):
+    payload = {
+      'workshopId': self.workshop.id,
+    }
+    self.open.value = False
+    self.open.save()
+
+    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_410_GONE)
+    self.assertEqual(resp.data['code'], 402)
+    self.assertEqual(resp.data['detail'], 'Workshops registration closed')
 
   def tearDown(self):
     self.client.credentials(HTTP_AUTHORIZATION=None)

@@ -17,7 +17,7 @@ from jsonschema.exceptions import ValidationError as JSONValidationError
 from codepot.exceptions import (
     RegistrationClosedException,
     TicketsLimitExceededException,
-)
+    WorkshopsRegistrationClosedException)
 from codepot.logging import logger
 from codepot.views.auth.exceptions import (
     EmailAddressAlreadyUsedException,
@@ -56,6 +56,7 @@ from codepot.views.workshops.exceptions import (
   WorkshopMaxAttendeesLimitExceededException,
   UserAlreadySignedForWorkshopInTierException,
   UserNotSignedForWorkshopException,
+  MutuallyExclusiveTiersException,
 )
 
 _CODE_TO_EXCEPTION = {
@@ -101,10 +102,12 @@ _CODE_TO_EXCEPTION = {
     UserNotSignedForWorkshopException,
     UserNotFoundForPasswordResetException,
     ResetPasswordNotFoundException,
+    MutuallyExclusiveTiersException,
   ],
   HTTP_410_GONE: [
     RegistrationClosedException,
     TicketsLimitExceededException,
+    WorkshopsRegistrationClosedException,
   ]
 }
 

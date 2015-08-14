@@ -9,14 +9,14 @@ from codepot.models import AppSettingName
 class Migration(migrations.Migration):
   def initial_data(apps, schema_editor):
     AppSettings = apps.get_model('codepot', 'AppSettings')
-    AppSettings.objects.create(name=AppSettingName.CDPT_REGISTRATION_OPEN.value, value=True)
+    AppSettings.objects.create(name=AppSettingName.CDPT_WORKSHOP_REGISTRATION_OPEN.value, value=False)
 
   def remove_data(apps, schema_editor):
     AppSettings = apps.get_model('codepot', 'AppSettings')
     AppSettings.objects.all().delete()
 
   dependencies = [
-    ('codepot', '0003_appsettings'),
+    ('codepot', '0025_auto_20150813_2056'),
   ]
 
   operations = [

@@ -17,6 +17,11 @@ class TicketsLimitExceededException(CodepotException):
         super().__init__('Tickets limit exceeded', 401)
 
 
+class WorkshopsRegistrationClosedException(CodepotException):
+    def __init__(self):
+        super().__init__('Workshops registration closed', 402)
+
+
 def log_and_raise(message, exc_class):
     logger.error(message)
     raise exc_class(message)

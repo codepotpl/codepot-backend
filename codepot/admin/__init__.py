@@ -12,6 +12,7 @@ from codepot.models import (
     Workshop,
     WorkshopTag,
     WorkshopMessage,
+    WorkshopMentor,
     TimeSlotTier,
     TimeSlot,
     ResetPassword,
@@ -86,6 +87,17 @@ class WorkshopAdmin(admin.ModelAdmin):
     'max_attendees',
   )
 
+class LimitedWorkshop(Workshop):
+    class Meta:
+        proxy = True
+
+@admin.register(LimitedWorkshop)
+class LimitedWorkshopAdmin(admin.ModelAdmin):
+  list_display = (
+    'title',
+    'max_attendees',
+  )
+  exclude = ['attendees']
 
 @admin.register(WorkshopTag)
 class WorkshopTagAdmin(admin.ModelAdmin):
@@ -133,4 +145,13 @@ class ResetPasswordAdmin(admin.ModelAdmin):
     'email',
     'token',
     'active',
+  )
+
+
+@admin.register(WorkshopMentor)
+class WorkshopMentorAdmin(admin.ModelAdmin):
+  list_display = (
+    'first_name',
+    'last_name',
+    'tagline',
   )

@@ -53,3 +53,8 @@ class UserAlreadySignedForWorkshopInTierException(WorkshopException):
 class UserNotSignedForWorkshopException(WorkshopException):
   def __init__(self, user_id, workshop_id):
     super().__init__('User with ID: {} is not signed for workshop with ID: {}'.format(user_id, workshop_id), 509)
+
+
+class MutuallyExclusiveTiersException(WorkshopException):
+  def __init__(self):
+    super().__init__('Cannot sign for workshop when tiers are mutually exclusive.', 510)
