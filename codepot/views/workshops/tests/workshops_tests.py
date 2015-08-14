@@ -167,7 +167,7 @@ class WorkshopsListTests(TestCase):
     workshop = workshops[0]
     self.assertEqual(workshop['id'], self.workshop.id)
 
-  def test_if_filtering_by_tag_mentor_correctly(self):
+  def test_if_filtering_by_tag_mentor_works_correctly(self):
     update_workshops_full_text_search()
 
     resp = self.client.post('/api/workshops/search/', {'query': self.mentor.last_name}, format=self.req_format)

@@ -10,11 +10,13 @@ from rest_framework.status import (
   HTTP_204_NO_CONTENT,
 )
 
+from codepot.exceptions import WorkshopsRegistrationClosedException
 from codepot.logging import logger
 from codepot.models import (
   Purchase,
   PaymentStatusName,
   TimeSlot,
+  AppSettings,
 )
 from codepot.models.workshops import Workshop
 from codepot.views.users import _compare_ids_and_raise_exception_if_different
@@ -59,6 +61,8 @@ def _get_user_workshops(user):
   return prepare_list_of_workshops_response(workshops)
 
 def _sign_user_for_workshop(user, payload):
+  __check_if_workshops_registration_is_open()
+
   __validate_sign_for_workshop_payload(payload)
 
   workshop_id = payload['workshopId']
@@ -81,6 +85,10 @@ def _sign_user_for_workshop(user, payload):
 
   return Response(status=HTTP_204_NO_CONTENT)
 
+
+def __check_if_workshops_registration_is_open():
+  if not AppSettings.objects.is_workshop_registration_open():
+    raise WorkshopsRegistrationClosedException()
 
 def __validate_sign_for_workshop_payload(payload):
   jsonschema.validate(payload, workshops_json_schema.sign_for_workshop_req_schema)

@@ -13,6 +13,7 @@ from rest_framework.status import (
   HTTP_409_CONFLICT,
   HTTP_204_NO_CONTENT,
   HTTP_200_OK,
+  HTTP_410_GONE,
 )
 from rest_framework.test import APIClient
 
@@ -25,6 +26,8 @@ from codepot.models import (
   TimeSlotTier,
   TimeSlot,
   WorkshopTag,
+  AppSettings,
+  AppSettingName,
 )
 from codepot.views.workshops import workshops_json_schema
 
@@ -64,6 +67,10 @@ class UserWorkshopsTest(TestCase):
 
     self.req_format = 'json'
     self.client.credentials(HTTP_AUTHORIZATION='Token {}'.format(self.attendee_token.key))
+
+    self.open = AppSettings.objects.get(name=AppSettingName.CDPT_WORKSHOP_REGISTRATION_OPEN.value)
+    self.open.value = True
+    self.open.save()
 
   def test_if_exception_raised_when_user_id_and_token_does_not_match_when_getting_list_of_workshops(self):
     resp = self.client.get('/api/users/{}/workshops/'.format(randint(3000, 4000)), None, format=self.req_format)
@@ -456,6 +463,19 @@ class UserWorkshopsTest(TestCase):
 
       workshop_2.delete()
       workshop_3.delete()
+
+  def test_if_exception_raised_when_registration_closed(self):
+    payload = {
+      'workshopId': self.workshop.id,
+    }
+    self.open.value = False
+    self.open.save()
+
+    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_410_GONE)
+    self.assertEqual(resp.data['code'], 402)
+    self.assertEqual(resp.data['detail'], 'Workshops registration closed')
 
   def tearDown(self):
     self.client.credentials(HTTP_AUTHORIZATION=None)

@@ -17,7 +17,7 @@ from jsonschema.exceptions import ValidationError as JSONValidationError
 from codepot.exceptions import (
     RegistrationClosedException,
     TicketsLimitExceededException,
-)
+    WorkshopsRegistrationClosedException)
 from codepot.logging import logger
 from codepot.views.auth.exceptions import (
     EmailAddressAlreadyUsedException,
@@ -107,6 +107,7 @@ _CODE_TO_EXCEPTION = {
   HTTP_410_GONE: [
     RegistrationClosedException,
     TicketsLimitExceededException,
+    WorkshopsRegistrationClosedException,
   ]
 }
 

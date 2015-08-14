@@ -173,6 +173,7 @@ def send_mail(to, title, messageTXT, messageHTML, bcc=None, attachment=[]):
                                                                                                        messageHTML, bcc,
                                                                                                        bool(
                                                                                                          attachment)))
+  #TODO unlock mailing
   # email = EmailMultiAlternatives(
   #   subject=title,
   #   body=messageTXT,
