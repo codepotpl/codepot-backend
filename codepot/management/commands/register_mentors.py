@@ -5,7 +5,9 @@ from optparse import make_option
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db import transaction
+
 from getenv import env
+
 from rest_framework.test import APIRequestFactory
 
 from codepot import create_hash
@@ -15,6 +17,7 @@ from codepot.models import (
   Product,
   WorkshopMentor,
 )
+from codepot.models.purchases import PaymentStatusName
 from codepot.utils import get_rendered_template
 from codepot.views.auth import sign_up
 from celerytq.tasks import send_mail
@@ -51,7 +54,10 @@ class Command(BaseCommand):
     promo_code = PromoCode.objects.get(code=env('CDPT_MENTORS_PROMO_CODE'))
     product = Product.objects.order_by('id')[0]
 
-    Purchase.objects.create(user=user, promo_code=promo_code, product=product)
+    Purchase.objects.create(
+      user=user, promo_code=promo_code, product=product,
+      payment_status=PaymentStatusName.SUCCESS.value
+    )
 
   def _send_reset_password_message(self, user):
     reset_link = '{}{}'.format(settings.WEB_CLIENT_ADDRESS, 'reset-password')
