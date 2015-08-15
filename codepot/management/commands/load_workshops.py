@@ -3,7 +3,6 @@ import sys
 from optparse import make_option
 
 from django.contrib.auth.models import User
-
 from django.core.management.base import BaseCommand
 
 from codepot.models import (
@@ -66,7 +65,6 @@ class Command(BaseCommand):
       data = json.load(file)
 
       Workshop.objects.all().delete()
-      WorkshopTag.objects.all().delete()
 
       for entry in data:
         try:
