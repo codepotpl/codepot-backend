@@ -56,7 +56,7 @@ class Command(BaseCommand):
     workshops_json = options.get('workshops_json')
 
     if workshops_json is None:
-      self.stderr.write('No mentors JSON file passed.')
+      self.stderr.write('No workshops JSON file passed.')
       sys.exit(1)
 
     self.stdout.write("Loading data from: '{}' file".format(workshops_json))
