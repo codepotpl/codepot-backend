@@ -7,7 +7,7 @@ from .workshop_users import (
   list_user_workshops_or_sign_for_workshops,
   delete_user_workshop,
 )
-from .workshsops import (
+from .workshops import (
   get_workshops,
   get_workshop_attendees,
   search_workshops,
