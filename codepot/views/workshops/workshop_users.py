@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 import jsonschema
 from django.db import transaction
 from rest_framework.decorators import (
@@ -6,6 +8,7 @@ from rest_framework.decorators import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
 from rest_framework.status import (
   HTTP_204_NO_CONTENT,
 )
@@ -31,7 +34,7 @@ from codepot.views.workshops.exceptions import (
   MentorCannotSignForOwnWorkshopException,
   WorkshopMaxAttendeesLimitExceededException,
   UserAlreadySignedForWorkshopInTierException,
-  UserNotSignedForWorkshopException, MutuallyExclusiveTiersException)
+  UserNotSignedForWorkshopException, MutuallyExclusiveTiersException, WorkshopHasAlreadyStartedException)
 
 __mutually_exclusive_tiers_ids_day_1 = set(['6DNs2lvvZH', 'XurOSgWLtg', ])
 __mutually_exclusive_tiers_ids_day_2 = set(['VZG2dH6HoX', 'Rf0gaLELyI', ])
@@ -70,6 +73,8 @@ def _sign_user_for_workshop(user, payload):
   __check_if_user_has_successful_purchase(user, workshop_id)
 
   workshop = find_workshop_for_id_or_raise(workshop_id)
+
+  __check_if_workshop_has_already_started(workshop)
 
   __check_if_user_already_signed_for_workshop(user, workshop)
 
@@ -205,6 +210,8 @@ def delete_user_workshop(request, **kwargs):
 
   workshop = find_workshop_for_id_or_raise(workshop_id)
 
+  __check_if_workshop_has_already_started(workshop)
+
   __check_if_user_is_not_workshop_attendee(workshop, user)
 
   workshop.attendees.remove(user)
@@ -215,3 +222,11 @@ def delete_user_workshop(request, **kwargs):
 def __check_if_user_is_not_workshop_attendee(workshop, user):
   if user not in workshop.attendees.all():
     raise UserNotSignedForWorkshopException(user.id, workshop.id)
+
+def __check_if_workshop_has_already_started(workshop):
+  now = timezone.now()
+  workshop_slots_sorted = sorted(workshop.timeslot_set.all(), key=lambda x: x.timeslot_tier.date_from)
+  workshop_date_from = workshop_slots_sorted[0].timeslot_tier.date_from
+
+  if now > workshop_date_from:
+    raise WorkshopHasAlreadyStartedException(workshop.id)

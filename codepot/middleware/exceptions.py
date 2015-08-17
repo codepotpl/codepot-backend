@@ -57,7 +57,7 @@ from codepot.views.workshops.exceptions import (
   UserAlreadySignedForWorkshopInTierException,
   UserNotSignedForWorkshopException,
   MutuallyExclusiveTiersException,
-)
+  WorkshopHasAlreadyStartedException)
 
 _CODE_TO_EXCEPTION = {
   HTTP_400_BAD_REQUEST: [
@@ -108,6 +108,7 @@ _CODE_TO_EXCEPTION = {
     RegistrationClosedException,
     TicketsLimitExceededException,
     WorkshopsRegistrationClosedException,
+    WorkshopHasAlreadyStartedException,
   ]
 }
 
