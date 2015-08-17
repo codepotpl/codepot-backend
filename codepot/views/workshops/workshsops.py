@@ -1,7 +1,5 @@
 from haystack.query import SearchQuerySet
-
 import jsonschema
-
 from rest_framework.decorators import (
   api_view,
   permission_classes,
@@ -78,7 +76,7 @@ def __validate_search_workshops_payload(payload):
 
 
 def __find_workshops_for_query(query):
-  search_results = SearchQuerySet().models(Workshop).filter(text__in=query.split()).load_all()
+  search_results = SearchQuerySet().models(Workshop).filter(text__in=query.split(), content__contains=query).load_all()
   valid_results = [result for result in search_results if result is not None]
   for result in valid_results:
     logger.info('Found result with id: {:<30} and score: {}'.format(result.id, result.score))
