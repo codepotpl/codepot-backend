@@ -28,6 +28,7 @@ def find_message_for_id_or_raise(message_id):
     logger.error('No workshop message found for ID: {}, err: {}'.format(message_id, str(e)))
     raise WorkshopMessageNotFoundException(message_id)
 
+
 def check_if_user_is_workshop_mentor_or_attendee(workshop, user):
   if (user not in workshop.attendees.all()) and (user not in workshop.mentors.all()):
     logger.error('User with ID: {} tried to access workshop with ID: {} illegally.'.format(user.id, workshop.id))
@@ -52,13 +53,7 @@ def prepare_list_of_workshops_response(workshops):
               'order': ts.timeslot_tier.order,
             } for ts in w.timeslot_set.all()
             ],
-          'mentors': [
-            {
-              'id': m.id,
-              'firstName': m.first_name,
-              'lastName': m.last_name,
-            } for m in w.mentors.all()
-            ],
+          'mentors': [__get_workshop_mentor_data(m) for m in w.mentors.all()],
           'tags': [
             {
               'id': t.name,
@@ -70,3 +65,29 @@ def prepare_list_of_workshops_response(workshops):
     },
     HTTP_200_OK
   )
+
+
+def __get_workshop_mentor_data(mentor):
+  basic_data = {
+    'id': mentor.id,
+    'firstName': mentor.first_name,
+    'lastName': mentor.last_name,
+  }
+  extended_data = __get_workshop_mentor_extended_data(mentor)
+  basic_data.update(extended_data)
+  return basic_data
+
+
+def __get_workshop_mentor_extended_data(mentor):
+  workshop_mentor = mentor.workshopmentor if hasattr(mentor, 'workshopmentor') else None
+  return {
+    'tagline': workshop_mentor.tagline if workshop_mentor else None,
+    'pictureURL': workshop_mentor.picture_url if workshop_mentor else None,
+    'twitterUsername': workshop_mentor.twitter_username if workshop_mentor else None,
+    'githubUsername': workshop_mentor.github_username if workshop_mentor else None,
+    'linkedinProfileURL': workshop_mentor.linkedin_profile_url if workshop_mentor else None,
+    'stackoverflowId': workshop_mentor.stackoverflow_id if workshop_mentor else None,
+    'googleplusHandler': workshop_mentor.googleplus_handler if workshop_mentor else None,
+    'websiteURL': workshop_mentor.website_url if workshop_mentor else None,
+    'bioInMd': workshop_mentor.bio_in_md if workshop_mentor else None,
+  }

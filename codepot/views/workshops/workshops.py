@@ -24,6 +24,7 @@ def get_workshops(request, **kwargs):
   workshops = Workshop.objects.all()
   return prepare_list_of_workshops_response(workshops)
 
+
 @api_view(['GET', ])
 @permission_classes((IsAuthenticated,))
 def get_workshop_attendees(request, **kwargs):
@@ -47,6 +48,7 @@ def get_workshop_attendees(request, **kwargs):
     },
     status=HTTP_200_OK
   )
+
 
 def _check_if_user_is_workshop_mentor(workshop, user):
   if user not in workshop.mentors.all():
