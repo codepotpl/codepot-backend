@@ -228,10 +228,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'celerytq.tasks.generate_and_send_invoice',
         'schedule': crontab(minute='*/3'),
     },
-    'every-10-minutes-update-workshops-full-text-search': {
-        'task': 'celerytq.tasks.update_workshops_full_text_search',
-        'schedule': crontab(minute='*/10'),
-    },
+    # 'every-10-minutes-update-workshops-full-text-search': {
+    #     'task': 'celerytq.tasks.update_workshops_full_text_search',
+    #     'schedule': crontab(minute='*/10'),
+    # },
 }
 
 # Haystack
