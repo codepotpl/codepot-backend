@@ -10,7 +10,9 @@ from django.db.models.signals import (
 from django.dispatch import receiver
 
 from codepot import primary_key
-from celerytq.tasks import update_workshops_full_text_search
+from celerytq.tasks import rebuild_workshops_full_text_search
+from codepot.logging import logger
+
 
 class WorkshopTag(models.Model):
     name = models.CharField(primary_key=True, max_length=256, blank=False, unique=True)
@@ -50,7 +52,8 @@ class WorkshopMentor(models.Model):
 @receiver(post_save, sender=Workshop)
 @receiver(post_delete, sender=Workshop)
 def _update_workshop_full_text_search_index(**kwargs):
-  update_workshops_full_text_search.delay()
+  logger.info('Rebuilding workshops full text search index.')
+  rebuild_workshops_full_text_search.delay()
 
 class WorkshopMessage(models.Model):
     id = models.CharField(primary_key=True, max_length=32, default=primary_key)

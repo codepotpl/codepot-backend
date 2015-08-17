@@ -3,7 +3,7 @@ from django.core.mail import EmailMultiAlternatives
 from getenv import env
 from celery import shared_task
 from django.db import transaction
-from haystack.management.commands import update_index
+from haystack.management.commands import rebuild_index
 
 from python_ifirma.core import (
     iFirmaAPI,
@@ -188,10 +188,10 @@ def send_mail(to, title, messageTXT, messageHTML, bcc=None, attachment=[]):
 
 
 @shared_task
-def update_workshops_full_text_search():
+def rebuild_workshops_full_text_search():
   logger.info('Updating workshop full-text search index.')
   try:
-    update_index.Command().handle(using=['default'], verbosity=2, remove=True)
+    rebuild_index.Command().handle(using=['default'], verbosity=2, remove=True, noinput=True)
   except Exception as e:
     logger.error('Caught exception while updating workshop index: %s' % e)
 
