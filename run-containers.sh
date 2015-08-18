@@ -17,7 +17,6 @@ docker run \
 docker rm -f codepot-elasticsearch
 docker run \
     --name codepot-elasticsearch \
-    -v `pwd`:/es-data:/usr/share/elasticsearch/data \
     -d \
     elasticsearch:1.7.1
 
