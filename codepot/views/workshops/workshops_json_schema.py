@@ -74,8 +74,36 @@ workshops_list_res_schema = {
                   'type': 'string',
                   'minLength': 1,
                 },
+                'tagline': {
+                  'type': ['string', 'null'],
+                },
+                'pictureURL': {
+                  'type': ['string', 'null'],
+                },
+                'twitterUsername': {
+                  'type': ['string', 'null'],
+                },
+                'githubUsername': {
+                  'type': ['string', 'null'],
+                },
+                'linkedinProfileURL': {
+                  'type': ['string', 'null'],
+                },
+                'stackoverflowId': {
+                  'type': ['string', 'null'],
+                },
+                'googleplusHandler': {
+                  'type': ['string', 'null'],
+                },
+                'websiteURL': {
+                  'type': ['string', 'null'],
+                },
+                'bioInMd': {
+                  'type': ['string', 'null'],
+                },
               },
-              'required': ['id', 'firstName', 'lastName', ],
+              'required': ['id', 'firstName', 'lastName', 'tagline', 'pictureURL', 'twitterUsername', 'githubUsername',
+                           'linkedinProfileURL', 'stackoverflowId', 'googleplusHandler', 'websiteURL', 'bioInMd'],
               'additionalProperties': False,
             },
           },

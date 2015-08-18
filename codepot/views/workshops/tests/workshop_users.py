@@ -25,6 +25,7 @@ from codepot.models import (
   PaymentStatusName,
   TimeSlotTier,
   TimeSlot,
+  TimeSlotTierDayName,
   WorkshopTag,
   AppSettings,
   AppSettingName,
@@ -211,7 +212,7 @@ class UserWorkshopsTest(TestCase):
                      )
 
   def test_if_exception_raised_when_workshop_limit_exceeded(self):
-    workshop = self.workshop = Workshop.objects.create(title='t', description='d', max_attendees=0)
+    workshop = Workshop.objects.create(title='t', description='d', max_attendees=0)
 
     payload = {
       'workshopId': workshop.id
@@ -476,6 +477,49 @@ class UserWorkshopsTest(TestCase):
     self.assertEqual(resp.status_code, HTTP_410_GONE)
     self.assertEqual(resp.data['code'], 402)
     self.assertEqual(resp.data['detail'], 'Workshops registration closed')
+
+  def test_if_exception_raised_when_registering_for_started_workshop(self):
+    tier = TimeSlotTier.objects.create(date_from=datetime.datetime.now(), date_to=datetime.datetime.now(), order=0,
+                                       day=TimeSlotTierDayName.FIRST.value)
+    workshop = Workshop.objects.create(title='t', description='d', max_attendees=5)
+
+    TimeSlot.objects.create(room_no=103, timeslot_tier=tier, workshop=workshop)
+
+    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), {'workshopId': workshop.id},
+                            format=self.req_format)
+
+    self.assertEquals(0, workshop.attendees.count())
+
+    self.assertEqual(resp.status_code, HTTP_410_GONE)
+
+    data = resp.data
+    self.assertEqual(data['code'], 511)
+    self.assertEqual(data['detail'], 'Workshop with ID: {} has already started.'.format(workshop.id))
+
+    workshop = Workshop.objects.get(id=workshop.id)
+    self.assertEquals(0, workshop.attendees.count())
+
+  def test_if_exception_raised_when_unregistering_for_started_workshop(self):
+    tier = TimeSlotTier.objects.create(date_from=datetime.datetime.now(), date_to=datetime.datetime.now(), order=0,
+                                       day=TimeSlotTierDayName.FIRST.value)
+    workshop = Workshop.objects.create(title='t', description='d', max_attendees=5)
+
+    TimeSlot.objects.create(room_no=103, timeslot_tier=tier, workshop=workshop)
+    workshop.attendees.add(self.attendee)
+
+    resp = self.client.delete('/api/users/{}/workshops/{}/'.format(self.attendee.id, workshop.id), None,
+                              format=self.req_format)
+
+    self.assertEquals(1, workshop.attendees.count())
+
+    self.assertEqual(resp.status_code, HTTP_410_GONE)
+
+    data = resp.data
+    self.assertEqual(data['code'], 511)
+    self.assertEqual(data['detail'], 'Workshop with ID: {} has already started.'.format(workshop.id))
+
+    workshop = Workshop.objects.get(id=workshop.id)
+    self.assertEquals(1, workshop.attendees.count())
 
   def tearDown(self):
     self.client.credentials(HTTP_AUTHORIZATION=None)
