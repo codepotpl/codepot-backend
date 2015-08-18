@@ -31,7 +31,7 @@ class TimeSlotTier(models.Model):
 
 class TimeSlot(models.Model):
   id = models.CharField(primary_key=True, max_length=32, default=primary_key)
-  room_no = models.CharField(max_length=10, blank=False)
+  room_no = models.CharField(max_length=100, blank=False)
   timeslot_tier = models.ForeignKey('codepot.TimeSlotTier', blank=False)
   workshop = models.ForeignKey('codepot.Workshop', blank=False)
 
