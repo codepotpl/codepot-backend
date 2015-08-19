@@ -3,6 +3,7 @@ django:
   env_file: environment
   volumes:
     - ./log:/log
+    - .:/app
   links:
     - postgres
     - redis
@@ -31,6 +32,3 @@ redis:
 
 elasticsearch:
   image: elasticsearch:1.7.1
-  volumes:
-    - ./es-data:/usr/share/elasticsearch/data
-
