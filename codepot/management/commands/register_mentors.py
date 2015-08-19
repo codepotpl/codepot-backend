@@ -5,9 +5,7 @@ from optparse import make_option
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db import transaction
-
 from getenv import env
-
 from rest_framework.test import APIRequestFactory
 
 from codepot import create_hash
@@ -73,20 +71,21 @@ class Command(BaseCommand):
     )
 
   def _create_workshop_mentor_model(self, user, entry):
-    WorkshopMentor.objects.create(
-      user=user,
-      first_name=entry['firstName'],
-      last_name=entry['lastName'],
-      tagline=entry['tagline'],
-      picture_url=entry['pictureUrl'],
-      twitter_username=entry['twitterUsername'],
-      github_username=entry['githubUsername'],
-      linkedin_profile_url=entry['linkedInProfileUrl'],
-      stackoverflow_id=entry['stackoverflowId'],
-      googleplus_handler=entry['googlePlusHandler'],
-      website_url=entry['websiteUrl'],
-      bio_in_md=entry['bioInMd']
-    )
+    workshop_mentor = WorkshopMentor.objects.get_or_create(user=user)[0]
+
+    workshop_mentor.first_name = entry['firstName']
+    workshop_mentor.last_name = entry['lastName']
+    workshop_mentor.tagline = entry['tagline']
+    workshop_mentor.picture_url = entry['pictureUrl']
+    workshop_mentor.twitter_username = entry['twitterUsername']
+    workshop_mentor.github_username = entry['githubUsername']
+    workshop_mentor.linkedin_profile_url = entry['linkedInProfileUrl']
+    workshop_mentor.stackoverflow_id = entry['stackoverflowId']
+    workshop_mentor.googleplus_handler = entry['googlePlusHandler']
+    workshop_mentor.website_url = entry['websiteUrl']
+    workshop_mentor.bio_in_md = entry['bioInMd']
+
+    workshop_mentor.save()
 
   def handle(self, *args, **options):
     mentors_json = options.get('mentors_json')
@@ -120,10 +119,13 @@ class Command(BaseCommand):
               user = self._find_user_for_email_or_none(email)
               self._add_purchase(user)
               self._send_reset_password_message(user)
-              self._create_workshop_mentor_model(user, entry)
 
             else:
-              self.stderr.write('User with email: {} (ID: {}) already exists, skipping.'.format(email, user.id))
+              self.stderr.write(
+                'User with email: {} (ID: {}) already exists, skipping registration.'.format(email, user.id))
+              user = self._find_user_for_email_or_none(email)
+              self._create_workshop_mentor_model(user, entry)
+
 
         except Exception as e:
           self.stderr.write('Error while processing user with email: {}, err: {}'.format(email, e))
