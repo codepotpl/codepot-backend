@@ -51,7 +51,7 @@ def prepare_list_of_workshops_response(workshops):
               'endTime': ts.timeslot_tier.date_to.isoformat(),
               'room': ts.room_no,
               'order': ts.timeslot_tier.order,
-            } for ts in w.timeslot_set.all()
+            } for ts in sorted(w.timeslot_set.all(), key=lambda x: x.timeslot_tier.order)
             ],
           'mentors': [__get_workshop_mentor_data(m) for m in w.mentors.all()],
           'tags': [
