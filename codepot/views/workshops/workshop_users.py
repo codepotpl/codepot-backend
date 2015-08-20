@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.utils import timezone
+from django.views.decorators.cache import never_cache
 import jsonschema
 from django.db import transaction
 from rest_framework.decorators import (
@@ -46,6 +47,7 @@ __mutually_exclusive_tiers_ids_day_2 = set(['VZG2dH6HoX', 'Rf0gaLELyI', ])
 @api_view(['POST', ])
 @permission_classes((IsAuthenticated,))
 @transaction.atomic()
+@never_cache
 def sign_for_workshop(request, **kwargs):
   user = request.user
   user_id = kwargs['user_id']
@@ -58,6 +60,7 @@ def sign_for_workshop(request, **kwargs):
 
 @api_view(['POST', ])
 @permission_classes((IsAuthenticated,))
+@never_cache
 def get_user_workshops(request, **kwargs):
   user = request.user
   user_id = kwargs['user_id']
@@ -94,7 +97,7 @@ def _sign_user_for_workshop(user, payload):
 
   __add_user_to_workshop_attendees(workshop, user)
 
-  return Response(status=HTTP_204_NO_CONTENT)
+  return Response(status=HTTP_204_NO_CONTENT, headers={'Cache-Control': 'no-cache, no-store, must-revalidate'})
 
 
 def __check_if_workshops_registration_is_open():
