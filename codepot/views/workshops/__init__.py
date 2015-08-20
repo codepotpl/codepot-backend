@@ -9,6 +9,7 @@ from .workshop_users import (
 )
 from .workshops import (
   get_workshops,
+  get_workshops_places,
   get_workshop_attendees,
   search_workshops,
 )

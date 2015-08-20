@@ -199,3 +199,33 @@ workshop_search_req_schema = {
   'required': ['query', ],
   'additionalProperties': False,
 }
+
+workshop_places_res_schema = {
+  '$schema': 'http://json-schema.org/draft-04/schema',
+  'type': 'object',
+  'properties': {
+    'places': {
+      'type': 'array',
+      'uniqueItems': True,
+      'minItems': 1,
+      'items': {
+        'type': 'object',
+        'properties': {
+          'workshopId': {
+            'type': 'integer',
+          },
+          'maxAttendees': {
+            'type': 'integer',
+          },
+          'attendeesCount': {
+            'type': 'integer',
+          },
+        },
+        'required': ['workshopId', 'maxAttendees', 'attendeesCount', ],
+        'additionalProperties': False,
+      },
+    },
+  },
+  'required': ['places', ],
+  'additionalProperties': False,
+}
