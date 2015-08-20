@@ -35,7 +35,10 @@ from codepot.views.workshops.exceptions import (
   MentorCannotSignForOwnWorkshopException,
   WorkshopMaxAttendeesLimitExceededException,
   UserAlreadySignedForWorkshopInTierException,
-  UserNotSignedForWorkshopException, MutuallyExclusiveTiersException, WorkshopHasAlreadyStartedException)
+  UserNotSignedForWorkshopException,
+  MutuallyExclusiveTiersException,
+  WorkshopHasAlreadyStartedException,
+)
 
 __mutually_exclusive_tiers_ids_day_1 = set(['6DNs2lvvZH', 'XurOSgWLtg', ])
 __mutually_exclusive_tiers_ids_day_2 = set(['VZG2dH6HoX', 'Rf0gaLELyI', ])
