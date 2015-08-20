@@ -74,7 +74,7 @@ class UserWorkshopsTest(TestCase):
     self.open.save()
 
   def test_if_exception_raised_when_user_id_and_token_does_not_match_when_getting_list_of_workshops(self):
-    resp = self.client.get('/api/users/{}/workshops/'.format(randint(3000, 4000)), None, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/'.format(randint(3000, 4000)), None, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_403_FORBIDDEN)
 
@@ -83,7 +83,7 @@ class UserWorkshopsTest(TestCase):
     self.assertEqual(data['detail'], 'Invalid user ID exception.')
 
   def test_if_list_of_workshops_matches_schema_if_user_has_no_workshops(self):
-    resp = self.client.get('/api/users/{}/workshops/'.format(self.attendee.id), None, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), None, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_200_OK)
 
@@ -94,7 +94,7 @@ class UserWorkshopsTest(TestCase):
 
   def test_if_list_of_workshops_matches_schema_if_user_has_workshops(self):
     self.workshop.attendees.add(self.attendee)
-    resp = self.client.get('/api/users/{}/workshops/'.format(self.attendee.id), None, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), None, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_200_OK)
 
@@ -104,7 +104,7 @@ class UserWorkshopsTest(TestCase):
     self.assertEqual(len(workshops), 1)
 
   def test_if_validation_fails_when_invalid_body_sent_with_sign_request(self):
-    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), {}, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), {}, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
 
@@ -113,7 +113,7 @@ class UserWorkshopsTest(TestCase):
     self.assertEqual(data['detail'], "'workshopId' is a required property")
 
   def test_if_exception_raised_when_user_id_and_token_does_not_match_when_signing_for_workshop(self):
-    resp = self.client.get('/api/users/{}/workshops/'.format(randint(3000, 4000)), None, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(randint(3000, 4000)), None, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_403_FORBIDDEN)
 
@@ -131,7 +131,7 @@ class UserWorkshopsTest(TestCase):
       'workshopId': 123456789
     }
 
-    resp = self.client.post('/api/users/{}/workshops/'.format(attendee.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(attendee.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
 
@@ -151,7 +151,7 @@ class UserWorkshopsTest(TestCase):
       'workshopId': 123456789
     }
 
-    resp = self.client.post('/api/users/{}/workshops/'.format(attendee.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(attendee.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
 
@@ -163,7 +163,7 @@ class UserWorkshopsTest(TestCase):
     payload = {
       'workshopId': 123456789
     }
-    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
 
@@ -177,7 +177,7 @@ class UserWorkshopsTest(TestCase):
     payload = {
       'workshopId': self.workshop.id
     }
-    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
 
@@ -200,7 +200,7 @@ class UserWorkshopsTest(TestCase):
     payload = {
       'workshopId': self.workshop.id
     }
-    resp = self.client.post('/api/users/{}/workshops/'.format(mentor.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(mentor.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
 
@@ -214,11 +214,13 @@ class UserWorkshopsTest(TestCase):
   def test_if_exception_raised_when_workshop_limit_exceeded(self):
     workshop = Workshop.objects.create(title='t', description='d', max_attendees=0)
 
+    TimeSlot.objects.create(room_no=103, timeslot_tier=self.timeslot_tier, workshop=workshop)
+
     payload = {
       'workshopId': workshop.id
     }
 
-    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
 
@@ -238,7 +240,7 @@ class UserWorkshopsTest(TestCase):
       'workshopId': self.workshop.id
     }
 
-    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
 
@@ -254,7 +256,7 @@ class UserWorkshopsTest(TestCase):
       'workshopId': self.workshop.id
     }
 
-    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
 
@@ -270,7 +272,7 @@ class UserWorkshopsTest(TestCase):
       'workshopId': self.workshop.id
     }
 
-    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
 
@@ -279,7 +281,7 @@ class UserWorkshopsTest(TestCase):
     self.assertEqual(self.workshop.attendees.count(), 1)
     self.assertIn(self.attendee, self.workshop.attendees.all())
 
-    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
 
@@ -387,7 +389,7 @@ class UserWorkshopsTest(TestCase):
       'workshopId': workshop_3.id
     }
 
-    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
 
@@ -417,7 +419,7 @@ class UserWorkshopsTest(TestCase):
       'workshopId': workshop_3.id
     }
 
-    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_409_CONFLICT)
 
@@ -453,7 +455,7 @@ class UserWorkshopsTest(TestCase):
         'workshopId': workshop_3.id
       }
 
-      resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+      resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), payload, format=self.req_format)
 
       self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
 
@@ -472,7 +474,7 @@ class UserWorkshopsTest(TestCase):
     self.open.value = False
     self.open.save()
 
-    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), payload, format=self.req_format)
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), payload, format=self.req_format)
 
     self.assertEqual(resp.status_code, HTTP_410_GONE)
     self.assertEqual(resp.data['code'], 402)
@@ -485,7 +487,7 @@ class UserWorkshopsTest(TestCase):
 
     TimeSlot.objects.create(room_no=103, timeslot_tier=tier, workshop=workshop)
 
-    resp = self.client.post('/api/users/{}/workshops/'.format(self.attendee.id), {'workshopId': workshop.id},
+    resp = self.client.post('/api/users/{}/workshops/sign/'.format(self.attendee.id), {'workshopId': workshop.id},
                             format=self.req_format)
 
     self.assertEquals(0, workshop.attendees.count())
