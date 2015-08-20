@@ -223,6 +223,14 @@ class WorkshopsListTests(TestCase):
     self.assertEqual(timeslots[1]['order'], 1)
     self.assertEqual(timeslots[1]['room'], '102')
 
+  def test_if_workshop_places_response_matches_schema(self):
+    client = APIClient()
+
+    resp = client.get('/api/workshops/places/', None, format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_200_OK)
+
+    jsonschema.validate(resp.data, workshops_json_schema.workshop_places_res_schema)
 
   def tearDown(self):
     self.client.credentials(HTTP_AUTHORIZATION=None)

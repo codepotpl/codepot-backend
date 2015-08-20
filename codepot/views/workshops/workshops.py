@@ -26,6 +26,23 @@ def get_workshops(request, **kwargs):
 
 
 @api_view(['GET', ])
+@permission_classes((AllowAny,))
+def get_workshops_places(request, **kwargs):
+  workshops = Workshop.objects.all()
+  return Response(
+    data={
+      'places': [
+        {
+          'workshopId': w.id,
+          'maxAttendees': w.max_attendees,
+          'attendeesCount': w.attendees.count(),
+        }
+      ] for w in workshops
+      },
+    status=HTTP_200_OK
+  )
+
+@api_view(['GET', ])
 @permission_classes((IsAuthenticated,))
 def get_workshop_attendees(request, **kwargs):
   workshop_id = kwargs['workshop_id']
