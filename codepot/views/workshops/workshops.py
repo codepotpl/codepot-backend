@@ -25,7 +25,7 @@ def get_workshops(request, **kwargs):
   return prepare_list_of_workshops_response(workshops)
 
 
-@api_view(['GET', ])
+@api_view(['POST', ])
 @permission_classes((AllowAny,))
 def get_workshops_places(request, **kwargs):
   workshops = Workshop.objects.all()
