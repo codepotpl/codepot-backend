@@ -4,7 +4,8 @@ from .workshop_messages import (
   delete_workshop_message,
 )
 from .workshop_users import (
-  list_user_workshops_or_sign_for_workshops,
+  get_user_workshops,
+  sign_for_workshop,
   delete_user_workshop,
 )
 from .workshops import (

@@ -1,5 +1,4 @@
 from django.db.models import Q
-
 from django.utils import timezone
 import jsonschema
 from django.db import transaction
@@ -43,26 +42,28 @@ from codepot.views.workshops.exceptions import (
 __mutually_exclusive_tiers_ids_day_1 = set(['6DNs2lvvZH', 'XurOSgWLtg', ])
 __mutually_exclusive_tiers_ids_day_2 = set(['VZG2dH6HoX', 'Rf0gaLELyI', ])
 
-@api_view(['GET', 'POST', ])
+
+@api_view(['POST', ])
 @permission_classes((IsAuthenticated,))
 @transaction.atomic()
-def list_user_workshops_or_sign_for_workshops(request, **kwargs):
+def sign_for_workshop(request, **kwargs):
   user = request.user
   user_id = kwargs['user_id']
 
   _compare_ids_and_raise_exception_if_different(user_id, user.id)
 
-  method = request.method
-  if method == 'GET':
-    return _get_user_workshops(user)
-  elif method == 'POST':
-    payload = request.DATA
-    return _sign_user_for_workshop(user, payload)
-  else:
-    raise Exception('Should never happen! Method: {}'.format(method))
+  payload = request.DATA
+  return _sign_user_for_workshop(user, payload)
 
 
-def _get_user_workshops(user):
+@api_view(['POST', ])
+@permission_classes((IsAuthenticated,))
+def get_user_workshops(request, **kwargs):
+  user = request.user
+  user_id = kwargs['user_id']
+
+  _compare_ids_and_raise_exception_if_different(user_id, user.id)
+
   workshops = Workshop.objects.filter(Q(attendees__in=[user]) | Q(mentors__in=[user])).distinct()
   sorted_workshops = sort_workshops_by_start_date(workshops)
 
