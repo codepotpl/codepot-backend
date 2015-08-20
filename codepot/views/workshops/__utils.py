@@ -67,6 +67,9 @@ def prepare_list_of_workshops_response(workshops):
   )
 
 
+def sort_workshops_by_start_date(workshops):
+  return sorted(workshops, key=lambda x: x.timeslot_set.all()[0].timeslot_tier.date_from)
+
 def __get_workshop_mentor_data(mentor):
   basic_data = {
     'id': mentor.id,
