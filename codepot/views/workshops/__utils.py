@@ -63,7 +63,8 @@ def prepare_list_of_workshops_response(workshops):
         } for w in workshops
         ]
     },
-    HTTP_200_OK
+    HTTP_200_OK,
+    headers={'Cache-Control': 'no-cache, no-store, must-revalidate'}
   )
 
 
