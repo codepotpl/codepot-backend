@@ -1,5 +1,4 @@
 from django.utils import timezone
-
 import jsonschema
 from django.db import transaction
 from rest_framework.decorators import (
@@ -8,7 +7,6 @@ from rest_framework.decorators import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
 from rest_framework.status import (
   HTTP_204_NO_CONTENT,
 )
@@ -27,6 +25,7 @@ from codepot.views.workshops import workshops_json_schema
 from codepot.views.workshops.__utils import (
   find_workshop_for_id_or_raise,
   prepare_list_of_workshops_response,
+  sort_workshops_by_start_date,
 )
 from codepot.views.workshops.exceptions import (
   WorkshopWithoutPurchaseSignAttemptException,
@@ -60,8 +59,9 @@ def list_user_workshops_or_sign_for_workshops(request, **kwargs):
 
 def _get_user_workshops(user):
   workshops = Workshop.objects.filter(attendees__in=[user])
+  sorted_workshops = sort_workshops_by_start_date(workshops)
 
-  return prepare_list_of_workshops_response(workshops)
+  return prepare_list_of_workshops_response(sorted_workshops)
 
 def _sign_user_for_workshop(user, payload):
   __check_if_workshops_registration_is_open()
