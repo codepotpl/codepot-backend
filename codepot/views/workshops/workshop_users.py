@@ -60,7 +60,7 @@ def list_user_workshops_or_sign_for_workshops(request, **kwargs):
 
 
 def _get_user_workshops(user):
-  workshops = Workshop.objects.filter(Q(attendees__in=[user]) | Q(mentors__in=[user]))
+  workshops = Workshop.objects.filter(Q(attendees__in=[user]) | Q(mentors__in=[user])).distinct()
   sorted_workshops = sort_workshops_by_start_date(workshops)
 
   return prepare_list_of_workshops_response(sorted_workshops)
