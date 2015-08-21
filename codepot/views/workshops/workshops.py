@@ -21,7 +21,7 @@ from codepot.views.workshops.exceptions import WorkshopIllegalAccessException
 @api_view(['GET', ])
 @permission_classes((AllowAny,))
 def get_workshops(request, **kwargs):
-  workshops = Workshop.objects.all()
+  workshops = Workshop.objects.all().order_by('id')
   return prepare_list_of_workshops_response(workshops)
 
 
