@@ -36,8 +36,8 @@ def get_workshops_places(request, **kwargs):
           'workshopId': w.id,
           'maxAttendees': w.max_attendees,
           'attendeesCount': w.attendees.count(),
-        }
-      ] for w in workshops
+        } for w in workshops
+        ]
       },
     status=HTTP_200_OK
   )
