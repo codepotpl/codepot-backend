@@ -14,8 +14,9 @@ from codepot.models import (
   Purchase,
   Product,
   WorkshopMentor,
+  PaymentStatusName,
+  PaymentTypeName,
 )
-from codepot.models.purchases import PaymentStatusName
 from codepot.utils import get_rendered_template
 from codepot.views.auth import sign_up
 from celerytq.tasks import send_mail
@@ -54,7 +55,8 @@ class Command(BaseCommand):
 
     Purchase.objects.create(
       user=user, promo_code=promo_code, product=product,
-      payment_status=PaymentStatusName.SUCCESS.value
+      payment_status=PaymentStatusName.SUCCESS.value,
+      payment_type=PaymentTypeName.FREE.value
     )
 
   def _send_reset_password_message(self, user):
