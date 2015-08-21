@@ -21,6 +21,12 @@ workshops_list_res_schema = {
             'type': 'string',
             'minLength': 1,
           },
+          'maxAttendees': {
+            'type': 'integer',
+          },
+          'attendeesCount': {
+            'type': 'integer',
+          },
           'timeSlots': {
             'type': 'array',
             'uniqueItems': True,
@@ -128,7 +134,7 @@ workshops_list_res_schema = {
             },
           },
         },
-        'required': ['id', 'title', 'description', 'timeSlots', 'mentors', 'tags', ],
+        'required': ['id', 'title', 'description', 'maxAttendees', 'attendeesCount', 'timeSlots', 'mentors', 'tags', ],
         'additionalProperties': False,
       },
     },

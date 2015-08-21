@@ -43,6 +43,8 @@ def prepare_list_of_workshops_response(workshops):
           'id': w.id,
           'title': w.title,
           'description': w.description,
+          'maxAttendees': w.max_attendees,
+          'attendeesCount': w.attendees.count(),
           'timeSlots': [
             {
               'id': ts.id,
