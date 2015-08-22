@@ -71,3 +71,6 @@ src/
 postgres-data
 redis-data
 es-data
+
+*.iml
+.idea/
