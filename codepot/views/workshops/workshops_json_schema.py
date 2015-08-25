@@ -165,8 +165,22 @@ workshop_message_res_schema = {
       'minLength': 1,
     },
     'author': {
+      'type': 'object',
+      'properties': {
+        'id': {
+          'type': 'integer',
+        },
+        'firstName': {
       'type': 'string',
       'minLength': 1,
+        },
+        'lastName': {
+          'type': 'string',
+          'minLength': 1,
+        },
+      },
+      'required': ['id', 'firstName', 'lastName', ],
+      'additionalProperties': False,
     },
     'content': {
       'type': 'string',
