@@ -81,7 +81,7 @@ def send_payment_notification():
       template = 'completed' if completed else 'failed'
 
       send_mail.delay(
-        user.email,
+        [user.email],
         subject,
         get_rendered_template('mail/purchase/{}.txt'.format(template),
                               {'name': user.first_name, 'purchase_id': purchase.id}),
@@ -136,7 +136,7 @@ def generate_and_send_invoice():
 
         invoice.ifirma_id = ifirma_invoice_id
         send_mail(
-          purchase.user.email,
+          [purchase.user.email],
           'Payment completed [{}]'.format(purchase.id),
           get_rendered_template(
             'mail/purchase/invoice.txt',
@@ -179,7 +179,7 @@ def send_mail(to, title, messageTXT, messageHTML, bcc=None, attachment=[]):
     subject=title,
     body=messageTXT,
     from_email='donotreply@codepot.pl',
-    to=[to],
+    to=to,
     bcc=bcc,
     attachments=attachment and [attachment] or []
   )

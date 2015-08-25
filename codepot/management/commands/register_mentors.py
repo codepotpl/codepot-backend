@@ -66,7 +66,7 @@ class Command(BaseCommand):
       'reset_link': reset_link
     }
     send_mail.delay(
-      user.email, 'Codepot Reset Password Request ({})'.format(user.email),
+      [user.email], 'Codepot Reset Password Request ({})'.format(user.email),
       get_rendered_template('mail/mentor_registration_confirmation.txt', ctx),
       get_rendered_template('mail/mentor_registration_confirmation.html', ctx),
       ['tickets@codepot.pl']
