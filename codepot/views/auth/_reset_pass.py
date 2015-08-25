@@ -73,7 +73,7 @@ def __prepare_reset_pw_link(token):
 
 
 def __send_reset_pw_email(email, reset_link):
-  send_mail.delay(email, 'Codepot Password Reset.',
+  send_mail.delay([email], 'Codepot Password Reset.',
                   get_rendered_template('mail/reset_password_initialize.txt', {
                     'resetPasswordLink': reset_link
                   }),

@@ -85,7 +85,7 @@ def _get_or_generate_token(user):
 
 
 def _send_registration_email(email, name):
-    send_mail.delay(email, 'Welcome {}!'.format(name),
+    send_mail.delay([email], 'Welcome {}!'.format(name),
                     get_rendered_template('mail/registration_confirmation.txt', {'name': name}),
                     get_rendered_template('mail/registration_confirmation.html', {'name': name}),
                     ['tickets@codepot.pl'])
