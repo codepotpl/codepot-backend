@@ -100,12 +100,13 @@ def _send_new_message_notification(workshop, user):
   mentor = '{} {}'.format(user.first_name, user.last_name)
   message_link = '{}workshops/{}/{}'.format(settings.WEB_CLIENT_ADDRESS, workshop.id, slugify(workshop.title))
   send_mail.delay(
-    [a.email for a in workshop.attendees.all()],
+    [],
     '{} - new message from mentor'.format(workshop.title),
     get_rendered_template('mail/workshop_mentor_new_message.txt',
                           {'mentor': mentor, 'message_link': message_link}),
     get_rendered_template('mail/workshop_mentor_new_message.html',
                           {'mentor': mentor, 'message_link': message_link}),
+    [a.email for a in workshop.attendees.all()]
   )
 
 @api_view(['DELETE', ])
