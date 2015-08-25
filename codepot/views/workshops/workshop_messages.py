@@ -1,5 +1,8 @@
-from django.db import transaction
+from django.conf import settings
+
 import jsonschema
+from django.db import transaction
+from django.utils.text import slugify
 from rest_framework.decorators import (
   api_view,
   permission_classes,
@@ -19,8 +22,10 @@ from .__utils import (
 )
 from codepot.logging import logger
 from codepot.models.workshops import WorkshopMessage
+from codepot.utils import get_rendered_template
 from codepot.views.workshops import workshops_json_schema
 from codepot.views.workshops.exceptions import WorkshopIllegalAccessException
+from celerytq.tasks import send_mail
 
 
 @api_view(['GET', 'POST', ])
@@ -71,6 +76,9 @@ def _create_new_message(workshop, user, payload):
     message=payload['content']
   )
 
+  if user in workshop.mentors.all():
+    _send_new_message_notification(workshop, user)
+
   return Response(
     data={
       'message': {
@@ -87,6 +95,18 @@ def _create_new_message(workshop, user, payload):
     status=HTTP_201_CREATED
   )
 
+
+def _send_new_message_notification(workshop, user):
+  mentor = '{} {}'.format(user.first_name, user.last_name)
+  message_link = '{}workshops/{}/{}'.format(settings.WEB_CLIENT_ADDRESS, workshop.id, slugify(workshop.title))
+  send_mail.delay(
+    [a.email for a in workshop.attendees.all()],
+    '{} - new message from mentor'.format(workshop.title),
+    get_rendered_template('mail/workshop_mentor_new_message.txt',
+                          {'mentor': mentor, 'message_link': message_link}),
+    get_rendered_template('mail/workshop_mentor_new_message.html',
+                          {'mentor': mentor, 'message_link': message_link}),
+  )
 
 @api_view(['DELETE', ])
 @permission_classes((IsAuthenticated,))

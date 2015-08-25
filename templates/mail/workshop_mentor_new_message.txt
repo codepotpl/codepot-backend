@@ -1,0 +1,14 @@
+Hi!
+
+Workshop mentor ({{ mentor }}) has just added new message.
+
+You can view it at: {{ message_link }}
+
+--
+Kind regards,
+The Codepot Team
+
+Follow us:
+http://codepot.pl
+http://twitter.com/codepot_pl
+http://www.facebook.com/codepotpl
