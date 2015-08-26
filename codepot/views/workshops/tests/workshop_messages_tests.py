@@ -86,7 +86,12 @@ class WorkshopsMessagesTests(TestCase):
 
       message = messages[0]
       self.assertEqual(message['id'], self.workshop_message.id)
-      self.assertEqual(message['author'], 'FA LA')
+
+      author = message['author']
+      self.assertEquals(author['id'], self.attendee.id)
+      self.assertEquals(author['firstName'], self.attendee.first_name)
+      self.assertEquals(author['lastName'], self.attendee.last_name)
+
       self.assertEqual(message['content'], self.workshop_message.message)
       self.assertIn('created', message)
       self.assertIsNotNone(message['created'])
@@ -132,7 +137,11 @@ class WorkshopsMessagesTests(TestCase):
       message = data['message']
 
       self.assertIsNotNone(message['id'])
-      self.assertEqual(message['author'], '{} {}'.format(token.user.first_name, token.user.last_name))
+
+      author = message['author']
+      self.assertEquals(author['id'], token.user.id)
+      self.assertEquals(author['firstName'], token.user.first_name)
+      self.assertEquals(author['lastName'], token.user.last_name)
       self.assertEqual(message['content'], body['content'])
       self.assertIn('created', message)
       self.assertIsNotNone(message['created'])

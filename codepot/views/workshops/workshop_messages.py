@@ -53,7 +53,11 @@ def _get_messages(workshop):
       'messages': [
         {
           'id': m.id,
-          'author': '{} {}'.format(m.author.first_name, m.author.last_name),
+          'author': {
+            'id': m.author.id,
+            'firstName': m.author.first_name,
+            'lastName': m.author.last_name,
+          },
           'content': m.message,
           'created': m.created.isoformat(),
         } for m in workshop.workshopmessage_set.all()
@@ -79,7 +83,11 @@ def _create_new_message(workshop, user, payload):
     data={
       'message': {
         'id': message.id,
-        'author': '{} {}'.format(message.author.first_name, message.author.last_name),
+        'author': {
+          'id': user.id,
+          'firstName': user.first_name,
+          'lastName': user.last_name,
+        },
         'content': message.message,
         'created': message.created.isoformat(),
       },

@@ -232,6 +232,25 @@ class WorkshopsListTests(TestCase):
 
     jsonschema.validate(resp.data, workshops_json_schema.workshop_places_res_schema)
 
+  def test_if_workshop_matches_schema(self):
+    client = APIClient()
+
+    resp = client.get('/api/workshops/{}/'.format(self.workshop.id), None, format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_200_OK)
+
+    jsonschema.validate(resp.data, workshops_json_schema.workshop_res_schema)
+
+  def test_if_not_found_exception_raised_when_fetching_non_existing_workshop(self):
+    workshop_id = int(datetime.datetime.now().timestamp())
+    resp = self.client.get('/api/workshops/{}/'.format(workshop_id), None, format=self.req_format)
+
+    self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
+
+    data = resp.data
+    self.assertEqual(data['code'], 501)
+    self.assertEqual(data['detail'], 'Workshop with ID: {} not found'.format(workshop_id))
+
   def tearDown(self):
     self.client.credentials(HTTP_AUTHORIZATION=None)
     Workshop.objects.all().delete()

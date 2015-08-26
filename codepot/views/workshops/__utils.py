@@ -38,37 +38,38 @@ def check_if_user_is_workshop_mentor_or_attendee(workshop, user):
 def prepare_list_of_workshops_response(workshops):
   return Response(
     {
-      'workshops': [
-        {
-          'id': w.id,
-          'title': w.title,
-          'description': w.description,
-          'maxAttendees': w.max_attendees,
-          'attendeesCount': w.attendees.count(),
-          'timeSlots': [
-            {
-              'id': ts.id,
-              'day': ts.timeslot_tier.day,
-              'startTime': ts.timeslot_tier.date_from.isoformat(),
-              'endTime': ts.timeslot_tier.date_to.isoformat(),
-              'room': ts.room_no,
-              'order': ts.timeslot_tier.order,
-            } for ts in sorted(w.timeslot_set.all(), key=lambda x: x.timeslot_tier.order)
-            ],
-          'mentors': [__get_workshop_mentor_data(m) for m in w.mentors.all()],
-          'tags': [
-            {
-              'id': t.name,
-              'name': t.name,
-            } for t in w.tags.all()
-            ],
-        } for w in workshops
-        ]
+      'workshops': [map_single_workshop(w) for w in workshops]
     },
     HTTP_200_OK,
     headers={'Cache-Control': 'no-cache, no-store, must-revalidate'}
   )
 
+
+def map_single_workshop(workshop):
+  return {
+    'id': workshop.id,
+    'title': workshop.title,
+    'description': workshop.description,
+    'maxAttendees': workshop.max_attendees,
+    'attendeesCount': workshop.attendees.count(),
+    'timeSlots': [
+      {
+        'id': ts.id,
+        'day': ts.timeslot_tier.day,
+        'startTime': ts.timeslot_tier.date_from.isoformat(),
+        'endTime': ts.timeslot_tier.date_to.isoformat(),
+        'room': ts.room_no,
+        'order': ts.timeslot_tier.order,
+      } for ts in sorted(workshop.timeslot_set.all(), key=lambda x: x.timeslot_tier.order)
+      ],
+    'mentors': [__get_workshop_mentor_data(m) for m in workshop.mentors.all()],
+    'tags': [
+      {
+        'id': t.name,
+        'name': t.name,
+      } for t in workshop.tags.all()
+      ],
+  }
 
 def sort_workshops_by_start_date(workshops):
   return sorted(workshops, key=lambda x: x.timeslot_set.all()[0].timeslot_tier.date_from)
