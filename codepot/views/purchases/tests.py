@@ -17,7 +17,6 @@ from rest_framework.test import APIClient
 from codepot.models import (
     Purchase,
     PurchaseInvoice,
-    Ticket,
     PriceTier,
     PromoCode,
     PromoCodeClassification,
@@ -161,7 +160,6 @@ class NewPurchaseTest(TestCase):
         }
 
         self.assertEqual(Purchase.objects.count(), 0)
-        self.assertEqual(Ticket.objects.count(), 0)
 
         resp = self.client.post('/api/purchases/new/', payload, format=self.req_format)
         self.assertEqual(resp.status_code, HTTP_201_CREATED)
@@ -565,7 +563,6 @@ class NewPurchaseTest(TestCase):
         PriceTier.objects.all().delete()
         Product.objects.all().delete()
         Purchase.objects.all().delete()
-        Ticket.objects.all().delete()
         User.objects.all().delete()
         PromoCode.objects.all().delete()
         PromoCodeClassification.objects.all().delete()
