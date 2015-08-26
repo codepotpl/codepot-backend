@@ -13,6 +13,7 @@ from codepot.models import Workshop
 from .__utils import (
   find_workshop_for_id_or_raise,
   prepare_list_of_workshops_response,
+  map_single_workshop,
 )
 from codepot.views.workshops import workshops_json_schema
 from codepot.views.workshops.exceptions import WorkshopIllegalAccessException
@@ -23,6 +24,14 @@ from codepot.views.workshops.exceptions import WorkshopIllegalAccessException
 def get_workshops(request, **kwargs):
   workshops = Workshop.objects.all().order_by('id')
   return prepare_list_of_workshops_response(workshops)
+
+
+@api_view(['GET', ])
+@permission_classes((AllowAny,))
+def get_workshop(request, **kwargs):
+  workshop_id = kwargs['workshop_id']
+  workshop = find_workshop_for_id_or_raise(workshop_id)
+  return Response(data=map_single_workshop(workshop), status=HTTP_200_OK)
 
 
 @api_view(['POST', ])

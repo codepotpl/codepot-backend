@@ -45,9 +45,10 @@ user_patterns = patterns(
 workshops_patterns = patterns(
     '',
     url(r'^workshops/$', workshops_views.get_workshops),
+    url(r'^workshops/(?P<workshop_id>[0-9]+)/$', workshops_views.get_workshop),
+    url(r'^workshops/(?P<workshop_id>[0-9]+)/attendees/$', workshops_views.get_workshop_attendees),
     url(r'^workshops/places/$', workshops_views.get_workshops_places),
-    url(r'^workshops/search/$', workshops_views.search_workshops),
-    url(r'^workshops/(?P<workshop_id>.+)/attendees/$', workshops_views.get_workshop_attendees)
+    url(r'^workshops/search/$', workshops_views.search_workshops)
 )
 
 workshops_messages_patterns = patterns(
