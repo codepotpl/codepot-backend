@@ -27,7 +27,6 @@ class Command(BaseCommand):
   option_list = (
     make_option('-f', '--file',
                 dest='mentors_json',
-
                 help='Path to file with mentors JSON data'),
   )
   factory = APIRequestFactory()
