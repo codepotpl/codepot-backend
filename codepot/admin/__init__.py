@@ -5,7 +5,6 @@ from codepot.models import (
     PromoCodeClassification,
     Purchase,
     PurchaseInvoice,
-    Ticket,
     PriceTier,
     Product,
     AppSettings,
@@ -50,11 +49,6 @@ class PurchaseInvoiceAdmin(admin.ModelAdmin):
   pass
 
 
-@admin.register(Ticket)
-class TicketAdmin(admin.ModelAdmin):
-  pass
-
-
 @admin.register(PromoCodeClassification)
 class PromoCodeClassificationAdmin(admin.ModelAdmin):
   pass
@@ -87,9 +81,11 @@ class WorkshopAdmin(admin.ModelAdmin):
     'max_attendees',
   )
 
+
 class LimitedWorkshop(Workshop):
-    class Meta:
-        proxy = True
+  class Meta:
+    proxy = True
+
 
 @admin.register(LimitedWorkshop)
 class LimitedWorkshopAdmin(admin.ModelAdmin):
@@ -98,6 +94,7 @@ class LimitedWorkshopAdmin(admin.ModelAdmin):
     'max_attendees',
   )
   exclude = ['attendees']
+
 
 @admin.register(WorkshopTag)
 class WorkshopTagAdmin(admin.ModelAdmin):
